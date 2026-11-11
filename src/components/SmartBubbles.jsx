@@ -24,8 +24,8 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
   const showLowEnergy =
     activeTab === "tracking" && (today.energy === 1 || today.energy === 2);
 
-  // 3. Low Mood (שפוף 🌧️): shows everywhere as a warm haven
-  const showMoodHaven = today.mood === 0;
+  // 3. Low Mood (שפוף 🌧️): shows ONLY on the cabin tab as requested
+  const showMoodHaven = activeTab === "cabin" && today.mood === 0;
 
   // 4. Asthma / Heavy breathing: heavyBreathing is true (shown when relevant)
   const showAsthma = !!today.heavyBreathing;
