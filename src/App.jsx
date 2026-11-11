@@ -13,6 +13,7 @@ import Nutrition from "./screens/Nutrition";
 import Movement from "./screens/Movement";
 import Tracking from "./screens/Tracking";
 import Cabin from "./screens/Cabin";
+import SmartBubbles from "./components/SmartBubbles";
 
 const TABS = [
   { id: "quests", label: "הקצב היומי", icon: Sparkles, Screen: Quests },
@@ -47,6 +48,8 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-md space-y-4 px-4 pt-4">
+        {/* Context-aware Adaptive Health Bubbles */}
+        <SmartBubbles onNavigateTab={setActiveTab} />
         <Screen />
       </main>
 
