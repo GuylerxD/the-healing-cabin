@@ -180,6 +180,25 @@ export default function Tracking() {
             ))}
           </div>
         </div>
+        <div className="space-y-2">
+          <p className="text-xs text-purple-200">כאבי גב היום 🦴</p>
+          <div className="grid grid-cols-4 gap-2">
+            {PAIN.map((label, n) => (
+              <button
+                key={label}
+                aria-pressed={today.backPain === n}
+                onClick={() => updateToday({ backPain: n })}
+                className={`rounded-2xl py-2.5 text-sm font-bold transition ${
+                  today.backPain === n
+                    ? "bg-mint text-space"
+                    : "bg-white/5 text-purple-200"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="glass space-y-2 p-5">
