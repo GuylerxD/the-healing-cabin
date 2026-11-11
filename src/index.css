@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Rubik", system-ui, sans-serif;
+  --color-space: #130d26;
+  --color-space-light: #1e1538;
+  --color-mint: #80ffdb;
+  --color-blush: #ffb7df;
+  --color-lilac: #c792ea;
+  --color-moon: #f5f0ff;
+}
+
+@utility glass {
+  @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-lg;
+}
+
+html,
+body {
+  @apply bg-space text-moon font-sans antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
