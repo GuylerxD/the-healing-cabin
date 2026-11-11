@@ -9,9 +9,12 @@ import {
   CheckCircle2,
   Calendar,
   Check,
+  BookOpen,
+  ChefHat,
 } from "lucide-react";
 import { setCabin, updateToday, useCabin, useToday } from "../store";
 import { useDailyPlan } from "../hooks/useDailyPlan";
+import MealRecipeModal from "../components/MealRecipeModal";
 
 const PROTEIN_ADDS = [
   { label: "🐟 דג", grams: 25 },
@@ -105,6 +108,7 @@ export default function Nutrition() {
   const [activeCategory, setActiveCategory] = useState(
     WEEKLY_GROCERY_CATEGORIES[0].category,
   );
+  const [activeRecipeMeal, setActiveRecipeMeal] = useState(null);
 
   const protein = today.protein ?? 0;
   const meals = today.meals ?? 0;
@@ -348,44 +352,68 @@ export default function Nutrition() {
                   {selectedPlan.nutrition.meals.breakfast.notes}
                 </p>
 
-                {isToday && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleToggleMealEaten(
+                {/* Meal Actions */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {selectedPlan.nutrition.meals.breakfast.recipe && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveRecipeMeal(
+                          selectedPlan.nutrition.meals.breakfast,
+                        )
+                      }
+                      className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
+                    >
+                      <BookOpen className="h-3.5 w-3.5" />
+                      <span>מתכון והכנה</span>
+                    </button>
+                  )}
+
+                  {isToday && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleToggleMealEaten(
+                          `day-${selectedDayIndex}-breakfast`,
+                          selectedPlan.nutrition.meals.breakfast.proteinGrams,
+                        )
+                      }
+                      className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
+                        eatenMeals.includes(`day-${selectedDayIndex}-breakfast`)
+                          ? "bg-mint text-space shadow-sm shadow-mint/20"
+                          : "bg-white/10 text-moon hover:bg-white/15"
+                      }`}
+                    >
+                      {eatenMeals.includes(
                         `day-${selectedDayIndex}-breakfast`,
-                        selectedPlan.nutrition.meals.breakfast.proteinGrams,
-                      )
-                    }
-                    className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
-                      eatenMeals.includes(`day-${selectedDayIndex}-breakfast`)
-                        ? "bg-mint text-space shadow-sm shadow-mint/20"
-                        : "bg-white/10 text-moon hover:bg-white/15"
-                    }`}
-                  >
-                    {eatenMeals.includes(
-                      `day-${selectedDayIndex}-breakfast`,
-                    ) ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>
-                          אכלתי! (נוספו{" "}
-                          {selectedPlan.nutrition.meals.breakfast.proteinGrams}
-                          ג׳ חלבון)
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-3.5 w-3.5 text-mint" />
-                        <span>
-                          סמן כאכול (+
-                          {selectedPlan.nutrition.meals.breakfast.proteinGrams}
-                          ג׳ חלבון +5 🪙)
-                        </span>
-                      </>
-                    )}
-                  </button>
-                )}
+                      ) ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" />
+                          <span>
+                            אכלתי! (נוספו{" "}
+                            {
+                              selectedPlan.nutrition.meals.breakfast
+                                .proteinGrams
+                            }
+                            ג׳ חלבון)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-3.5 w-3.5 text-mint" />
+                          <span>
+                            סמן כאכול (+
+                            {
+                              selectedPlan.nutrition.meals.breakfast
+                                .proteinGrams
+                            }
+                            ג׳ חלבון +5 🪙)
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -411,42 +439,58 @@ export default function Nutrition() {
                   {selectedPlan.nutrition.meals.lunch.notes}
                 </p>
 
-                {isToday && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleToggleMealEaten(
-                        `day-${selectedDayIndex}-lunch`,
-                        selectedPlan.nutrition.meals.lunch.proteinGrams,
-                      )
-                    }
-                    className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
-                      eatenMeals.includes(`day-${selectedDayIndex}-lunch`)
-                        ? "bg-mint text-space shadow-sm shadow-mint/20"
-                        : "bg-white/10 text-moon hover:bg-white/15"
-                    }`}
-                  >
-                    {eatenMeals.includes(`day-${selectedDayIndex}-lunch`) ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>
-                          אכלתי! (נוספו{" "}
-                          {selectedPlan.nutrition.meals.lunch.proteinGrams}ג׳
-                          חלבון)
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-3.5 w-3.5 text-mint" />
-                        <span>
-                          סמן כאכול (+
-                          {selectedPlan.nutrition.meals.lunch.proteinGrams}ג׳
-                          חלבון +5 🪙)
-                        </span>
-                      </>
-                    )}
-                  </button>
-                )}
+                {/* Meal Actions */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {selectedPlan.nutrition.meals.lunch.recipe && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveRecipeMeal(selectedPlan.nutrition.meals.lunch)
+                      }
+                      className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
+                    >
+                      <BookOpen className="h-3.5 w-3.5" />
+                      <span>מתכון והכנה</span>
+                    </button>
+                  )}
+
+                  {isToday && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleToggleMealEaten(
+                          `day-${selectedDayIndex}-lunch`,
+                          selectedPlan.nutrition.meals.lunch.proteinGrams,
+                        )
+                      }
+                      className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
+                        eatenMeals.includes(`day-${selectedDayIndex}-lunch`)
+                          ? "bg-mint text-space shadow-sm shadow-mint/20"
+                          : "bg-white/10 text-moon hover:bg-white/15"
+                      }`}
+                    >
+                      {eatenMeals.includes(`day-${selectedDayIndex}-lunch`) ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" />
+                          <span>
+                            אכלתי! (נוספו{" "}
+                            {selectedPlan.nutrition.meals.lunch.proteinGrams}ג׳
+                            חלבון)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-3.5 w-3.5 text-mint" />
+                          <span>
+                            סמן כאכול (+
+                            {selectedPlan.nutrition.meals.lunch.proteinGrams}ג׳
+                            חלבון +5 🪙)
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -472,42 +516,58 @@ export default function Nutrition() {
                   {selectedPlan.nutrition.meals.dinner.notes}
                 </p>
 
-                {isToday && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleToggleMealEaten(
-                        `day-${selectedDayIndex}-dinner`,
-                        selectedPlan.nutrition.meals.dinner.proteinGrams,
-                      )
-                    }
-                    className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
-                      eatenMeals.includes(`day-${selectedDayIndex}-dinner`)
-                        ? "bg-mint text-space shadow-sm shadow-mint/20"
-                        : "bg-white/10 text-moon hover:bg-white/15"
-                    }`}
-                  >
-                    {eatenMeals.includes(`day-${selectedDayIndex}-dinner`) ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>
-                          אכלתי! (נוספו{" "}
-                          {selectedPlan.nutrition.meals.dinner.proteinGrams}ג׳
-                          חלבון)
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-3.5 w-3.5 text-mint" />
-                        <span>
-                          סמן כאכול (+
-                          {selectedPlan.nutrition.meals.dinner.proteinGrams}ג׳
-                          חלבון +5 🪙)
-                        </span>
-                      </>
-                    )}
-                  </button>
-                )}
+                {/* Meal Actions */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {selectedPlan.nutrition.meals.dinner.recipe && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveRecipeMeal(selectedPlan.nutrition.meals.dinner)
+                      }
+                      className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
+                    >
+                      <BookOpen className="h-3.5 w-3.5" />
+                      <span>מתכון והכנה</span>
+                    </button>
+                  )}
+
+                  {isToday && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleToggleMealEaten(
+                          `day-${selectedDayIndex}-dinner`,
+                          selectedPlan.nutrition.meals.dinner.proteinGrams,
+                        )
+                      }
+                      className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
+                        eatenMeals.includes(`day-${selectedDayIndex}-dinner`)
+                          ? "bg-mint text-space shadow-sm shadow-mint/20"
+                          : "bg-white/10 text-moon hover:bg-white/15"
+                      }`}
+                    >
+                      {eatenMeals.includes(`day-${selectedDayIndex}-dinner`) ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" />
+                          <span>
+                            אכלתי! (נוספו{" "}
+                            {selectedPlan.nutrition.meals.dinner.proteinGrams}ג׳
+                            חלבון)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-3.5 w-3.5 text-mint" />
+                          <span>
+                            סמן כאכול (+
+                            {selectedPlan.nutrition.meals.dinner.proteinGrams}ג׳
+                            חלבון +5 🪙)
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -533,37 +593,53 @@ export default function Nutrition() {
                   {selectedPlan.nutrition.meals.snack.notes}
                 </p>
 
-                {isToday && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleToggleMealEaten(
-                        `day-${selectedDayIndex}-snack`,
-                        selectedPlan.nutrition.meals.snack.proteinGrams,
-                      )
-                    }
-                    className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
-                      eatenMeals.includes(`day-${selectedDayIndex}-snack`)
-                        ? "bg-mint text-space shadow-sm shadow-mint/20"
-                        : "bg-white/10 text-moon hover:bg-white/15"
-                    }`}
-                  >
-                    {eatenMeals.includes(`day-${selectedDayIndex}-snack`) ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>נאכל!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-3.5 w-3.5 text-mint" />
-                        <span>
-                          סמן כאכול (+
-                          {selectedPlan.nutrition.meals.snack.proteinGrams}ג׳)
-                        </span>
-                      </>
-                    )}
-                  </button>
-                )}
+                {/* Meal Actions */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {selectedPlan.nutrition.meals.snack.recipe && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveRecipeMeal(selectedPlan.nutrition.meals.snack)
+                      }
+                      className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
+                    >
+                      <BookOpen className="h-3.5 w-3.5" />
+                      <span>מתכון והכנה</span>
+                    </button>
+                  )}
+
+                  {isToday && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleToggleMealEaten(
+                          `day-${selectedDayIndex}-snack`,
+                          selectedPlan.nutrition.meals.snack.proteinGrams,
+                        )
+                      }
+                      className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
+                        eatenMeals.includes(`day-${selectedDayIndex}-snack`)
+                          ? "bg-mint text-space shadow-sm shadow-mint/20"
+                          : "bg-white/10 text-moon hover:bg-white/15"
+                      }`}
+                    >
+                      {eatenMeals.includes(`day-${selectedDayIndex}-snack`) ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" />
+                          <span>נאכל!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-3.5 w-3.5 text-mint" />
+                          <span>
+                            סמן כאכול (+
+                            {selectedPlan.nutrition.meals.snack.proteinGrams}ג׳)
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -703,6 +779,64 @@ export default function Nutrition() {
           </div>
         </div>
       </section>
+
+      {/* 6. בישול מרוכז לסופ״ש (Weekend Meal Prep Guide) */}
+      <section className="glass space-y-3 p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <ChefHat className="h-5 w-5 text-blush" />
+            <h2 className="font-bold text-blush text-sm">
+              הכנות מרוכזות לסופ״ש (Meal Prep 🍱)
+            </h2>
+          </div>
+          <span className="rounded-full bg-blush/15 px-2.5 py-0.5 text-[10px] font-bold text-blush">
+            חוסך 4 שעות בישול בשבוע!
+          </span>
+        </div>
+
+        <p className="text-xs text-purple-200">
+          מתאים ל-ADHD: מכינים 3 עוגנים בסופ&quot;ש, ובאמצע השבוע הארוחות מוכנות
+          תוך 5 דקות:
+        </p>
+
+        <div className="space-y-2 text-xs">
+          <div className="rounded-2xl bg-white/5 p-3 border border-white/5 space-y-1">
+            <span className="font-bold text-mint block">
+              1. אפיית תבנית מאפינס פולנטה וקוטג' 🧁
+            </span>
+            <p className="text-purple-300 text-[11.5px]">
+              מכינים 6-8 מאפינס לפי המתכון ושומרים בקופסה אטומה במקרר לארוחות
+              בוקר של ראשון וחמישי.
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/5 p-3 border border-white/5 space-y-1">
+            <span className="font-bold text-lilac block">
+              2. בישול קינואה ואורז בסמטי מראש 🍚
+            </span>
+            <p className="text-purple-300 text-[11.5px]">
+              מבשלים כוס קינואה וכוס אורז בסמטי. מחלקים לקופסאות — מוכן להגשה
+              לצד סלמון או טופו.
+            </p>
+          </div>
+
+          <div className="rounded-2xl bg-white/5 p-3 border border-white/5 space-y-1">
+            <span className="font-bold text-moon block">
+              3. חיתוך וייבוש קוביות טופו 🍱
+            </span>
+            <p className="text-purple-300 text-[11.5px]">
+              סוחטים נוזלים מחבילת טופו, חותכים לקוביות ושומרים מתובל במקרר —
+              ישר לאייר-פרייר!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Modal with exact recipe and cooking timer */}
+      <MealRecipeModal
+        meal={activeRecipeMeal}
+        onClose={() => setActiveRecipeMeal(null)}
+      />
     </div>
   );
 }
