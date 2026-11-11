@@ -49,7 +49,7 @@ export default function App() {
 
       <main className="mx-auto max-w-md space-y-4 px-4 pt-4">
         {/* Context-aware Adaptive Health Bubbles */}
-        <SmartBubbles onNavigateTab={setActiveTab} />
+        <SmartBubbles onNavigateTab={setActiveTab} activeTab={activeTab} />
         <Screen />
       </main>
 
