@@ -13,8 +13,8 @@ import { updateToday, useToday } from "../store";
 export default function SmartBubbles({ onNavigateTab }) {
   const today = useToday();
 
-  // 1. Endo Belly / Bloating condition: fit is 'tight' or pain >= 2
-  const showBloat = today.fit === "tight" || (today.pain ?? 0) >= 2;
+  // 1. PCOS Bloating condition: fit is 'tight'
+  const showBloat = today.fit === "tight";
 
   // 2. Low Energy condition: energy is 1 or 2
   const showLowEnergy = today.energy === 1 || today.energy === 2;
@@ -62,14 +62,14 @@ export default function SmartBubbles({ onNavigateTab }) {
 
   return (
     <div className="space-y-3">
-      {/* Bubble 1: Endo Belly & Bloating */}
+      {/* Bubble 1: PCOS Bloating & Insulin Sensitivity */}
       {showBloat && (
         <section className="p-4 rounded-3xl bg-gradient-to-l from-[#ffb7df]/20 to-[#c792ea]/15 border border-[#ffb7df]/40 backdrop-blur-md space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Coffee className="h-5 w-5 text-blush" />
               <h3 className="font-bold text-sm text-blush">
-                הקלה על נפיחות ובטן אנדו 🍵
+                הקלה על נפיחות ועומס ל-PCOS 🍵
               </h3>
             </div>
             {today.teaLogged && (
@@ -79,8 +79,9 @@ export default function SmartBubbles({ onNavigateTab }) {
             )}
           </div>
           <p className="text-xs text-purple-100 leading-relaxed">
-            הגוף מעט נפוח היום — זה טבעי לחלוטין וללא שום קשר לשומן. עברי לבגדים
-            רפויים ונוחים, שתי מים או חליטת בבונג/ג׳ינג׳ר חמימה.
+            נפיחות היא תגובה נפוצה לרגישות להורמונים ואינסולין ב-PCOS — זה לא
+            שומן ולא כישלון. עברי לבגדים משוחררים, שתי מים מרווים או חליטת
+            קינמון/בבונג שעוזרת לאיזון.
           </p>
           <div className="flex justify-end pt-1">
             <button

@@ -9,6 +9,7 @@ const FIT = [
   ["loose", "משוחרר"],
 ];
 const PAIN = ["אין", "קל", "בינוני", "חזק"]; // index = 0..3
+const MOOD = ["שפוף 🌧️", "רגוע ⛅", "טוב ☀️", "קורן ✨"];
 const WEIGH_REWARD = 10;
 
 function TrendChart({ weighIns }) {
@@ -138,7 +139,7 @@ export default function Tracking() {
 
       <section className="glass space-y-4 p-5">
         <h2 className="flex items-center gap-2 font-bold text-lilac">
-          <Zap className="h-5 w-5" aria-hidden /> אנרגיה וכאבי אנדו
+          <Zap className="h-5 w-5" aria-hidden /> אנרגיה, מצב רוח ו-PCOS
         </h2>
         <div className="space-y-2">
           <p className="text-xs text-purple-200">
@@ -162,15 +163,15 @@ export default function Tracking() {
           </div>
         </div>
         <div className="space-y-2">
-          <p className="text-xs text-purple-200">כאבי אנדומטריוזיס היום</p>
+          <p className="text-xs text-purple-200">מצב נפשי ורגשי היום 🧘‍♀️</p>
           <div className="grid grid-cols-4 gap-2">
-            {PAIN.map((label, n) => (
+            {MOOD.map((label, n) => (
               <button
                 key={label}
-                aria-pressed={today.pain === n}
-                onClick={() => updateToday({ pain: n })}
-                className={`rounded-2xl py-2.5 text-sm font-bold transition ${
-                  today.pain === n
+                aria-pressed={today.mood === n}
+                onClick={() => updateToday({ mood: n })}
+                className={`rounded-2xl py-2.5 text-xs font-bold transition ${
+                  today.mood === n
                     ? "bg-blush text-space"
                     : "bg-white/5 text-purple-200"
                 }`}
