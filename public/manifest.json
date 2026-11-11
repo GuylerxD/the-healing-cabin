@@ -2,8 +2,8 @@
   "name": "בקתת הריפוי - The Healing Cabin",
   "short_name": "בקתת הריפוי",
   "description": "מסע יומי מרגיע לבריאות, תזונה והתאוששות",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/the-healing-cabin/",
+  "scope": "/the-healing-cabin/",
   "display": "standalone",
   "orientation": "portrait",
   "dir": "rtl",
@@ -12,10 +12,22 @@
   "theme_color": "#130d26",
   "icons": [
     {
-      "src": "/icon.svg",
+      "src": "/the-healing-cabin/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/the-healing-cabin/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/the-healing-cabin/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

@@ -2,11 +2,19 @@
 <html dir="rtl" lang="he">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <link rel="apple-touch-icon" href="/icon.svg" />
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/the-healing-cabin/icon.svg" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/the-healing-cabin/icon-192.png"
+    />
+    <link rel="apple-touch-icon" href="/the-healing-cabin/icon-192.png" />
+    <link rel="manifest" href="/the-healing-cabin/manifest.json" />
     <meta name="theme-color" content="#130d26" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="בקתת הריפוי" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
       content="black-translucent"
@@ -26,5 +34,17 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/the-healing-cabin/sw.js")
+            .then((reg) =>
+              console.log("SW registered successfully:", reg.scope),
+            )
+            .catch((err) => console.log("SW registration failed:", err));
+        });
+      }
+    </script>
   </body>
 </html>
