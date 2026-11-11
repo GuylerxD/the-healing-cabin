@@ -7,8 +7,10 @@ import {
   House,
   Coins,
   ChefHat,
+  ChevronsUp,
+  ChevronsDown,
 } from "lucide-react";
-import { useCabin, updateToday } from "./store";
+import { useCabin, updateToday, setAllSectionsCollapsed } from "./store";
 import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
 import MealPrep from "./screens/MealPrep";
@@ -29,8 +31,18 @@ const TABS = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("quests");
-  const { coins, longGoal } = useCabin();
+  const { coins, longGoal, collapsedSections } = useCabin();
   const { Screen } = TABS.find((t) => t.id === activeTab);
+
+  // Check if all known sections are currently collapsed
+  const isAllCollapsed =
+    collapsedSections &&
+    Object.keys(collapsedSections).length > 0 &&
+    Object.values(collapsedSections).filter(Boolean).length >= 5;
+
+  const handleToggleCollapseAll = () => {
+    setAllSectionsCollapsed(!isAllCollapsed);
+  };
 
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator))
@@ -57,11 +69,35 @@ export default function App() {
               {longGoal ? `🌟 ${longGoal}` : "צעד קטן כל יום 🌱"}
             </p>
           </div>
-          <div className="flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-3.5 py-1.5">
-            <Coins className="h-4 w-4 text-mint" aria-hidden />
-            <span className="text-sm font-bold text-mint" aria-label="מטבעות">
-              {coins}
-            </span>
+          <div className="flex items-center gap-2">
+            {/* כפתור כווץ הכל / פתח הכל למעלה */}
+            <button
+              type="button"
+              onClick={handleToggleCollapseAll}
+              className="flex items-center gap-1 rounded-2xl border border-white/15 bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-moon hover:bg-white/15 transition active:scale-95"
+              title={
+                isAllCollapsed ? "פתח את כל התפריטים" : "כווץ את כל התפריטים"
+              }
+            >
+              {isAllCollapsed ? (
+                <>
+                  <ChevronsDown className="h-3.5 w-3.5 text-mint" />
+                  <span>פתח הכל</span>
+                </>
+              ) : (
+                <>
+                  <ChevronsUp className="h-3.5 w-3.5 text-lilac" />
+                  <span>כווץ הכל</span>
+                </>
+              )}
+            </button>
+
+            <div className="flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-3.5 py-1.5">
+              <Coins className="h-4 w-4 text-mint" aria-hidden />
+              <span className="text-sm font-bold text-mint" aria-label="מטבעות">
+                {coins}
+              </span>
+            </div>
           </div>
         </div>
       </header>

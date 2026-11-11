@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { BatteryCharging, ShoppingBag, Star } from "lucide-react";
+import { BatteryCharging, ShoppingBag, Star, PawPrint } from "lucide-react";
 import { setCabin, todayKey, useCabin, useToday } from "../store";
 import { RECOVERY_DAILY_CAP, recoveryCoins } from "../lib/recovery";
 import AchievementBadges from "../components/AchievementBadges";
+import CollapsibleCard from "../components/CollapsibleCard";
 
 const SHOP = [
   { id: "mochi-bow", pet: "mochi", emoji: "🎀", name: "פפיון ורוד", price: 30 },
@@ -113,79 +114,115 @@ export default function Cabin() {
 
   return (
     <div className="space-y-4">
-      <section className="glass space-y-4 p-5">
-        <h2 className="font-bold text-blush">החדר של מוצ׳י וצ׳ארלי 🐾</h2>
-        <div className="flex items-end justify-around rounded-2xl bg-gradient-to-t from-lilac/20 to-transparent px-2 pt-6 pb-3">
-          {PETS.map((pet) => {
-            const items = SHOP.filter(
-              (i) => i.pet === pet.id && owned.includes(i.id),
-            );
-            return (
-              <figure key={pet.id} className="flex flex-col items-center gap-1">
-                <div className="flex h-6 gap-0.5 text-lg" aria-label="אביזרים">
-                  {items.map((i) => (
-                    <span key={i.id} title={i.name}>
-                      {i.emoji}
-                    </span>
-                  ))}
-                </div>
-                <span
-                  className={`${pet.size} ${resting ? "animate-pulse" : ""}`}
-                  aria-hidden
+      {/* 1. החדר של מוצ׳י וצ׳ארלי (Collapsible) */}
+      <CollapsibleCard
+        id="cabin-pet-room"
+        title="החדר של מוצ׳י וצ׳ארלי 🐾"
+        badge={resting ? "מתכרבלים איתך ונחים 💤" : "מוצ׳י & צ׳ארלי בבקתה"}
+        icon={PawPrint}
+        defaultOpen={true}
+      >
+        <div className="space-y-4">
+          <div className="flex items-end justify-around rounded-2xl bg-gradient-to-t from-lilac/20 to-transparent px-2 pt-6 pb-3">
+            {PETS.map((pet) => {
+              const items = SHOP.filter(
+                (i) => i.pet === pet.id && owned.includes(i.id),
+              );
+              return (
+                <figure
+                  key={pet.id}
+                  className="flex flex-col items-center gap-1"
                 >
-                  {pet.emoji}
-                </span>
-                <figcaption className="text-center text-xs">
-                  <span className="block font-bold text-moon">{pet.name}</span>
-                  <span className="text-purple-300">{pet.desc}</span>
-                </figcaption>
-              </figure>
-            );
-          })}
-        </div>
-        <p className="text-center text-xs text-purple-200">
-          {resting ? "מתכרבלים איתך ונחים יחד 💤" : "מחכים לך בבקתה 🕯️"}
-        </p>
-      </section>
-
-      <section className="glass space-y-3 p-5">
-        <h2 className="flex items-center gap-2 font-bold text-mint">
-          <BatteryCharging className="h-5 w-5" aria-hidden /> התאוששות פעילה
-        </h2>
-        <p className="text-xs text-purple-200">
-          יום כואב? מנוחה היא גם התקדמות. מטבע לכל 2 דקות מנוחה (עד{" "}
-          {RECOVERY_DAILY_CAP} ביום) — ממשיך לצבור גם כשהאפליקציה סגורה.
-        </p>
-        {resting && (
-          <p className="text-sm text-mint">
-            נחת {elapsedMin} דק׳ • נצברו {pending} מטבעות 🌙
+                  <div
+                    className="flex h-6 gap-0.5 text-lg"
+                    aria-label="אביזרים"
+                  >
+                    {items.map((i) => (
+                      <span key={i.id} title={i.name}>
+                        {i.emoji}
+                      </span>
+                    ))}
+                  </div>
+                  <span
+                    className={`${pet.size} ${resting ? "animate-pulse" : ""}`}
+                    aria-hidden
+                  >
+                    {pet.emoji}
+                  </span>
+                  <figcaption className="text-center text-xs">
+                    <span className="block font-bold text-moon">
+                      {pet.name}
+                    </span>
+                    <span className="text-purple-300">{pet.desc}</span>
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+          <p className="text-center text-xs text-purple-200">
+            {resting ? "מתכרבלים איתך ונחים יחד 💤" : "מחכים לך בבקתה 🕯️"}
           </p>
-        )}
-        <button
-          aria-pressed={resting}
-          onClick={toggleRecovery}
-          disabled={!resting && earnedToday >= RECOVERY_DAILY_CAP}
-          className={`w-full rounded-2xl py-3 font-bold transition disabled:opacity-40 ${
-            resting
-              ? "bg-mint text-space"
-              : "bg-lilac/20 text-moon ring-1 ring-lilac"
-          }`}
-        >
-          {resting
-            ? `סיימתי לנוח — לאסוף ${pending} 🪙`
-            : earnedToday >= RECOVERY_DAILY_CAP
-              ? "אספת את כל מטבעות המנוחה להיום 💜"
-              : "להתחיל מנוחה 🛋️"}
-        </button>
-      </section>
+        </div>
+      </CollapsibleCard>
 
-      {/* Achievement Badges System */}
-      <AchievementBadges />
+      {/* 2. התאוששות פעילה (Collapsible) */}
+      <CollapsibleCard
+        id="cabin-recovery"
+        title="התאוששות פעילה"
+        badge={
+          resting ? `נחת ${elapsedMin} דק׳ (+${pending} 🪙)` : "מטבעות במנוחה"
+        }
+        icon={BatteryCharging}
+        defaultOpen={true}
+      >
+        <div className="space-y-3">
+          <p className="text-xs text-purple-200">
+            יום כואב? מנוחה היא גם התקדמות. מטבע לכל 2 דקות מנוחה (עד{" "}
+            {RECOVERY_DAILY_CAP} ביום) — ממשיך לצבור גם כשהאפליקציה סגורה.
+          </p>
+          {resting && (
+            <p className="text-sm text-mint">
+              נחת {elapsedMin} דק׳ • נצברו {pending} מטבעות 🌙
+            </p>
+          )}
+          <button
+            aria-pressed={resting}
+            onClick={toggleRecovery}
+            disabled={!resting && earnedToday >= RECOVERY_DAILY_CAP}
+            className={`w-full rounded-2xl py-3 font-bold transition disabled:opacity-40 ${
+              resting
+                ? "bg-mint text-space"
+                : "bg-lilac/20 text-moon ring-1 ring-lilac"
+            }`}
+          >
+            {resting
+              ? `סיימתי לנוח — לאסוף ${pending} 🪙`
+              : earnedToday >= RECOVERY_DAILY_CAP
+                ? "אספת את כל מטבעות המנוחה להיום 💜"
+                : "להתחיל מנוחה 🛋️"}
+          </button>
+        </div>
+      </CollapsibleCard>
 
-      <section className="glass space-y-3 p-5">
-        <h2 className="flex items-center gap-2 font-bold text-lilac">
-          <ShoppingBag className="h-5 w-5" aria-hidden /> חנות אביזרים
-        </h2>
+      {/* 3. מדליות והישגים (Collapsible) */}
+      <CollapsibleCard
+        id="cabin-badges"
+        title="מדליות והישגי ריפוי"
+        badge="פרסי מטבעות לחדר"
+        icon={Star}
+        defaultOpen={false}
+      >
+        <AchievementBadges />
+      </CollapsibleCard>
+
+      {/* 4. חנות אביזרים (Collapsible) */}
+      <CollapsibleCard
+        id="cabin-shop"
+        title="חנות אביזרים"
+        badge={`${owned.length} מתוך ${SHOP.length} נרכשו`}
+        icon={ShoppingBag}
+        defaultOpen={false}
+      >
         <div className="grid grid-cols-2 gap-2">
           {SHOP.map((item) => {
             const has = owned.includes(item.id);
@@ -213,37 +250,43 @@ export default function Cabin() {
             );
           })}
         </div>
-      </section>
+      </CollapsibleCard>
 
-      <section className="glass space-y-3 p-5">
-        <h2 className="flex items-center gap-2 font-bold text-blush">
-          <Star className="h-5 w-5" aria-hidden /> המטרה הגדולה שלי
-        </h2>
-        <p className="text-xs text-purple-300">
-          אופציונלי — חלום רחוק שיופיע בראש המסך.
-        </p>
-        <form
-          className="flex gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setCabin((s) => ({
-              ...s,
-              longGoal: goalDraft.trim().slice(0, 40),
-            }));
-          }}
-        >
-          <input
-            value={goalDraft}
-            maxLength={40}
-            onChange={(e) => setGoalDraft(e.target.value)}
-            placeholder="למשל: טיול חלומות 🌸"
-            className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-sm text-moon placeholder:text-purple-300"
-          />
-          <button className="rounded-2xl bg-blush px-4 py-2 text-sm font-bold text-space">
-            שמירה
-          </button>
-        </form>
-      </section>
+      {/* 5. המטרה הגדולה שלי (Collapsible) */}
+      <CollapsibleCard
+        id="cabin-goal"
+        title="המטרה הגדולה שלי"
+        badge={longGoal ? `🌟 ${longGoal}` : "הגדרת מטרה ארוכת טווח"}
+        icon={Star}
+        defaultOpen={false}
+      >
+        <div className="space-y-3">
+          <p className="text-xs text-purple-300">
+            אופציונלי — חלום רחוק שיופיע בראש המסך.
+          </p>
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setCabin((s) => ({
+                ...s,
+                longGoal: goalDraft.trim().slice(0, 40),
+              }));
+            }}
+          >
+            <input
+              value={goalDraft}
+              maxLength={40}
+              onChange={(e) => setGoalDraft(e.target.value)}
+              placeholder="למשל: טיול חלומות 🌸"
+              className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-sm text-moon placeholder:text-purple-300"
+            />
+            <button className="rounded-2xl bg-blush px-4 py-2 text-sm font-bold text-space">
+              שמירה
+            </button>
+          </form>
+        </div>
+      </CollapsibleCard>
     </div>
   );
 }

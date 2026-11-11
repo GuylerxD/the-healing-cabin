@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import plansData from "../data/plansDB.json";
+import { useCabin } from "../store";
 
 const HEBREW_DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 
@@ -24,19 +25,35 @@ function getCurrentDayIndex() {
 
 /**
  * Custom hook to retrieve daily spine-safe workouts and PCOS blood sugar-balanced nutrition plans.
- * @param {number|null} initialDay - Optional day index (0 = Sunday ... 6 = Saturday). Defaults to today.
+ * @param {number|null} initialDay - Optional day index (0 = Sunday ... 6 = Saturday). Defaults to today or customMealPlanDay.
  * @param {Object} options - { sosMode: boolean }
  */
 export function useDailyPlan(initialDay = null, options = {}) {
   const { sosMode = false } = options;
+  const { customMealPlanDay } = useCabin();
   const [todayIndex] = useState(getCurrentDayIndex);
-  const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    return initialDay !== null ? initialDay : getCurrentDayIndex();
-  });
+
+  // If initialDay is explicitly provided, use it; otherwise, if user picked a custom meal day in Meal Prep, respect it for nutrition.
+  const activeDayIndex =
+    initialDay !== null
+      ? initialDay
+      : customMealPlanDay !== null && customMealPlanDay !== undefined
+        ? customMealPlanDay
+        : todayIndex;
+
+  const [selectedDayIndex, setSelectedDayIndex] = useState(activeDayIndex);
 
   const rawTodayPlan = useMemo(() => {
-    return WEEKLY_PLAN.find((d) => d.dayIndex === todayIndex) || WEEKLY_PLAN[0];
-  }, [todayIndex]);
+    // If user explicitly chose another day's plan for today's meals, use it
+    const effectiveDayIndex =
+      customMealPlanDay !== null && customMealPlanDay !== undefined
+        ? customMealPlanDay
+        : todayIndex;
+    return (
+      WEEKLY_PLAN.find((d) => d.dayIndex === effectiveDayIndex) ||
+      WEEKLY_PLAN[0]
+    );
+  }, [todayIndex, customMealPlanDay]);
 
   const rawSelectedPlan = useMemo(() => {
     return (
@@ -69,6 +86,16 @@ export function useDailyPlan(initialDay = null, options = {}) {
     setSelectedDayIndex,
     isToday: selectedDayIndex === todayIndex,
     dayNameHe: HEBREW_DAYS[selectedDayIndex] || "",
+    activeNutritionDayName:
+      HEBREW_DAYS[
+        customMealPlanDay !== null && customMealPlanDay !== undefined
+          ? customMealPlanDay
+          : todayIndex
+      ] || "",
+    isCustomDayChosen:
+      customMealPlanDay !== null &&
+      customMealPlanDay !== undefined &&
+      customMealPlanDay !== todayIndex,
     weeklyPlan: WEEKLY_PLAN,
     meta: plansData.meta,
     isSosActive: sosMode,

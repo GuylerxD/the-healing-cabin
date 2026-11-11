@@ -1,7 +1,8 @@
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useCabin, toggleSectionCollapsed } from "../store";
 
 export default function CollapsibleCard({
+  id,
   title,
   icon: Icon,
   badge,
@@ -9,7 +10,24 @@ export default function CollapsibleCard({
   headerClassName = "",
   children,
 }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
+  const { collapsedSections } = useCabin();
+
+  // If `id` is provided, collapse state is persisted in the global store across tabs.
+  // When collapsedSections[id] is true => card is collapsed (!isOpen).
+  // When collapsedSections[id] is false => card is expanded (isOpen).
+  // If undefined => falls back to defaultOpen.
+  const isCollapsed =
+    id && collapsedSections && id in collapsedSections
+      ? !!collapsedSections[id]
+      : !defaultOpen;
+
+  const isOpen = !isCollapsed;
+
+  const handleToggle = () => {
+    if (id) {
+      toggleSectionCollapsed(id);
+    }
+  };
 
   return (
     <section
@@ -18,7 +36,7 @@ export default function CollapsibleCard({
     >
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         aria-expanded={isOpen}
         className={`flex w-full items-center justify-between p-4 text-right transition hover:bg-white/[0.03] ${headerClassName}`}
       >

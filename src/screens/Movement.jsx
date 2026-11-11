@@ -169,147 +169,136 @@ export default function Movement() {
         </section>
       )}
 
-      {/* Pre-workout Breathing Check */}
-      <section className="glass flex items-center justify-between gap-3 p-5">
-        <div>
-          <h2 className="flex items-center gap-2 font-bold text-blush">
-            <Wind className="h-5 w-5" aria-hidden /> בדיקת נשימה לפני אימון
-          </h2>
-          <p className="text-xs text-purple-200">איך הנשימה במנוחה עכשיו?</p>
-        </div>
-        <button
-          aria-pressed={heavy}
-          onClick={() => updateToday({ heavyBreathing: !heavy })}
-          className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-bold transition ${
-            heavy ? "bg-blush text-space" : "bg-mint/20 text-mint"
-          }`}
-        >
-          {heavy ? "כבדה 🫁" : "רגילה 🌿"}
-        </button>
-      </section>
-
-      {heavy && (
-        <p className="rounded-2xl border border-blush/40 bg-blush/15 p-3 text-xs text-blush">
-          💗 הנשימה כבדה היום — נוותר על אירובי. מתיחות עדינות זה ניצחון מלא, עם
-          אותם מטבעות.
-        </p>
-      )}
-
-      {/* SOS Mode Toggle (Low Energy / Asthma Fallback) */}
-      <section className="glass flex items-center justify-between p-4 text-right border-lilac/30">
-        <div className="flex items-center gap-2.5">
-          <div
-            className={`flex h-9 w-9 items-center justify-center rounded-2xl transition ${sosMode ? "bg-blush/20 text-blush" : "bg-white/10 text-purple-300"}`}
-          >
-            <LifeBuoy className="h-5 w-5" />
+      {/* Pre-workout Breathing Check (Collapsible) */}
+      <CollapsibleCard
+        id="movement-breathing"
+        title="בדיקת נשימה לפני אימון"
+        badge={heavy ? "כבדה 🫁" : "רגילה 🌿"}
+        icon={Wind}
+        defaultOpen={true}
+      >
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-purple-200">איך הנשימה במנוחה עכשיו?</p>
+            <button
+              aria-pressed={heavy}
+              onClick={() => updateToday({ heavyBreathing: !heavy })}
+              className={`shrink-0 rounded-2xl px-4 py-2 text-xs font-bold transition ${
+                heavy ? "bg-blush text-space" : "bg-mint/20 text-mint"
+              }`}
+            >
+              {heavy ? "כבדה 🫁" : "רגילה 🌿"}
+            </button>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-bold text-moon text-xs">
-                מצב SOS (עייפות משמרת / אסתמה)
-              </h2>
-              {sosMode && (
-                <span className="rounded-full bg-blush/20 px-2 py-0.5 text-[10px] font-bold text-blush animate-pulse">
-                  פעיל 🫁
-                </span>
-              )}
-            </div>
-            <p className="text-[11px] text-purple-300">
-              החלפה אוטומטית לרוטינת מתיחות עמידה עדינה של 8 דק׳
+          {heavy && (
+            <p className="rounded-2xl border border-blush/40 bg-blush/15 p-3 text-xs text-blush">
+              💗 הנשימה כבדה היום — נוותר על אירובי. מתיחות עדינות זה ניצחון
+              מלא, עם אותם מטבעות.
             </p>
-          </div>
+          )}
         </div>
+      </CollapsibleCard>
 
-        <button
-          type="button"
-          role="switch"
-          aria-checked={sosMode}
-          onClick={() => setCabin((s) => ({ ...s, sosMode: !s.sosMode }))}
-          className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-            sosMode ? "bg-blush" : "bg-white/20"
-          }`}
-        >
-          <span
-            className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-space shadow-md transition duration-200 ${
-              sosMode ? "-translate-x-5" : "translate-x-0"
+      {/* SOS Mode Toggle (Low Energy / Asthma Fallback - Collapsible) */}
+      <CollapsibleCard
+        id="movement-sos"
+        title="מצב SOS (עייפות משמרת / אסתמה)"
+        badge={sosMode ? "פעיל 🫁" : "כבוי"}
+        icon={LifeBuoy}
+        defaultOpen={true}
+        headerClassName={
+          sosMode ? "!border-blush/50 !bg-blush/10 text-blush" : ""
+        }
+      >
+        <div className="flex items-center justify-between p-1 text-right">
+          <div className="text-xs text-purple-200">
+            החלפה אוטומטית לרוטינת מתיחות עמידה עדינה של 8 דק׳ (100% מוגן גב
+            ואסתמה)
+          </div>
+
+          <button
+            type="button"
+            role="switch"
+            aria-checked={sosMode}
+            onClick={() => setCabin((s) => ({ ...s, sosMode: !s.sosMode }))}
+            className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
+              sosMode ? "bg-blush" : "bg-white/20"
             }`}
-          />
-        </button>
-      </section>
-
-      {/* Daily Spine-Safe Workout from plansDB */}
-      {todayPlan && todayPlan.workout && (
-        <section
-          className={`glass space-y-3.5 p-5 text-right transition ${sosMode ? "!border-blush/50 ring-2 ring-blush/20" : "border-mint/40"}`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ShieldCheck
-                className={`h-5 w-5 ${sosMode ? "text-blush" : "text-mint"}`}
-              />
-              <h2
-                className={`font-bold text-sm ${sosMode ? "text-blush" : "text-mint"}`}
-              >
-                {sosMode
-                  ? "אימון מצב SOS מותאם אישית"
-                  : `אימון יום ${dayNameHe}: תנועה מותאמת לגב 🌸`}
-              </h2>
-            </div>
+          >
             <span
-              className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${sosMode ? "bg-blush/20 text-blush" : "bg-mint/15 text-mint"}`}
-            >
-              {todayPlan.workout.category}
-            </span>
-          </div>
+              className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-space shadow-md transition duration-200 ${
+                sosMode ? "-translate-x-5" : "translate-x-0"
+              }`}
+            />
+          </button>
+        </div>
+      </CollapsibleCard>
 
-          <div>
-            <h3 className="font-bold text-moon text-sm">
-              {todayPlan.workout.title}
-            </h3>
-            <p className="text-xs text-purple-200 mt-1">
-              {todayPlan.workout.description}
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-white/5 p-3 space-y-1.5 text-xs">
-            <div
-              className={`flex items-center gap-2 ${sosMode ? "text-blush" : "text-mint"}`}
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>{todayPlan.workout.spineSafety}</span>
+      {/* Daily Spine-Safe Workout from plansDB (Collapsible) */}
+      {todayPlan && todayPlan.workout && (
+        <CollapsibleCard
+          id="movement-daily-workout"
+          title={
+            sosMode
+              ? "אימון מצב SOS מותאם אישית"
+              : `אימון יום ${dayNameHe}: תנועה מותאמת לגב 🌸`
+          }
+          badge={`${todayPlan.workout.category} • ${todayPlan.workout.durationMinutes} דק׳`}
+          icon={ShieldCheck}
+          defaultOpen={true}
+          headerClassName={sosMode ? "!border-blush/50" : "!border-mint/40"}
+        >
+          <div className="space-y-3.5">
+            <div>
+              <h3 className="font-bold text-moon text-sm">
+                {todayPlan.workout.title}
+              </h3>
+              <p className="text-xs text-purple-200 mt-1">
+                {todayPlan.workout.description}
+              </p>
             </div>
-            <div className="text-purple-300">
-              ⚡ {todayPlan.workout.impact} • ⏱️{" "}
-              {todayPlan.workout.durationMinutes} דקות
+
+            <div className="rounded-2xl bg-white/5 p-3 space-y-1.5 text-xs">
+              <div
+                className={`flex items-center gap-2 ${sosMode ? "text-blush" : "text-mint"}`}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>{todayPlan.workout.spineSafety}</span>
+              </div>
+              <div className="text-purple-300">
+                ⚡ {todayPlan.workout.impact} • ⏱️{" "}
+                {todayPlan.workout.durationMinutes} דקות
+              </div>
             </div>
+
+            {/* Smart TV Cast Integration */}
+            <CastToTvButton
+              workoutTitle={todayPlan.workout.title}
+              youtubeQuery={todayPlan.workout.youtubeQuery}
+            />
+
+            <a
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(todayPlan.workout.youtubeQuery)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold text-space shadow-lg transition active:scale-95 ${
+                sosMode ? "bg-blush shadow-blush/20" : "bg-mint shadow-mint/20"
+              }`}
+            >
+              <PlayCircle className="h-4 w-4" />
+              <span>
+                {sosMode
+                  ? "נגן מתיחות SOS עדינות"
+                  : `סרטון מודרך ביוטיוב (${todayPlan.workout.durationMinutes} דק׳)`}
+              </span>
+            </a>
           </div>
-
-          {/* Smart TV Cast Integration */}
-          <CastToTvButton
-            workoutTitle={todayPlan.workout.title}
-            youtubeQuery={todayPlan.workout.youtubeQuery}
-          />
-
-          <a
-            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(todayPlan.workout.youtubeQuery)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold text-space shadow-lg transition active:scale-95 ${
-              sosMode ? "bg-blush shadow-blush/20" : "bg-mint shadow-mint/20"
-            }`}
-          >
-            <PlayCircle className="h-4 w-4" />
-            <span>
-              {sosMode
-                ? "נגן מתיחות SOS עדינות"
-                : `סרטון מודרך ביוטיוב (${todayPlan.workout.durationMinutes} דק׳)`}
-            </span>
-          </a>
-        </section>
+        </CollapsibleCard>
       )}
 
       {/* Virtual Distance Pedometer: Journey to East Map (Collapsible) */}
       <CollapsibleCard
+        id="movement-map"
         title="המסע למזרח: בדרך לקוריאה ויפן"
         badge="מד צעדים ומרחק"
         icon={Compass}
@@ -320,6 +309,7 @@ export default function Movement() {
 
       {/* 28-Day Qlaira Challenge Progress Tracker (Collapsible) */}
       <CollapsibleCard
+        id="movement-qlaira-28"
         title="אתגר 28 הימים של קלייר"
         badge="סנכרון חפיסת גלולות"
         icon={Pill}
@@ -330,6 +320,7 @@ export default function Movement() {
 
       {/* Extra Workouts Library (Collapsible) */}
       <CollapsibleCard
+        id="movement-extra-workouts"
         title="ספריית אימונים ומתיחות נוספת"
         badge={`${visibleWorkouts.length} תרגילים`}
         icon={Dumbbell}

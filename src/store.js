@@ -16,6 +16,8 @@ const DEFAULTS = {
   prepPlan: [], // recipe ids planned for weekend prep
   recoveryStart: null, // ms timestamp while Active Recovery runs (survives closing the app)
   longGoal: "", // optional free-text long-term goal shown in the header
+  collapsedSections: {}, // { [sectionId]: boolean } - persisted collapse state
+  customMealPlanDay: null, // optional overridden dayIndex (0..6) for today's nutrition tab
 };
 
 function load() {
@@ -47,6 +49,60 @@ export const useToday = () => useCabin().days[todayKey()] ?? {};
 
 export const addCoins = (n) =>
   setCabin((s) => ({ ...s, coins: Math.max(0, s.coins + n) }));
+
+export function toggleSectionCollapsed(id, forcedState = null) {
+  setCabin((s) => {
+    const current = s.collapsedSections ?? {};
+    const nextVal = forcedState !== null ? forcedState : !current[id];
+    return {
+      ...s,
+      collapsedSections: {
+        ...current,
+        [id]: nextVal,
+      },
+    };
+  });
+}
+
+export function setAllSectionsCollapsed(collapsed = true) {
+  setCabin((s) => {
+    const knownKeys = [
+      "quests-shift",
+      "quests-acid",
+      "quests-qlaira",
+      "quests-push-settings",
+      "movement-breathing",
+      "movement-sos",
+      "movement-daily-workout",
+      "movement-map",
+      "movement-qlaira-28",
+      "movement-extra-workouts",
+      "nutrition-protein-bar",
+      "nutrition-water",
+      "nutrition-daily-meals",
+      "nutrition-reflux",
+      "mealprep-guide",
+      "mealprep-grocery",
+      "mealprep-weekly-plan",
+      "mealprep-guidelines",
+      "tracking-quick-check",
+      "tracking-weighin",
+      "tracking-history",
+      "cabin-recovery",
+      "cabin-pet-room",
+      "cabin-badges",
+      "cabin-shop",
+    ];
+    const updated = { ...(s.collapsedSections ?? {}) };
+    knownKeys.forEach((k) => {
+      updated[k] = collapsed;
+    });
+    return {
+      ...s,
+      collapsedSections: updated,
+    };
+  });
+}
 
 // Optional coin delta is applied in the same write, so quest toggles stay in sync with coins.
 export function updateToday(patch, coins = 0) {

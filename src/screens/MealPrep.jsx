@@ -7,6 +7,8 @@ import {
   Check,
   ShieldCheck,
   Flame,
+  Utensils,
+  RotateCcw,
 } from "lucide-react";
 import { setCabin, useCabin } from "../store";
 import { useDailyPlan } from "../hooks/useDailyPlan";
@@ -82,7 +84,7 @@ const toggleIn = (list, item) =>
   list.includes(item) ? list.filter((x) => x !== item) : [...list, item];
 
 export default function MealPrep() {
-  const { inventory = [] } = useCabin();
+  const { inventory = [], customMealPlanDay } = useCabin();
   const {
     todayIndex,
     selectedPlan,
@@ -124,8 +126,9 @@ export default function MealPrep() {
         </span>
       </div>
 
-      {/* 1. הכנות מרוכזות לסופ״ש (Collapsible: open by default) */}
+      {/* 1. הכנות מרוכזות לסופ״ש (Collapsible) */}
       <CollapsibleCard
+        id="mealprep-guide"
         title="תוכנית הכנות לסופ״ש (3 עוגני בישול)"
         badge="חוסך 4 שעות בישול במהלך השבוע"
         icon={Flame}
@@ -181,6 +184,7 @@ export default function MealPrep() {
 
       {/* 2. רשימת קניות שבועית מסונכרנת (Collapsible) */}
       <CollapsibleCard
+        id="mealprep-grocery"
         title="רשימת קניות שבועית חכמה"
         badge={`${inventory.length} מתוך ${ALL_GROCERY_ITEMS.length} מצרכים במזווה`}
         icon={ShoppingBasket}
@@ -267,6 +271,7 @@ export default function MealPrep() {
 
       {/* 3. תפריט מלא לכל השבוע ולשבוע הבא (Collapsible) */}
       <CollapsibleCard
+        id="mealprep-weekly-plan"
         title="תפריט מלא לכל ימי השבוע"
         badge={`יום ${dayNameHe} נבחר כעת • לחצי לפתיחה/סגירה`}
         icon={Calendar}
@@ -298,14 +303,70 @@ export default function MealPrep() {
             })}
           </div>
 
-          <div className="rounded-2xl bg-white/5 p-3 text-xs text-purple-200 flex justify-between items-center">
-            <span>
-              יום {dayNameHe}:{" "}
-              <strong>{selectedPlan.nutrition.pcosFocus}</strong>
-            </span>
-            <span className="font-bold text-mint">
-              יעד: {selectedPlan.nutrition.targetProteinGrams}ג׳ חלבון
-            </span>
+          {/* Quick Apply Day to Nutrition Tab Button */}
+          <div className="rounded-2xl bg-white/5 p-3.5 border border-white/10 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-purple-200">
+                יום {dayNameHe}:{" "}
+                <strong>{selectedPlan.nutrition.pcosFocus}</strong>
+              </span>
+              <span className="font-bold text-mint">
+                יעד: {selectedPlan.nutrition.targetProteinGrams}ג׳ חלבון
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              {(() => {
+                const isDayActive =
+                  customMealPlanDay === selectedDayIndex ||
+                  (customMealPlanDay == null &&
+                    selectedDayIndex === todayIndex);
+                const hasCustomOverride =
+                  customMealPlanDay !== null &&
+                  customMealPlanDay !== undefined &&
+                  customMealPlanDay !== todayIndex;
+
+                return (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCabin((s) => ({
+                          ...s,
+                          customMealPlanDay: selectedDayIndex,
+                        }))
+                      }
+                      className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 px-3 text-xs font-bold transition active:scale-95 ${
+                        isDayActive
+                          ? "bg-mint text-space shadow-md shadow-mint/20"
+                          : "bg-lilac/20 text-lilac border border-lilac/40 hover:bg-lilac/30"
+                      }`}
+                    >
+                      <Utensils className="h-3.5 w-3.5" />
+                      <span>
+                        {isDayActive
+                          ? `✔ תפריט יום ${dayNameHe} מוגדר להיום בטאב תזונה`
+                          : `בחר תפריט יום ${dayNameHe} להיום (לטאב תזונה)`}
+                      </span>
+                    </button>
+
+                    {hasCustomOverride && (
+                      <button
+                        type="button"
+                        title="חזור לתפריט המקורי של היום"
+                        onClick={() =>
+                          setCabin((s) => ({ ...s, customMealPlanDay: null }))
+                        }
+                        className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-2 text-xs text-purple-200 hover:bg-white/15"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        <span>איפוס</span>
+                      </button>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
           </div>
 
           {/* Meals for Selected Day with Recipe triggers */}
@@ -432,8 +493,9 @@ export default function MealPrep() {
         </div>
       </CollapsibleCard>
 
-      {/* 4. עקרונות תזונה והגבלות (Collapsible: closed by default) */}
+      {/* 4. עקרונות תזונה והגבלות (Collapsible) */}
       <CollapsibleCard
+        id="mealprep-guidelines"
         title="עקרונות והגבלות תזונה אישיות"
         badge="ללא כוסברה • ללא שעועית ירוקה • ללא תורמוס • ללא אדממה"
         icon={ShieldCheck}
