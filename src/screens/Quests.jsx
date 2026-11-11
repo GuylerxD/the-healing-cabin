@@ -4,6 +4,7 @@ import { setCabin, updateToday, useCabin, useToday } from "../store";
 import { shiftProgress } from "../lib/shift";
 import PillReminderToggle from "../components/PillReminderToggle";
 import { triggerInAppPillReminder } from "../lib/pillReminder";
+import CollapsibleCard from "../components/CollapsibleCard";
 
 function useNowMinutes() {
   const get = () => {
@@ -146,8 +147,15 @@ export default function Quests() {
         </div>
       </div>
 
-      {/* Push Notification Toggle for Qlaira Reminder */}
-      <PillReminderToggle />
+      {/* Push Notification Toggle for Qlaira Reminder (Collapsible) */}
+      <CollapsibleCard
+        title="הגדרות תזכורת יומית (Push)"
+        badge="שעת התראה ובדיקה"
+        icon={Bell}
+        defaultOpen={false}
+      >
+        <PillReminderToggle />
+      </CollapsibleCard>
     </div>
   );
 }

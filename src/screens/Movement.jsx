@@ -7,12 +7,16 @@ import {
   Sparkles,
   ShieldCheck,
   LifeBuoy,
+  Compass,
+  Pill,
+  Dumbbell,
 } from "lucide-react";
 import { updateToday, useToday, useCabin, setCabin } from "../store";
 import { useDailyPlan } from "../hooks/useDailyPlan";
 import CastToTvButton from "../components/CastToTvButton";
 import QlairaChallenge28 from "../components/QlairaChallenge28";
 import JourneyToEastMap from "../components/JourneyToEastMap";
+import CollapsibleCard from "../components/CollapsibleCard";
 
 const WORKOUTS = [
   {
@@ -304,72 +308,96 @@ export default function Movement() {
         </section>
       )}
 
-      {/* Virtual Distance Pedometer: Journey to East Map */}
-      <JourneyToEastMap />
+      {/* Virtual Distance Pedometer: Journey to East Map (Collapsible) */}
+      <CollapsibleCard
+        title="המסע למזרח: בדרך לקוריאה ויפן"
+        badge="מד צעדים ומרחק"
+        icon={Compass}
+        defaultOpen={false}
+      >
+        <JourneyToEastMap />
+      </CollapsibleCard>
 
-      {/* 28-Day Qlaira Challenge Progress Tracker */}
-      <QlairaChallenge28 />
+      {/* 28-Day Qlaira Challenge Progress Tracker (Collapsible) */}
+      <CollapsibleCard
+        title="אתגר 28 הימים של קלייר"
+        badge="סנכרון חפיסת גלולות"
+        icon={Pill}
+        defaultOpen={false}
+      >
+        <QlairaChallenge28 />
+      </CollapsibleCard>
 
-      {/* Workouts List */}
-      <section className="space-y-3">
-        {isBackPainHigh && (
-          <div className="flex items-center gap-1.5 text-xs text-mint px-1">
-            <Sparkles className="h-4 w-4" />
-            <span>האימונים הותאמו להקלה ופריקת עומס מהגב 💆‍♀️</span>
-          </div>
-        )}
-        {visibleWorkouts.map((w) => {
-          const locked = heavy && w.cardio;
-          const recommended =
-            (isBackPainHigh && w.backFocused) || (heavy && w.id === "stretch");
-          const isDone = done.includes(w.id);
-          return (
-            <article
-              key={w.id}
-              className={`glass space-y-3 p-4 transition ${locked ? "opacity-40" : ""} ${
-                recommended ? "!border-mint/60 ring-2 ring-mint/30" : ""
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold">{w.name}</h3>
-                <span className="text-xs text-purple-300">{w.minutes} דק׳</span>
-              </div>
-              {recommended && (
-                <p className="text-xs text-mint">
-                  {w.backFocused
-                    ? "✨ ממוקד להקלה על כאבי גב"
-                    : "✨ מומלץ במיוחד להיום"}
-                </p>
-              )}
-              {locked ? (
-                <p className="text-xs text-purple-200">
-                  נשמור לאחרי שהנשימה תירגע 🌙
-                </p>
-              ) : (
-                <div className="flex gap-2">
-                  <a
-                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(w.query)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-white/10 py-2 text-sm"
-                  >
-                    <PlayCircle className="h-4 w-4" aria-hidden /> לסרטון
-                  </a>
-                  <button
-                    aria-pressed={isDone}
-                    onClick={() => toggleDone(w.id)}
-                    className={`flex-1 rounded-2xl py-2 text-sm font-bold transition ${
-                      isDone ? "bg-mint/20 text-mint" : "bg-lilac text-space"
-                    }`}
-                  >
-                    {isDone ? "✅ בוצע" : `סיימתי +${REWARD}`}
-                  </button>
+      {/* Extra Workouts Library (Collapsible) */}
+      <CollapsibleCard
+        title="ספריית אימונים ומתיחות נוספת"
+        badge={`${visibleWorkouts.length} תרגילים`}
+        icon={Dumbbell}
+        defaultOpen={false}
+      >
+        <div className="space-y-3 pt-1">
+          {isBackPainHigh && (
+            <div className="flex items-center gap-1.5 text-xs text-mint px-1">
+              <Sparkles className="h-4 w-4" />
+              <span>האימונים הותאמו להקלה ופריקת עומס מהגב 💆‍♀️</span>
+            </div>
+          )}
+          {visibleWorkouts.map((w) => {
+            const locked = heavy && w.cardio;
+            const recommended =
+              (isBackPainHigh && w.backFocused) ||
+              (heavy && w.id === "stretch");
+            const isDone = done.includes(w.id);
+            return (
+              <article
+                key={w.id}
+                className={`glass space-y-3 p-4 transition ${locked ? "opacity-40" : ""} ${
+                  recommended ? "!border-mint/60 ring-2 ring-mint/30" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold">{w.name}</h3>
+                  <span className="text-xs text-purple-300">
+                    {w.minutes} דק׳
+                  </span>
                 </div>
-              )}
-            </article>
-          );
-        })}
-      </section>
+                {recommended && (
+                  <p className="text-xs text-mint">
+                    {w.backFocused
+                      ? "✨ ממוקד להקלה על כאבי גב"
+                      : "✨ מומלץ במיוחד להיום"}
+                  </p>
+                )}
+                {locked ? (
+                  <p className="text-xs text-purple-200">
+                    נשמור לאחרי שהנשימה תירגע 🌙
+                  </p>
+                ) : (
+                  <div className="flex gap-2">
+                    <a
+                      href={`https://www.youtube.com/results?search_query=${encodeURIComponent(w.query)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-white/10 py-2 text-sm"
+                    >
+                      <PlayCircle className="h-4 w-4" aria-hidden /> לסרטון
+                    </a>
+                    <button
+                      aria-pressed={isDone}
+                      onClick={() => toggleDone(w.id)}
+                      className={`flex-1 rounded-2xl py-2 text-sm font-bold transition ${
+                        isDone ? "bg-mint/20 text-mint" : "bg-lilac text-space"
+                      }`}
+                    >
+                      {isDone ? "✅ בוצע" : `סיימתי +${REWARD}`}
+                    </button>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </CollapsibleCard>
     </div>
   );
 }
