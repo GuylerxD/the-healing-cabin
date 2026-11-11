@@ -1,0 +1,324 @@
+{
+  "meta": {
+    "title": "תכנית שבועית אישית - בקתת הריפוי",
+    "version": "2.0",
+    "dietPrinciples": "פסקטריאני, דגש על איזון סוכר ל-PCOS, שובע וירידה במשקל",
+    "workoutPrinciples": "100% מוגן גב לאחר ניתוח פריצת דיסק (ללא פיתולים וללא כפיפות בטן/Crunches), אימפקט נמוך וידידותי לאסתמה",
+    "strictExclusions": [
+      "ללא כוסברה (No Coriander)",
+      "ללא שעועית ירוקה (No Green Beans)",
+      "ללא תורמוס (No Lupin Beans)",
+      "ללא אדממה (No Edamame)"
+    ]
+  },
+  "weeklyPlan": [
+    {
+      "dayIndex": 0,
+      "dayName": "ראשון",
+      "dayEnglish": "Sunday",
+      "workout": {
+        "id": "kpop-walking-sun",
+        "title": "אירובי קיי-פופ (Low Impact) 🎧",
+        "category": "K-pop Walking",
+        "durationMinutes": 25,
+        "impact": "נמוך מאוד, ידידותי לאסתמה וללא קפיצות",
+        "spineSafety": "100% בטוח לעמוד השדרה: ללא פיתולי מותן וללא כפיפות גב, צעידה רכה במקום",
+        "description": "צעידה קצבית מלהיבה לצלילי מוזיקת K-pop: שמירה על יציבה זקופה, נשימה מבוקרת וקצב פעימות לב מתון.",
+        "youtubeQuery": "Low impact Kpop walking workout"
+      },
+      "nutrition": {
+        "pcosFocus": "איזון עקומת הסוכר ליום ראשון + שובע ממושך",
+        "targetProteinGrams": 85,
+        "meals": {
+          "breakfast": {
+            "name": "2 מאפינס פולנטה וקוטג' 🧁",
+            "proteinGrams": 20,
+            "complexCarbs": "קמח תירס (פולנטה) מלא",
+            "notes": "מרגיע את הקיבה והחומציות, עשיר בחלבון ומשביע."
+          },
+          "lunch": {
+            "name": "פילה סלמון באייר-פרייר + חצי כוס קינואה + סלט מלפפונים 🐟",
+            "proteinGrams": 34,
+            "complexCarbs": "חצי כוס קינואה מבושלת",
+            "notes": "שומן אומגה 3 אנטי-דלקתי, קינואה כפחמימה מורכבת ומלפפונים מרעננים (ללא כוסברה)."
+          },
+          "dinner": {
+            "name": "תבשיל דאל עדשים כתומות (מוגש פושר) 🍲",
+            "proteinGrams": 22,
+            "complexCarbs": "עדשים כתומות עשירות בסיבים",
+            "notes": "מרקם רך ופושר עדין במיוחד למערכת העיכול, עשיר בסיבים מסיסים."
+          },
+          "snack": {
+            "name": "יוגורט יווני טבעי עם מעט קינמון 🥣",
+            "proteinGrams": 12,
+            "notes": "נשנוש מאזן סוכר בערב."
+          }
+        }
+      }
+    },
+    {
+      "dayIndex": 1,
+      "dayName": "שני",
+      "dayEnglish": "Monday",
+      "workout": {
+        "id": "standing-strength-mon",
+        "title": "חיזוק ועיצוב בעמידה מול המסך 🧍‍♀️",
+        "category": "Standing Strength",
+        "durationMinutes": 20,
+        "impact": "אפס קפיצות, עמידה יציבה",
+        "spineSafety": "100% שמירה על מנח ניטרלי: ללא כפיפות בטן וללא פיתולים, חיזוק שרירי רגליים וזרועות בעמידה",
+        "description": "אימון כוח עדין וממוקד לכל הגוף ללא ציוד: סקווטים רדודים מבוקרים, הרמות עקבים וייצוב כתפיים.",
+        "youtubeQuery": "Standing full body strength no equipment"
+      },
+      "nutrition": {
+        "pcosFocus": "אנרגיה יציבה מבוססת סויה וטופו ללא נפילות סוכר",
+        "targetProteinGrams": 82,
+        "meals": {
+          "breakfast": {
+            "name": "דייסת שיבולת שועל חמה על בסיס חלב סויה וקינמון 🥣",
+            "proteinGrams": 18,
+            "complexCarbs": "שיבולת שועל עבה",
+            "notes": "קינמון תומך ברגישות לאינסולין, שיבולת שועל משחררת אנרגיה בהדרגה."
+          },
+          "lunch": {
+            "name": "קוביות טופו קריספי באייר-פרייר + רצועות בטטה אפויות 🍱",
+            "proteinGrams": 28,
+            "complexCarbs": "רצועות בטטה אפויות עם שמן זית",
+            "notes": "טופו פריך עשיר בחלבון מלא ובטטה בעלת אינדקס גליקמי מאוזן."
+          },
+          "dinner": {
+            "name": "מקושקשת טופו רכה במחבת + סלט קטן 🥗",
+            "proteinGrams": 24,
+            "complexCarbs": "ירקות הסלט (עגבנייה, מלפפון, שמן זית)",
+            "notes": "ארוחת ערב קלילה ומנחמת לעיכול מהיר לפני השינה."
+          },
+          "snack": {
+            "name": "חופן שקדים טבעיים 🌰",
+            "proteinGrams": 6,
+            "notes": "שומן בריא ומגנזיום התומכים במערכת העצבים."
+          }
+        }
+      }
+    },
+    {
+      "dayIndex": 2,
+      "dayName": "שלישי",
+      "dayEnglish": "Tuesday",
+      "workout": {
+        "id": "boxing-decompression-tue",
+        "title": "משחק קצב והרפיית גב 🥊",
+        "category": "POV Boxing & Spine Stretch",
+        "durationMinutes": 25,
+        "impact": "אימפקט נמוך (15 דק' איגרוף POV + 10 דק' שחרור)",
+        "spineSafety": "איגרוף במכות ישרות בלבד (ללא רוטציות מותן) + שחרור גב ניטרלי ללא מתיחות פיתוליות",
+        "description": "15 דקות איגרוף קצבי משחרר מול המסך, ואחריו 10 דקות מתיחות עדינות להפחתת לחץ מהחוליות.",
+        "youtubeQuery": "POV Boxing Workout"
+      },
+      "nutrition": {
+        "pcosFocus": "הפחתת עומס עיכול ותמיכה בשרירים",
+        "targetProteinGrams": 86,
+        "meals": {
+          "breakfast": {
+            "name": "פרוסת לחם מחמצת עם 2 כפות קוטג' או חצי אבוקדו 🍞",
+            "proteinGrams": 16,
+            "complexCarbs": "לחם מחמצת מלא",
+            "notes": "מחמצת מקלה מאוד על העיכול, שומן האבוקדו מייצב את הגלוקוז בדם."
+          },
+          "lunch": {
+            "name": "ניוקי תפוחי אדמה ברוטב שמנת קוטג' ותרד + נתחי סלמון 🍝",
+            "proteinGrams": 36,
+            "complexCarbs": "ניוקי תפוחי אדמה מבוקר",
+            "notes": "שילוב חלבון הסלמון והקוטג' מונע את עליית הסוכר מהניוקי, תרד תורם ברזל."
+          },
+          "dinner": {
+            "name": "שקשוקה קטנה מ-2 ביצים (ללא בצל חי) 🍳",
+            "proteinGrams": 18,
+            "complexCarbs": "רוטב עגבניות טריות מבושל",
+            "notes": "ללא בצל חי למניעת צרבות וגירוי קיבה בערב."
+          },
+          "snack": {
+            "name": "מעדן סויה ללא סוכר עם זרעי צ'יה 🫐",
+            "proteinGrams": 8,
+            "notes": "סיבים ואומגה 3 מהצומח."
+          }
+        }
+      }
+    },
+    {
+      "dayIndex": 3,
+      "dayName": "רביעי",
+      "dayEnglish": "Wednesday",
+      "workout": {
+        "id": "standing-liit-wed",
+        "title": "אינטרוולים ללא קפיצות (LIIT) 🔥",
+        "category": "Standing LIIT",
+        "durationMinutes": 25,
+        "impact": "אפס קפיצות, מותאם אסתמה (Low-Intensity Interval)",
+        "spineSafety": "100% Spine-Safe: עבודה בעמידה בלבד, ללא שכיבה על הרצפה, ללא כפיפות בטן",
+        "description": "אימון אינטרוולים בעצימות מבוקרת (LIIT): העלאה מתונה של הדופק להמרצת חילוף החומרים ללא קוצר נשימה.",
+        "youtubeQuery": "Standing LIIT workout for weight loss"
+      },
+      "nutrition": {
+        "pcosFocus": "ארוחות קלות ודלות שומן רווי לעידוד שריפת שומן",
+        "targetProteinGrams": 84,
+        "meals": {
+          "breakfast": {
+            "name": "יוגורט טבעי מועשר בחלבון עם חצי בננה 🍌",
+            "proteinGrams": 22,
+            "complexCarbs": "חצי בננה",
+            "notes": "פרוביוטיקה עשירה, אשלגן וחלבון איכותי לפתיחת בוקר קלילה."
+          },
+          "lunch": {
+            "name": "קציצות דגים אפויות + זוקיני מאודה 🧆",
+            "proteinGrams": 32,
+            "complexCarbs": "זוקיני עשיר בסיבים (ללא כוסברה/שעועית ירוקה)",
+            "notes": "קציצות אפויות בתנור, דלות שומן וקלות במיוחד לעיכול."
+          },
+          "dinner": {
+            "name": "דפי אורז במילוי ירקות ורצועות טופו 🥢",
+            "proteinGrams": 20,
+            "complexCarbs": "דפי אורז",
+            "notes": "ממולאים בגזר, מלפפון וטופו צרוב עם רוטב סויה עדין ושמן שומשום."
+          },
+          "snack": {
+            "name": "תפוח עץ ירוק קטן עם קינמון 🍏",
+            "proteinGrams": 2,
+            "notes": "אינדקס גליקמי נמוך להרגעת חשק למתוק."
+          }
+        }
+      }
+    },
+    {
+      "dayIndex": 4,
+      "dayName": "חמישי",
+      "dayEnglish": "Thursday",
+      "workout": {
+        "id": "standing-barre-thu",
+        "title": "פילאטיס עמידה / אימון בר (Barre) 🩰",
+        "category": "Standing Barre",
+        "durationMinutes": 25,
+        "impact": "אפס קפיצות, תנועות מיקרו מדויקות",
+        "spineSafety": "אחיזה במשענת כיסא/בר, עמוד שדרה ארוך וניטרלי, שמירה על אגן מאוזן",
+        "description": "אימון בר בעמידה: חיזוק שרירי יציבה, ישבן ושוקיים ללא זעזועים למפרקים, מצוין לחיזוק שרירי התמיכה בגב.",
+        "youtubeQuery": "Beginner standing barre workout"
+      },
+      "nutrition": {
+        "pcosFocus": "איזון אינסולין וסיום שבוע רגוע",
+        "targetProteinGrams": 85,
+        "meals": {
+          "breakfast": {
+            "name": "2 מאפינס פולנטה וקוטג' 🧁",
+            "proteinGrams": 20,
+            "complexCarbs": "פולנטה (קמח תירס) מלא",
+            "notes": "מאפה רך, קל ומשביע ששומר על רמת אנרגיה קבועה."
+          },
+          "lunch": {
+            "name": "קוביות טופו קריספי + חצי כוס אורז 🍱",
+            "proteinGrams": 27,
+            "complexCarbs": "חצי כוס אורז מלא / בסמטי",
+            "notes": "חלבון טופו מלא בשילוב פחמימה נקייה ושמן זית."
+          },
+          "dinner": {
+            "name": "פריטטה (פשטידת מחבת) מ-2 ביצים, תרד ופטריות 🍳",
+            "proteinGrams": 22,
+            "complexCarbs": "פטריות ותרד מאודים",
+            "notes": "עשירה בכולין, לוטאין וברזל ללא הכבדה על מערכת העיכול."
+          },
+          "snack": {
+            "name": "חופן אגוזי מלך טבעיים 🌰",
+            "proteinGrams": 5,
+            "notes": "אומגה 3 ממקור צמחי לחיזוק הזיכרון ומצב הרוח."
+          }
+        }
+      }
+    },
+    {
+      "dayIndex": 5,
+      "dayName": "שישי",
+      "dayEnglish": "Friday",
+      "workout": {
+        "id": "rhythm-game-fri",
+        "title": "חוויית משחק וירטואלי מול המסך 🎮",
+        "category": "Virtual Walking Game",
+        "durationMinutes": 30,
+        "impact": "צעידה קלה ומותאמת נשימה, אפס קפיצות",
+        "spineSafety": "הליכה במקום וקדימה-אחורה, גו זקוף, ללא כיפוף או רוטציות לגב",
+        "description": "משחק צעידה וירטואלי גיימיפיקציה: הליכה בקצב עולמות וירטואליים מול המסך לשחרור מתחי השבוע.",
+        "youtubeQuery": "30 minute POV walking rhythm game"
+      },
+      "nutrition": {
+        "pcosFocus": "ארוחת שישי חגיגית, מזינה וקלה לעיכול",
+        "targetProteinGrams": 88,
+        "meals": {
+          "breakfast": {
+            "name": "פנקייק קוטג' ושיבולת שועל 🥞",
+            "proteinGrams": 23,
+            "complexCarbs": "שיבולת שועל טחונה",
+            "notes": "ללא סוכר לבן, עשיר בחלבון ומשביע לאורך כל שעות הבוקר."
+          },
+          "lunch": {
+            "name": "פילה אמנון באייר-פרייר + תפוחי אדמה אפויים 🐟",
+            "proteinGrams": 32,
+            "complexCarbs": "תפוחי אדמה אפויים עם קליפה",
+            "notes": "דג לבן רזה וקל במיוחד לעיכול בליווי תפוח אדמה משביע."
+          },
+          "dinner": {
+            "name": "סלט טונה, ביצה קשה מגורדת וקרקר כוסמין 🥗",
+            "proteinGrams": 28,
+            "complexCarbs": "קרקר כוסמין מלא",
+            "notes": "שילוב חלבון כפול (טונה וביצה) עם שמן זית, ירקות וקרקר עתיר סיבים."
+          },
+          "snack": {
+            "name": "תמר מג'הול אחד עם חצי אגוז מלך 🌰",
+            "proteinGrams": 3,
+            "notes": "מתיקות שבתית מתונה ומבוקרת."
+          }
+        }
+      }
+    },
+    {
+      "dayIndex": 6,
+      "dayName": "שבת",
+      "dayEnglish": "Saturday",
+      "workout": {
+        "id": "active-recovery-sat",
+        "title": "התאוששות פעילה: הליכת מישור בטיילת דדו + יציבות גב 🌊",
+        "category": "Active Recovery & Spine Stability",
+        "durationMinutes": 35,
+        "impact": "הליכה מישורית באוויר הפתוח + חיזוק עדין",
+        "spineSafety": "100% McGill Big 3: תרגילי היציבות המובילים בעולם לשיקום פריצות דיסק (Bird-Dog, Side Bridge, Curl-up מותאם ללא כיפוף צווארי)",
+        "description": "הליכה ארוכה במישור מול הים בטיילת דדו, ואחריה ביצוע תרגילי יציבות עמוד שדרה של פרופ' מקגיל.",
+        "youtubeQuery": "McGill Big 3 spine safe lower back exercises"
+      },
+      "nutrition": {
+        "pcosFocus": "יום בחירה חופשית מודעת והכנת ארוחות לשבוע (Meal Prep)",
+        "targetProteinGrams": 80,
+        "meals": {
+          "breakfast": {
+            "name": "בחירה חופשית מזינה / הכנת ארוחות לשבוע 🥣",
+            "proteinGrams": 20,
+            "complexCarbs": "בחירה חופשית מורכבת",
+            "notes": "הכנת מאפינס או מנות חלבון לשבוע הקרוב."
+          },
+          "lunch": {
+            "name": "ארוחת צהריים פסקטריאנית לבחירה 🥗",
+            "proteinGrams": 28,
+            "complexCarbs": "דגן מלא לבחירה",
+            "notes": "דג, טופו או קטניות לבחירתך (ללא כוסברה, שעועית ירוקה, תורמוס או אדממה)."
+          },
+          "dinner": {
+            "name": "ארוחת ערב רגועה לבחירה 🍲",
+            "proteinGrams": 22,
+            "complexCarbs": "ירקות ופחמימה מורכבת",
+            "notes": "הקפדה על סיום 3 שעות לפני השינה למניעת צרבות."
+          },
+          "snack": {
+            "name": "חליטת צמחים מרגיעה (קמומיל/מנטה) 🫖",
+            "proteinGrams": 2,
+            "notes": "רוגע והכנה לשנת לילה איכותית לקראת שבוע חדש."
+          }
+        }
+      }
+    }
+  ]
+}

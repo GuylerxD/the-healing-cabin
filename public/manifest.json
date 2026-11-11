@@ -10,6 +10,7 @@
   "lang": "he",
   "background_color": "#130d26",
   "theme_color": "#130d26",
+  "gcm_sender_id": "103953800507",
   "icons": [
     {
       "src": "/the-healing-cabin/icon-192.png",

@@ -1,5 +1,6 @@
-import { Beef, ChefHat, ShoppingBasket, Trophy } from "lucide-react";
+import { Beef, ChefHat, ShoppingBasket, Trophy, Sparkles } from "lucide-react";
 import { setCabin, updateToday, useCabin, useToday } from "../store";
+import { useDailyPlan } from "../hooks/useDailyPlan";
 
 // Rough portion estimates — tweak to her real portions.
 const PROTEIN_ADDS = [
@@ -40,6 +41,7 @@ const toggleIn = (list, item) =>
 export default function Nutrition() {
   const { proteinGoal, inventory, prepPlan } = useCabin();
   const today = useToday();
+  const { todayPlan, dayNameHe } = useDailyPlan();
   const protein = today.protein ?? 0;
   const meals = today.meals ?? 0;
   const pct = Math.min(100, Math.round((protein / proteinGoal) * 100));
@@ -118,6 +120,86 @@ export default function Nutrition() {
           )}
         </div>
       </section>
+
+      {/* Daily PCOS Balanced Nutrition Plan from plansDB */}
+      {todayPlan && todayPlan.nutrition && (
+        <section className="glass space-y-3.5 p-5 text-right">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-mint" />
+              <h2 className="font-bold text-mint text-sm">
+                תפריט יום {dayNameHe}: איזון סוכר ו-PCOS 🌱
+              </h2>
+            </div>
+            <span className="rounded-full bg-mint/15 px-2.5 py-0.5 text-[11px] font-bold text-mint">
+              פסקטריאני מוקפד
+            </span>
+          </div>
+
+          <p className="text-xs text-purple-200">
+            {todayPlan.nutrition.pcosFocus} • יעד חלבון יומי מומלץ:{" "}
+            {todayPlan.nutrition.targetProteinGrams} גרם
+          </p>
+
+          <div className="space-y-2.5 text-xs">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center justify-between font-bold text-blush">
+                <span>
+                  ארוחת בוקר: {todayPlan.nutrition.meals.breakfast.name}
+                </span>
+                <span className="text-[11px] text-mint">
+                  +{todayPlan.nutrition.meals.breakfast.proteinGrams}ג׳ חלבון
+                </span>
+              </div>
+              <p className="mt-1 text-purple-200">
+                {todayPlan.nutrition.meals.breakfast.notes}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center justify-between font-bold text-lilac">
+                <span>
+                  ארוחת צהריים: {todayPlan.nutrition.meals.lunch.name}
+                </span>
+                <span className="text-[11px] text-mint">
+                  +{todayPlan.nutrition.meals.lunch.proteinGrams}ג׳ חלבון
+                </span>
+              </div>
+              <p className="mt-1 text-purple-200">
+                {todayPlan.nutrition.meals.lunch.notes}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center justify-between font-bold text-moon">
+                <span>ארוחת ערב: {todayPlan.nutrition.meals.dinner.name}</span>
+                <span className="text-[11px] text-mint">
+                  +{todayPlan.nutrition.meals.dinner.proteinGrams}ג׳ חלבון
+                </span>
+              </div>
+              <p className="mt-1 text-purple-200">
+                {todayPlan.nutrition.meals.dinner.notes}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+              <div className="flex items-center justify-between font-bold text-purple-300">
+                <span>נשנוש מאזן: {todayPlan.nutrition.meals.snack.name}</span>
+                <span className="text-[11px] text-mint">
+                  +{todayPlan.nutrition.meals.snack.proteinGrams}ג׳ חלבון
+                </span>
+              </div>
+              <p className="mt-1 text-purple-200">
+                {todayPlan.nutrition.meals.snack.notes}
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-space/60 p-2 text-center text-[11px] text-purple-300">
+            🚫 ללא כוסברה • ללא שעועית ירוקה • ללא תורמוס • ללא אדממה
+          </div>
+        </section>
+      )}
 
       <section className="glass space-y-3 p-5">
         <h2 className="flex items-center gap-2 font-bold text-blush">

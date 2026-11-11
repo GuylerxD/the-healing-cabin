@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { Clock, Pill, Flame } from "lucide-react";
+import { Clock, Pill, Flame, Bell } from "lucide-react";
 import { setCabin, updateToday, useCabin, useToday } from "../store";
 import { shiftProgress } from "../lib/shift";
+import PillReminderToggle from "../components/PillReminderToggle";
+import { triggerInAppPillReminder } from "../lib/pillReminder";
 
 function useNowMinutes() {
   const get = () => {
@@ -96,28 +98,56 @@ export default function Quests() {
         )}
       </section>
 
-      <button
-        aria-pressed={!!today.qlaira}
-        onClick={() =>
-          updateToday({ qlaira: !today.qlaira }, today.qlaira ? -10 : 10)
-        }
+      <div
         className={`glass flex w-full items-center justify-between p-5 text-right transition ${
           today.qlaira
             ? "!border-mint/50 !bg-mint/15 text-mint"
             : "text-purple-100"
         }`}
       >
-        <span className="flex items-center gap-3">
-          <Pill className="h-5 w-5" aria-hidden />
+        <button
+          type="button"
+          aria-pressed={!!today.qlaira}
+          onClick={() =>
+            updateToday({ qlaira: !today.qlaira }, today.qlaira ? -10 : 10)
+          }
+          className="flex flex-1 items-center gap-3 text-right"
+        >
+          <Pill className="h-5 w-5 shrink-0" aria-hidden />
           <span>
             <span className="block font-bold">נטילת קליירה (Qlaira)</span>
             <span className="text-xs opacity-80">
               {today.qlaira ? "נלקחה היום ✨" : "+10 מטבעות ריפוי"}
             </span>
           </span>
-        </span>
-        <span className="text-xl">{today.qlaira ? "✅" : "⬜"}</span>
-      </button>
+        </button>
+
+        <div className="flex items-center gap-2">
+          {!today.qlaira && (
+            <button
+              type="button"
+              onClick={triggerInAppPillReminder}
+              className="flex items-center gap-1 rounded-xl bg-blush/20 px-2.5 py-1.5 text-xs font-semibold text-blush hover:bg-blush/30 transition active:scale-95"
+            >
+              <Bell className="h-3.5 w-3.5" />
+              <span>הקפץ תזכורת</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() =>
+              updateToday({ qlaira: !today.qlaira }, today.qlaira ? -10 : 10)
+            }
+            className="text-xl"
+            aria-label={today.qlaira ? "סומן שלקחת" : "סמן שלקחת"}
+          >
+            {today.qlaira ? "✅" : "⬜"}
+          </button>
+        </div>
+      </div>
+
+      {/* Push Notification Toggle for Qlaira Reminder */}
+      <PillReminderToggle />
     </div>
   );
 }

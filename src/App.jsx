@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Sparkles,
   Dumbbell,
@@ -7,13 +7,14 @@ import {
   House,
   Coins,
 } from "lucide-react";
-import { useCabin } from "./store";
+import { useCabin, updateToday } from "./store";
 import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
 import Movement from "./screens/Movement";
 import Tracking from "./screens/Tracking";
 import Cabin from "./screens/Cabin";
 import SmartBubbles from "./components/SmartBubbles";
+import InAppPillReminder from "./components/InAppPillReminder";
 
 const TABS = [
   { id: "quests", label: "הקצב היומי", icon: Sparkles, Screen: Quests },
@@ -28,8 +29,23 @@ export default function App() {
   const { coins, longGoal } = useCabin();
   const { Screen } = TABS.find((t) => t.id === activeTab);
 
+  useEffect(() => {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator))
+      return;
+    const handler = (event) => {
+      if (event.data?.type === "QLAIRA_PILL_TAKEN") {
+        updateToday({ qlaira: true }, 10);
+      }
+    };
+    navigator.serviceWorker.addEventListener("message", handler);
+    return () =>
+      navigator.serviceWorker.removeEventListener("message", handler);
+  }, []);
+
   return (
     <div className="min-h-dvh pb-[calc(7rem+env(safe-area-inset-bottom))] select-none">
+      {/* In-App Floating Pill Reminder Popup */}
+      <InAppPillReminder />
       <header className="sticky top-0 z-20 border-b border-white/10 bg-space/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
           <div>

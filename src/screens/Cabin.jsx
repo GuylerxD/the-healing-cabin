@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BatteryCharging, ShoppingBag, Star } from "lucide-react";
 import { setCabin, todayKey, useCabin, useToday } from "../store";
 import { RECOVERY_DAILY_CAP, recoveryCoins } from "../lib/recovery";
+import AchievementBadges from "../components/AchievementBadges";
 
 const SHOP = [
   { id: "mochi-bow", pet: "mochi", emoji: "🎀", name: "פפיון ורוד", price: 30 },
@@ -177,6 +178,9 @@ export default function Cabin() {
               : "להתחיל מנוחה 🛋️"}
         </button>
       </section>
+
+      {/* Achievement Badges System */}
+      <AchievementBadges />
 
       <section className="glass space-y-3 p-5">
         <h2 className="flex items-center gap-2 font-bold text-lilac">

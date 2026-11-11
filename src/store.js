@@ -7,6 +7,9 @@ const DEFAULTS = {
   days: {}, // { 'YYYY-MM-DD': { acid, qlaira, protein, ... } } — daily quests reset by date key
   weighIns: [], // [{ date, kg }]
   owned: [], // pet accessory ids
+  badges: [], // earned badge ids
+  walkingMinutes: 65, // total accumulated indoor walking minutes (initial baseline)
+  sosMode: false, // low energy / asthma mode
   shift: { start: "08:00", end: "16:00" },
   proteinGoal: 80, // grams/day, editable in Nutrition
   inventory: [], // ingredient names at home
