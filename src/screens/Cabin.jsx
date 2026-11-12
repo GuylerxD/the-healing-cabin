@@ -80,7 +80,14 @@ function useNow(active) {
 }
 
 export default function Cabin() {
-  const { coins, owned, recoveryStart, longGoal } = useCabin();
+  const {
+    coins,
+    owned,
+    recoveryStart,
+    longGoal,
+    dogTreats = 0,
+    unlockedFurniture = [],
+  } = useCabin();
   const today = useToday();
   const resting = recoveryStart != null;
   const now = useNow(resting);
@@ -162,6 +169,38 @@ export default function Cabin() {
           <p className="text-center text-xs text-purple-200">
             {resting ? "מתכרבלים איתך ונחים יחד 💤" : "מחכים לך בבקתה 🕯️"}
           </p>
+
+          {/* Lifestyle Rewards Display in Pet Room: Dog Treats & Aesthetic Furniture */}
+          {(dogTreats > 0 || unlockedFurniture.length > 0) && (
+            <div className="rounded-2xl bg-white/5 border border-white/10 p-3 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                {dogTreats > 0 && (
+                  <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+                    <span>🦴 {dogTreats} חטיפי כלבים (מטיולי שטח)</span>
+                  </span>
+                )}
+                {unlockedFurniture.length > 0 && (
+                  <span className="text-lilac font-bold mr-auto">
+                    🛋️ {unlockedFurniture.length} רהיטי אווירה נפתחו!
+                  </span>
+                )}
+              </div>
+              {unlockedFurniture.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {unlockedFurniture.includes("salt-lamp") && (
+                    <span className="rounded-xl bg-amber-500/20 border border-amber-400/30 px-2 py-0.5 text-[10px] text-amber-200">
+                      🪨 מנורת מלח פעילה
+                    </span>
+                  )}
+                  {unlockedFurniture.includes("tarnaby-lamp") && (
+                    <span className="rounded-xl bg-lilac/20 border border-lilac/30 px-2 py-0.5 text-[10px] text-lilac">
+                      🕯️ מנורת TÄRNABY מאירה
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </CollapsibleCard>
 

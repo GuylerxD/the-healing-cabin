@@ -25,6 +25,10 @@ const DEFAULTS = {
   unlockedWeightMilestones: [], // IDs of claimed / unlocked milestones
   sweetTokensSpent: 0, // Weekly used tokens (max allowance: 4)
   sweetBankWeekKey: null, // "YYYY-Www" to detect weekly Saturday night reset & idle coins conversion
+  dogTreats: 0, // Virtual Dog Treats for Mochi in the Idle Room
+  homeResetTasks: {}, // { [taskId]: boolean } weekly home checklist
+  unlockedFurniture: [], // aesthetic furniture unlocked for idle cabin (e.g. "salt-lamp", "tarnaby-lamp")
+  lastMochiWalk: null, // timestamp or date of last walk
 };
 
 function load() {
