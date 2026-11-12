@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { BatteryCharging, ShoppingBag, Star, PawPrint } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShoppingBag, Star, PawPrint } from "lucide-react";
 import { setCabin, todayKey, useCabin, useToday } from "../store";
-import { RECOVERY_DAILY_CAP, recoveryCoins } from "../lib/recovery";
+import { recoveryCoins } from "../lib/recovery";
 import AchievementBadges from "../components/AchievementBadges";
 import CollapsibleCard from "../components/CollapsibleCard";
+import CozyPetRoom from "../components/CozyPetRoom";
 
 const SHOP = [
   { id: "mochi-bow", pet: "mochi", emoji: "🎀", name: "פפיון ורוד", price: 30 },
@@ -44,23 +45,6 @@ const SHOP = [
   },
 ];
 
-const PETS = [
-  {
-    id: "mochi",
-    name: "מוצ׳י",
-    emoji: "🐶",
-    size: "text-4xl",
-    desc: "צ׳יוואווה קטנטנה",
-  },
-  {
-    id: "charlie",
-    name: "צ׳ארלי",
-    emoji: "🐈‍⬛",
-    size: "text-6xl",
-    desc: "חתול שחור גדול",
-  },
-];
-
 function buy(item) {
   setCabin((s) =>
     s.coins < item.price || s.owned.includes(item.id)
@@ -80,14 +64,7 @@ function useNow(active) {
 }
 
 export default function Cabin() {
-  const {
-    coins,
-    owned,
-    recoveryStart,
-    longGoal,
-    dogTreats = 0,
-    unlockedFurniture = [],
-  } = useCabin();
+  const { coins, owned, recoveryStart, longGoal } = useCabin();
   const today = useToday();
   const resting = recoveryStart != null;
   const now = useNow(resting);
@@ -121,129 +98,23 @@ export default function Cabin() {
 
   return (
     <div className="space-y-4">
-      {/* 1. החדר של מוצ׳י וצ׳ארלי (Collapsible) */}
+      {/* 1. החדר האינטראקטיבי של מוצ׳י וצ׳ארלי (Cozy Virtual Room Canvas) */}
       <CollapsibleCard
         id="cabin-pet-room"
-        title="החדר של מוצ׳י וצ׳ארלי 🐾"
-        badge={resting ? "מתכרבלים איתך ונחים 💤" : "מוצ׳י & צ׳ארלי בבקתה"}
+        title="הבקתה האינטראקטיבית של מוצ׳י וצ׳ארלי 🐾"
+        badge={resting ? "שנ״צ משותף בעיצומו 💤" : "מגע, משחק ותאורת אווירה"}
         icon={PawPrint}
         defaultOpen={true}
       >
-        <div className="space-y-4">
-          <div className="flex items-end justify-around rounded-2xl bg-gradient-to-t from-lilac/20 to-transparent px-2 pt-6 pb-3">
-            {PETS.map((pet) => {
-              const items = SHOP.filter(
-                (i) => i.pet === pet.id && owned.includes(i.id),
-              );
-              return (
-                <figure
-                  key={pet.id}
-                  className="flex flex-col items-center gap-1"
-                >
-                  <div
-                    className="flex h-6 gap-0.5 text-lg"
-                    aria-label="אביזרים"
-                  >
-                    {items.map((i) => (
-                      <span key={i.id} title={i.name}>
-                        {i.emoji}
-                      </span>
-                    ))}
-                  </div>
-                  <span
-                    className={`${pet.size} ${resting ? "animate-pulse" : ""}`}
-                    aria-hidden
-                  >
-                    {pet.emoji}
-                  </span>
-                  <figcaption className="text-center text-xs">
-                    <span className="block font-bold text-moon">
-                      {pet.name}
-                    </span>
-                    <span className="text-purple-300">{pet.desc}</span>
-                  </figcaption>
-                </figure>
-              );
-            })}
-          </div>
-          <p className="text-center text-xs text-purple-200">
-            {resting ? "מתכרבלים איתך ונחים יחד 💤" : "מחכים לך בבקתה 🕯️"}
-          </p>
-
-          {/* Lifestyle Rewards Display in Pet Room: Dog Treats & Aesthetic Furniture */}
-          {(dogTreats > 0 || unlockedFurniture.length > 0) && (
-            <div className="rounded-2xl bg-white/5 border border-white/10 p-3 space-y-2 text-xs">
-              <div className="flex items-center justify-between">
-                {dogTreats > 0 && (
-                  <span className="flex items-center gap-1.5 text-amber-300 font-bold">
-                    <span>🦴 {dogTreats} חטיפי כלבים (מטיולי שטח)</span>
-                  </span>
-                )}
-                {unlockedFurniture.length > 0 && (
-                  <span className="text-lilac font-bold mr-auto">
-                    🛋️ {unlockedFurniture.length} רהיטי אווירה נפתחו!
-                  </span>
-                )}
-              </div>
-              {unlockedFurniture.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {unlockedFurniture.includes("salt-lamp") && (
-                    <span className="rounded-xl bg-amber-500/20 border border-amber-400/30 px-2 py-0.5 text-[10px] text-amber-200">
-                      🪨 מנורת מלח פעילה
-                    </span>
-                  )}
-                  {unlockedFurniture.includes("tarnaby-lamp") && (
-                    <span className="rounded-xl bg-lilac/20 border border-lilac/30 px-2 py-0.5 text-[10px] text-lilac">
-                      🕯️ מנורת TÄRNABY מאירה
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <CozyPetRoom
+          resting={resting}
+          elapsedMin={elapsedMin}
+          pending={pending}
+          onToggleRecovery={toggleRecovery}
+        />
       </CollapsibleCard>
 
-      {/* 2. התאוששות פעילה (Collapsible) */}
-      <CollapsibleCard
-        id="cabin-recovery"
-        title="התאוששות פעילה"
-        badge={
-          resting ? `נחת ${elapsedMin} דק׳ (+${pending} 🪙)` : "מטבעות במנוחה"
-        }
-        icon={BatteryCharging}
-        defaultOpen={true}
-      >
-        <div className="space-y-3">
-          <p className="text-xs text-purple-200">
-            יום כואב? מנוחה היא גם התקדמות. מטבע לכל 2 דקות מנוחה (עד{" "}
-            {RECOVERY_DAILY_CAP} ביום) — ממשיך לצבור גם כשהאפליקציה סגורה.
-          </p>
-          {resting && (
-            <p className="text-sm text-mint">
-              נחת {elapsedMin} דק׳ • נצברו {pending} מטבעות 🌙
-            </p>
-          )}
-          <button
-            aria-pressed={resting}
-            onClick={toggleRecovery}
-            disabled={!resting && earnedToday >= RECOVERY_DAILY_CAP}
-            className={`w-full rounded-2xl py-3 font-bold transition disabled:opacity-40 ${
-              resting
-                ? "bg-mint text-space"
-                : "bg-lilac/20 text-moon ring-1 ring-lilac"
-            }`}
-          >
-            {resting
-              ? `סיימתי לנוח — לאסוף ${pending} 🪙`
-              : earnedToday >= RECOVERY_DAILY_CAP
-                ? "אספת את כל מטבעות המנוחה להיום 💜"
-                : "להתחיל מנוחה 🛋️"}
-          </button>
-        </div>
-      </CollapsibleCard>
-
-      {/* 3. מדליות והישגים (Collapsible) */}
+      {/* 2. מדליות והישגים (Collapsible) */}
       <CollapsibleCard
         id="cabin-badges"
         title="מדליות והישגי ריפוי"

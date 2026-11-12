@@ -29,6 +29,9 @@ const DEFAULTS = {
   homeResetTasks: {}, // { [taskId]: boolean } weekly home checklist
   unlockedFurniture: [], // aesthetic furniture unlocked for idle cabin (e.g. "salt-lamp", "tarnaby-lamp")
   lastMochiWalk: null, // timestamp or date of last walk
+  roomLighting: "sunset", // "sunset" | "lofi" | "cozy" | "night"
+  placedDecor: ["rug", "plant", "salt-lamp"], // active decor placed in room
+  petHappiness: { mochi: 85, charlie: 85 }, // happiness levels 0..100
 };
 
 function load() {
