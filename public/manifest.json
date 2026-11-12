@@ -1,7 +1,7 @@
 {
-  "name": "בקתת הריפוי - The Healing Cabin",
-  "short_name": "בקתת הריפוי",
-  "description": "מסע יומי מרגיע לבריאות, תזונה והתאוששות",
+  "name": "The Healing Cabin",
+  "short_name": "The Healing Cabin",
+  "description": "Daily healing, PCOS-friendly nutrition and spine-safe recovery",
   "start_url": "/the-healing-cabin/",
   "scope": "/the-healing-cabin/",
   "display": "standalone",

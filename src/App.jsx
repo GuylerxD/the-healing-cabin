@@ -72,7 +72,9 @@ export default function App() {
       <header className="sticky top-0 z-20 border-b border-white/10 bg-space/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
           <div>
-            <h1 className="text-lg font-bold text-blush">בקתת הריפוי ✨</h1>
+            <h1 className="text-lg font-bold text-blush tracking-wide">
+              The Healing Cabin ✨
+            </h1>
             <p className="text-xs text-purple-300">
               {longGoal ? `🌟 ${longGoal}` : "צעד קטן כל יום 🌱"}
             </p>
