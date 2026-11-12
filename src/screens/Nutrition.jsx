@@ -8,14 +8,12 @@ import {
   CheckCircle2,
   Calendar,
   Check,
-  BookOpen,
   Sparkles,
   RotateCcw,
   Edit3,
 } from "lucide-react";
 import { updateToday, useCabin, useToday, setCabin } from "../store";
 import { useDailyPlan } from "../hooks/useDailyPlan";
-import MealRecipeModal from "../components/MealRecipeModal";
 import CollapsibleCard from "../components/CollapsibleCard";
 import CustomFoodLoggerModal from "../components/CustomFoodLoggerModal";
 import SweetBank from "../components/SweetBank";
@@ -43,7 +41,6 @@ export default function Nutrition() {
   const { todayPlan, activeNutritionDayName, isCustomDayChosen } =
     useDailyPlan();
 
-  const [activeRecipeMeal, setActiveRecipeMeal] = useState(null);
   const [customLoggerSlot, setCustomLoggerSlot] = useState(null);
 
   const protein = today.protein ?? 0;
@@ -433,18 +430,6 @@ export default function Nutrition() {
                           {customMeal ? "ערוך ארוחה מותאמת" : "אכלתי משהו אחר"}
                         </span>
                       </button>
-
-                      {/* Recipe modal trigger */}
-                      {plannedMeal.recipe && !customMeal && (
-                        <button
-                          type="button"
-                          onClick={() => setActiveRecipeMeal(plannedMeal)}
-                          className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-2.5 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
-                        >
-                          <BookOpen className="h-3.5 w-3.5" />
-                          <span>מתכון</span>
-                        </button>
-                      )}
                     </div>
                   </div>
                 );
@@ -485,12 +470,6 @@ export default function Nutrition() {
           <span className="text-lg">{today.earlyDinner ? "✅" : "⬜"}</span>
         </button>
       </CollapsibleCard>
-
-      {/* Modal with exact recipe and cooking timer */}
-      <MealRecipeModal
-        meal={activeRecipeMeal}
-        onClose={() => setActiveRecipeMeal(null)}
-      />
 
       {/* Custom Food Logger Modal */}
       <CustomFoodLoggerModal

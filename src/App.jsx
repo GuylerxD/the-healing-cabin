@@ -6,7 +6,6 @@ import {
   HeartHandshake,
   House,
   Coins,
-  ChefHat,
   ChevronsUp,
   ChevronsDown,
   Compass,
@@ -14,7 +13,6 @@ import {
 import { useCabin, updateToday, setAllSectionsCollapsed } from "./store";
 import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
-import MealPrep from "./screens/MealPrep";
 import Movement from "./screens/Movement";
 import Tracking from "./screens/Tracking";
 import Cabin from "./screens/Cabin";
@@ -26,7 +24,6 @@ const TABS = [
   { id: "quests", label: "הקצב", icon: Sparkles, Screen: Quests },
   { id: "movement", label: "אימונים", icon: Dumbbell, Screen: Movement },
   { id: "nutrition", label: "תזונה", icon: Utensils, Screen: Nutrition },
-  { id: "mealprep", label: "Meal Prep", icon: ChefHat, Screen: MealPrep },
   {
     id: "lifestyle",
     label: "Lifestyle",
