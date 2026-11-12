@@ -23,6 +23,8 @@ const DEFAULTS = {
   startWeight: 99, // Starting weight (99kg)
   goalWeight: 60, // Final goal weight (60kg)
   unlockedWeightMilestones: [], // IDs of claimed / unlocked milestones
+  sweetTokensSpent: 0, // Weekly used tokens (max allowance: 4)
+  sweetBankWeekKey: null, // "YYYY-Www" to detect weekly Saturday night reset & idle coins conversion
 };
 
 function load() {

@@ -18,6 +18,7 @@ import { useDailyPlan } from "../hooks/useDailyPlan";
 import MealRecipeModal from "../components/MealRecipeModal";
 import CollapsibleCard from "../components/CollapsibleCard";
 import CustomFoodLoggerModal from "../components/CustomFoodLoggerModal";
+import SweetBank from "../components/SweetBank";
 
 const PROTEIN_ADDS = [
   { label: "🐟 דג", grams: 25 },
@@ -239,7 +240,18 @@ export default function Nutrition() {
         </div>
       </CollapsibleCard>
 
-      {/* 2. מעקב שתיית מים וחליטות (Hydration Tracker) */}
+      {/* 2. קופת המתוקים ואתגר התזמון (Sugar Reduction & Sweet Bank) */}
+      <CollapsibleCard
+        id="nutrition-sweet-bank"
+        title="קופת המתוקים ואתגר התזמון 🍪"
+        badge="תקציב 4 אסימונים שבועי • מגן הגלוקוז"
+        icon={Sparkles}
+        defaultOpen={true}
+      >
+        <SweetBank />
+      </CollapsibleCard>
+
+      {/* 3. מעקב שתיית מים וחליטות (Hydration Tracker) */}
       <CollapsibleCard
         id="nutrition-water"
         title="שתיית מים וחליטות מאזנות סוכר 💧"
