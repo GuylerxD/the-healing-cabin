@@ -1,35 +1,116 @@
 import { useEffect, useState } from "react";
-import { Clock, Pill, Flame, Bell } from "lucide-react";
-import { setCabin, updateToday, useCabin, useToday } from "../store";
+import {
+  Clock,
+  Pill,
+  Flame,
+  Bell,
+  ChevronRight,
+  ChevronLeft,
+  Calendar,
+} from "lucide-react";
+import { setCabin, updateDay, useCabin, dateKeyWithOffset } from "../store";
 import { shiftProgress } from "../lib/shift";
 import PillReminderToggle from "../components/PillReminderToggle";
 import { triggerInAppPillReminder } from "../lib/pillReminder";
 import CollapsibleCard from "../components/CollapsibleCard";
 
 function useNowMinutes() {
-  const get = () => {
+  const [now, setNow] = useState(() => {
     const d = new Date();
     return d.getHours() * 60 + d.getMinutes();
-  };
-  const [now, setNow] = useState(get);
+  });
   useEffect(() => {
+    const get = () => {
+      const d = new Date();
+      return d.getHours() * 60 + d.getMinutes();
+    };
     const id = setInterval(() => setNow(get()), 60_000);
     return () => clearInterval(id);
   }, []);
   return now;
 }
 
+function getFormattedDayDetails(dayOffset) {
+  const d = new Date();
+  d.setDate(d.getDate() + dayOffset);
+  const dayName = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"][
+    d.getDay()
+  ];
+  const formatted = d.toLocaleDateString("he-IL", {
+    day: "numeric",
+    month: "numeric",
+  });
+
+  const title =
+    dayOffset === 0
+      ? `היום (יום ${dayName}, ${formatted})`
+      : dayOffset === -1
+        ? `אתמול (יום ${dayName}, ${formatted})`
+        : `יום ${dayName}, ${formatted}`;
+
+  return { displayDateTitle: title, dayNameHe: dayName };
+}
+
 export default function Quests() {
-  const { shift } = useCabin();
-  const today = useToday();
+  const { shift, days = {} } = useCabin();
+  const [dayOffset, setDayOffset] = useState(0); // 0 = today, -1 = yesterday, etc.
+  const activeDateKey = dateKeyWithOffset(dayOffset);
+  const activeDayData = days[activeDateKey] ?? {};
+
   const now = useNowMinutes();
   const { pct, label } = shiftProgress(shift.start, shift.end, now);
 
   const setShift = (key, value) =>
     value && setCabin((s) => ({ ...s, shift: { ...s.shift, [key]: value } }));
 
+  // Date formatting in Hebrew
+  const isToday = dayOffset === 0;
+  const { displayDateTitle, dayNameHe } = getFormattedDayDetails(dayOffset);
+
   return (
     <div className="space-y-4">
+      {/* Date Switcher Bar (מעבר בין ימים לעדכון רטרואקטיבי) */}
+      <div className="flex items-center justify-between rounded-2xl bg-white/5 border border-white/10 p-2.5 text-xs text-moon">
+        <button
+          type="button"
+          onClick={() => setDayOffset((prev) => prev - 1)}
+          className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 hover:bg-white/15 transition active:scale-95"
+          title="יום קודם"
+        >
+          <ChevronRight className="h-4 w-4" />
+          <span>יום קודם</span>
+        </button>
+
+        <div className="flex items-center gap-1.5 font-bold">
+          <Calendar className="h-4 w-4 text-lilac" />
+          <span className={isToday ? "text-mint" : "text-blush font-extrabold"}>
+            {displayDateTitle}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          {dayOffset < 0 ? (
+            <button
+              type="button"
+              onClick={() => setDayOffset((prev) => Math.min(0, prev + 1))}
+              className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 hover:bg-white/15 transition active:scale-95"
+              title="יום הבא"
+            >
+              <span>יום הבא</span>
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          ) : (
+            <div className="w-16" />
+          )}
+        </div>
+      </div>
+
+      {!isToday && (
+        <div className="rounded-xl border border-blush/40 bg-blush/10 p-2.5 text-center text-xs text-blush font-semibold">
+          💡 את נמצאת בעריכת נתוני עבר ({displayDateTitle}). כל סימון יעודכן
+          רטרואקטיבית לתאריך זה.
+        </div>
+      )}
       {/* 1. המשמרת שלי (Collapsible) */}
       <CollapsibleCard
         id="quests-shift"
@@ -77,10 +158,10 @@ export default function Quests() {
       {/* 2. בדיקת חומציות בוקר (Collapsible) */}
       <CollapsibleCard
         id="quests-acid"
-        title="בדיקת חומציות בוקר"
+        title={`בדיקת חומציות בוקר ${!isToday ? `(${dayNameHe})` : ""}`}
         badge={
-          today.acid
-            ? `רמת חומציות נוכחית: ${today.acid}`
+          activeDayData.acid
+            ? `רמת חומציות: ${activeDayData.acid}`
             : "1 = רגוע • 5 = צורב (+5 🪙)"
         }
         icon={Flame}
@@ -94,10 +175,16 @@ export default function Quests() {
             {[1, 2, 3, 4, 5].map((lvl) => (
               <button
                 key={lvl}
-                aria-pressed={today.acid === lvl}
-                onClick={() => updateToday({ acid: lvl }, today.acid ? 0 : 5)}
+                aria-pressed={activeDayData.acid === lvl}
+                onClick={() =>
+                  updateDay(
+                    activeDateKey,
+                    { acid: lvl },
+                    activeDayData.acid ? 0 : 5,
+                  )
+                }
                 className={`flex-1 rounded-2xl py-2.5 font-bold transition ${
-                  today.acid === lvl
+                  activeDayData.acid === lvl
                     ? "bg-lilac text-space shadow-lg shadow-lilac/30"
                     : "bg-white/5 text-purple-200"
                 }`}
@@ -106,10 +193,9 @@ export default function Quests() {
               </button>
             ))}
           </div>
-          {today.acid >= 4 && (
+          {activeDayData.acid >= 4 && (
             <p className="rounded-2xl border border-blush/40 bg-blush/15 p-3 text-xs text-blush">
-              💡 החומציות גבוהה היום — מומלץ להתחיל עם מאפין פולנטה רך להרגעת
-              הקיבה.
+              💡 החומציות גבוהה — מומלץ להתחיל עם מאפין פולנטה רך להרגעת הקיבה.
             </p>
           )}
         </div>
@@ -118,23 +204,27 @@ export default function Quests() {
       {/* 3. נטילת קליירה (Collapsible) */}
       <CollapsibleCard
         id="quests-qlaira"
-        title="נטילת קליירה (Qlaira)"
-        badge={today.qlaira ? "נלקחה היום ✨" : "גלולה יומית (+10 🪙)"}
+        title={`נטילת קליירה (Qlaira) ${!isToday ? `(${dayNameHe})` : ""}`}
+        badge={
+          activeDayData.qlaira
+            ? `נלקחה (${displayDateTitle}) ✨`
+            : "גלולה יומית (+10 🪙)"
+        }
         icon={Pill}
         defaultOpen={true}
         headerClassName={
-          today.qlaira ? "!border-mint/50 !bg-mint/10 text-mint" : ""
+          activeDayData.qlaira ? "!border-mint/50 !bg-mint/10 text-mint" : ""
         }
       >
         <div className="flex items-center justify-between gap-3 text-right">
           <div className="text-xs text-purple-200">
-            {today.qlaira
-              ? "כל הכבוד! הגלולה היומית סומנה בהצלחה ✨"
-              : "סמני ברגע שלקחת כדי לשמור על רצף ומחזור מאוזן"}
+            {activeDayData.qlaira
+              ? `הגלולה עבור ${displayDateTitle} סומנה בהצלחה ✨`
+              : `סמני אם נטלת את הגלולה ב-${displayDateTitle}`}
           </div>
 
           <div className="flex items-center gap-2">
-            {!today.qlaira && (
+            {!activeDayData.qlaira && isToday && (
               <button
                 type="button"
                 onClick={triggerInAppPillReminder}
@@ -147,13 +237,19 @@ export default function Quests() {
             <button
               type="button"
               onClick={() =>
-                updateToday({ qlaira: !today.qlaira }, today.qlaira ? -10 : 10)
+                updateDay(
+                  activeDateKey,
+                  { qlaira: !activeDayData.qlaira },
+                  activeDayData.qlaira ? -10 : 10,
+                )
               }
               className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
-                today.qlaira ? "bg-mint text-space" : "bg-white/10 text-moon"
+                activeDayData.qlaira
+                  ? "bg-mint text-space"
+                  : "bg-white/10 text-moon"
               }`}
             >
-              {today.qlaira ? "✅ נלקחה (+10)" : "סמן שלקחתי 💊"}
+              {activeDayData.qlaira ? "✅ נלקחה (+10)" : "סמן שלקחתי 💊"}
             </button>
           </div>
         </div>

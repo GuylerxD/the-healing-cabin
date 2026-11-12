@@ -45,11 +45,28 @@ function subscribe(listener) {
 
 export const todayKey = () => new Date().toLocaleDateString("en-CA"); // local YYYY-MM-DD
 
+export const dateKeyWithOffset = (offsetDays = 0) => {
+  const d = new Date();
+  d.setDate(d.getDate() + offsetDays);
+  return d.toLocaleDateString("en-CA");
+};
+
 export const useCabin = () => useSyncExternalStore(subscribe, () => state);
 export const useToday = () => useCabin().days[todayKey()] ?? {};
+export const useDay = (dateKey) => useCabin().days[dateKey] ?? {};
 
 export const addCoins = (n) =>
   setCabin((s) => ({ ...s, coins: Math.max(0, s.coins + n) }));
+
+export function updateDay(dateKey, patch, coins = 0) {
+  setCabin((s) => {
+    return {
+      ...s,
+      coins: Math.max(0, s.coins + coins),
+      days: { ...s.days, [dateKey]: { ...s.days[dateKey], ...patch } },
+    };
+  });
+}
 
 export function toggleSectionCollapsed(id, forcedState = null) {
   setCabin((s) => {
