@@ -3,6 +3,7 @@ import { Scale, Shirt, Zap, Sparkles } from "lucide-react";
 import { setCabin, todayKey, updateToday, useCabin, useToday } from "../store";
 import { compareBy, daysUntilNextWeighIn, smooth } from "../lib/tracking";
 import CollapsibleCard from "../components/CollapsibleCard";
+import JourneyToEastWeightTracker from "../components/JourneyToEastWeightTracker";
 
 const FIT = [
   ["tight", "צמוד"],
@@ -85,10 +86,21 @@ export default function Tracking() {
 
   return (
     <div className="space-y-4">
-      {/* 1. שקילה שבועית (Collapsible) */}
+      {/* 1. המסע למזרח 2027: מפת ירידה במשקל (Gamified Weight Tracker) */}
+      <CollapsibleCard
+        id="tracking-journey-weight"
+        title="המסע למזרח 2027: מפת ירידה במשקל"
+        badge="מ-99 ק״ג עד 60 ק״ג • תחנות סיאול וטוקיו"
+        icon={Scale}
+        defaultOpen={true}
+      >
+        <JourneyToEastWeightTracker />
+      </CollapsibleCard>
+
+      {/* 2. שקילה שבועית וגרף מגמה (Collapsible) */}
       <CollapsibleCard
         id="tracking-weighin"
-        title="שקילה שבועית רגועה"
+        title="שקילה שבועית רגועה וגרף מגמה"
         badge={
           weighIns.length > 0
             ? `${weighIns[weighIns.length - 1].kg} ק״ג אחרון • ${wait > 0 ? `עוד ${wait} ימים לשקילה` : "מוכנה לשקילה"}`

@@ -19,6 +19,10 @@ const DEFAULTS = {
   longGoal: "", // optional free-text long-term goal shown in the header
   collapsedSections: {}, // { [sectionId]: boolean } - persisted collapse state
   customMealPlanDay: null, // optional overridden dayIndex (0..6) for today's nutrition tab
+  currentWeight: 99, // Current weight in kg (starting baseline: 99kg)
+  startWeight: 99, // Starting weight (99kg)
+  goalWeight: 60, // Final goal weight (60kg)
+  unlockedWeightMilestones: [], // IDs of claimed / unlocked milestones
 };
 
 function load() {
