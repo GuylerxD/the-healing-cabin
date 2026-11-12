@@ -11,7 +11,8 @@ const DEFAULTS = {
   walkingMinutes: 65, // total accumulated indoor walking minutes (initial baseline)
   sosMode: false, // low energy / asthma mode
   shift: { start: "08:00", end: "16:00" },
-  proteinGoal: 80, // grams/day, editable in Nutrition
+  proteinGoal: 110, // grams/day target (range 100g - 120g)
+  calorieGoal: 1650, // kcal/day target (range 1600 - 1700 kcal)
   inventory: [], // ingredient names at home
   prepPlan: [], // recipe ids planned for weekend prep
   recoveryStart: null, // ms timestamp while Active Recovery runs (survives closing the app)

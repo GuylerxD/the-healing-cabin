@@ -371,124 +371,53 @@ export default function MealPrep() {
 
           {/* Meals for Selected Day with Recipe triggers */}
           <div className="space-y-2.5 text-xs">
-            {/* Breakfast */}
-            {selectedPlan.nutrition.meals.breakfast && (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-blush">
-                    ארוחת בוקר: {selectedPlan.nutrition.meals.breakfast.name}
-                  </span>
-                  <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-bold text-mint">
-                    +{selectedPlan.nutrition.meals.breakfast.proteinGrams}ג׳
-                    חלבון
-                  </span>
+            {[
+              { key: "breakfast", label: "ארוחת בוקר", color: "text-blush" },
+              { key: "morningSnack", label: "ביניים בוקר", color: "text-mint" },
+              { key: "lunch", label: "ארוחת צהריים", color: "text-lilac" },
+              {
+                key: "afternoonSnack",
+                label: "ביניים אחה״צ",
+                color: "text-sky-300",
+              },
+              { key: "dinner", label: "ארוחת ערב", color: "text-moon" },
+            ].map(({ key, label, color }) => {
+              const meal = selectedPlan.nutrition.meals?.[key];
+              if (!meal) return null;
+              return (
+                <div
+                  key={key}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-2"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={`font-bold ${color}`}>
+                      {label}: {meal.name}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {meal.calories && (
+                        <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-bold text-moon">
+                          {meal.calories} קק״ל
+                        </span>
+                      )}
+                      <span className="rounded-full bg-mint/15 px-2.5 py-0.5 text-[11px] font-bold text-mint">
+                        +{meal.proteinGrams}ג׳ חלבון
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-purple-200 text-[11px]">{meal.notes}</p>
+                  {meal.recipe && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveRecipeMeal(meal)}
+                      className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
+                    >
+                      <BookOpen className="h-3.5 w-3.5" />
+                      <span>הצג מתכון, כמויות וזמני הכנה</span>
+                    </button>
+                  )}
                 </div>
-                <p className="text-purple-200 text-[11px]">
-                  {selectedPlan.nutrition.meals.breakfast.notes}
-                </p>
-                {selectedPlan.nutrition.meals.breakfast.recipe && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveRecipeMeal(
-                        selectedPlan.nutrition.meals.breakfast,
-                      )
-                    }
-                    className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
-                  >
-                    <BookOpen className="h-3.5 w-3.5" />
-                    <span>הצג מתכון, כמויות וזמני הכנה</span>
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Lunch */}
-            {selectedPlan.nutrition.meals.lunch && (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lilac">
-                    ארוחת צהריים: {selectedPlan.nutrition.meals.lunch.name}
-                  </span>
-                  <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-bold text-mint">
-                    +{selectedPlan.nutrition.meals.lunch.proteinGrams}ג׳ חלבון
-                  </span>
-                </div>
-                <p className="text-purple-200 text-[11px]">
-                  {selectedPlan.nutrition.meals.lunch.notes}
-                </p>
-                {selectedPlan.nutrition.meals.lunch.recipe && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveRecipeMeal(selectedPlan.nutrition.meals.lunch)
-                    }
-                    className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
-                  >
-                    <BookOpen className="h-3.5 w-3.5" />
-                    <span>הצג מתכון, כמויות וזמני הכנה</span>
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Dinner */}
-            {selectedPlan.nutrition.meals.dinner && (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-moon">
-                    ארוחת ערב: {selectedPlan.nutrition.meals.dinner.name}
-                  </span>
-                  <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-bold text-mint">
-                    +{selectedPlan.nutrition.meals.dinner.proteinGrams}ג׳ חלבון
-                  </span>
-                </div>
-                <p className="text-purple-200 text-[11px]">
-                  {selectedPlan.nutrition.meals.dinner.notes}
-                </p>
-                {selectedPlan.nutrition.meals.dinner.recipe && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveRecipeMeal(selectedPlan.nutrition.meals.dinner)
-                    }
-                    className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
-                  >
-                    <BookOpen className="h-3.5 w-3.5" />
-                    <span>הצג מתכון, כמויות וזמני הכנה</span>
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Snack */}
-            {selectedPlan.nutrition.meals.snack && (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-purple-300">
-                    נשנוש מאזן: {selectedPlan.nutrition.meals.snack.name}
-                  </span>
-                  <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-bold text-mint">
-                    +{selectedPlan.nutrition.meals.snack.proteinGrams}ג׳ חלבון
-                  </span>
-                </div>
-                <p className="text-purple-200 text-[11px]">
-                  {selectedPlan.nutrition.meals.snack.notes}
-                </p>
-                {selectedPlan.nutrition.meals.snack.recipe && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveRecipeMeal(selectedPlan.nutrition.meals.snack)
-                    }
-                    className="flex items-center gap-1.5 rounded-xl border border-lilac/30 bg-lilac/10 px-3 py-1.5 text-xs font-semibold text-lilac hover:bg-lilac/20 transition active:scale-95"
-                  >
-                    <BookOpen className="h-3.5 w-3.5" />
-                    <span>הצג מתכון, כמויות וזמני הכנה</span>
-                  </button>
-                )}
-              </div>
-            )}
+              );
+            })}
           </div>
         </div>
       </CollapsibleCard>
