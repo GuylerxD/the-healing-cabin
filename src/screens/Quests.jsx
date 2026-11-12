@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-  Clock,
   Pill,
   Flame,
   Bell,
@@ -8,27 +7,10 @@ import {
   ChevronLeft,
   Calendar,
 } from "lucide-react";
-import { setCabin, updateDay, useCabin, dateKeyWithOffset } from "../store";
-import { shiftProgress } from "../lib/shift";
+import { updateDay, useCabin, dateKeyWithOffset } from "../store";
 import PillReminderToggle from "../components/PillReminderToggle";
 import { triggerInAppPillReminder } from "../lib/pillReminder";
 import CollapsibleCard from "../components/CollapsibleCard";
-
-function useNowMinutes() {
-  const [now, setNow] = useState(() => {
-    const d = new Date();
-    return d.getHours() * 60 + d.getMinutes();
-  });
-  useEffect(() => {
-    const get = () => {
-      const d = new Date();
-      return d.getHours() * 60 + d.getMinutes();
-    };
-    const id = setInterval(() => setNow(get()), 60_000);
-    return () => clearInterval(id);
-  }, []);
-  return now;
-}
 
 function getFormattedDayDetails(dayOffset) {
   const d = new Date();
@@ -52,16 +34,10 @@ function getFormattedDayDetails(dayOffset) {
 }
 
 export default function Quests() {
-  const { shift, days = {} } = useCabin();
+  const { days = {} } = useCabin();
   const [dayOffset, setDayOffset] = useState(0); // 0 = today, -1 = yesterday, etc.
   const activeDateKey = dateKeyWithOffset(dayOffset);
   const activeDayData = days[activeDateKey] ?? {};
-
-  const now = useNowMinutes();
-  const { pct, label } = shiftProgress(shift.start, shift.end, now);
-
-  const setShift = (key, value) =>
-    value && setCabin((s) => ({ ...s, shift: { ...s.shift, [key]: value } }));
 
   // Date formatting in Hebrew
   const isToday = dayOffset === 0;
@@ -111,51 +87,8 @@ export default function Quests() {
           רטרואקטיבית לתאריך זה.
         </div>
       )}
-      {/* 1. המשמרת שלי (Collapsible) */}
-      <CollapsibleCard
-        id="quests-shift"
-        title="המשמרת שלי"
-        badge={label}
-        icon={Clock}
-        defaultOpen={true}
-      >
-        <div className="space-y-3">
-          <div className="flex gap-3 text-sm">
-            {[
-              ["start", "התחלה"],
-              ["end", "סיום"],
-            ].map(([key, text]) => (
-              <label
-                key={key}
-                className="flex flex-1 flex-col gap-1 text-purple-200"
-              >
-                {text}
-                <input
-                  type="time"
-                  value={shift[key]}
-                  onChange={(e) => setShift(key, e.target.value)}
-                  className="rounded-2xl bg-white/10 px-3 py-2 text-moon"
-                />
-              </label>
-            ))}
-          </div>
-          <div
-            className="h-3 overflow-hidden rounded-full bg-white/10"
-            role="progressbar"
-            aria-valuenow={pct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div
-              className="h-full rounded-full bg-gradient-to-l from-mint to-lilac transition-all"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-          <p className="text-xs text-purple-200">{label}</p>
-        </div>
-      </CollapsibleCard>
 
-      {/* 2. בדיקת חומציות בוקר (Collapsible) */}
+      {/* 1. בדיקת חומציות בוקר (Collapsible) */}
       <CollapsibleCard
         id="quests-acid"
         title={`בדיקת חומציות בוקר ${!isToday ? `(${dayNameHe})` : ""}`}
