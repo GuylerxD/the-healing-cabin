@@ -38,7 +38,7 @@ export default function Lifestyle() {
       <CollapsibleCard
         id="lifestyle-home-reset"
         title="שגרת טיפוח הבית ואיפוס שבועי"
-        badge="רובורוק, שיאומי וצמחים • רהיטים לחדר הוירטואלי"
+        badge="טיפוח, נרות, צמחים וסירוק חיות • רהיטים לחדר הוירטואלי"
         icon={Home}
         defaultOpen={true}
       >
