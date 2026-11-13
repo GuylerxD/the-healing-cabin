@@ -27,6 +27,7 @@ const DEFAULTS = {
   sweetBankWeekKey: null, // "YYYY-Www" to detect weekly Saturday night reset & idle coins conversion
   dogTreats: 0, // Virtual Dog Treats for Mochi in the Idle Room
   homeResetTasks: {}, // { [taskId]: boolean } weekly home checklist
+  dailyHomeTasks: null, // { date: 'YYYY-MM-DD', ids: string[] } today's 3 home tasks
   unlockedFurniture: [], // aesthetic furniture unlocked for idle cabin (e.g. "salt-lamp", "tarnaby-lamp")
   lastMochiWalk: null, // timestamp or date of last walk
   roomLighting: "sunset", // "sunset" | "lofi" | "cozy" | "night"

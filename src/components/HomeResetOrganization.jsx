@@ -111,11 +111,23 @@ function getDailyTasks(tasks, count = 3) {
   return pool.slice(0, count);
 }
 
+function pickRandomTasks(pool, count) {
+  const copy = [...pool];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, count);
+}
+
 export default function HomeResetOrganization() {
-  const { homeResetTasks = {}, unlockedFurniture = [] } = useCabin();
+  const {
+    homeResetTasks = {},
+    dailyHomeTasks = null,
+    unlockedFurniture = [],
+  } = useCabin();
   const [justUnlocked, setJustUnlocked] = useState(null);
-  const [showAllTasks, setShowAllTasks] = useState(false);
-  const [rouletteTask, setRouletteTask] = useState(null);
+  const [previewTasks, setPreviewTasks] = useState(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const rouletteTimerRef = useRef(null);
 
@@ -123,30 +135,67 @@ export default function HomeResetOrganization() {
     return () => clearTimeout(rouletteTimerRef.current);
   }, []);
 
-  const dailyTasks = getDailyTasks(HOME_TASKS, 3);
-  const visibleTasks = showAllTasks ? HOME_TASKS : dailyTasks;
+  const [todayStr] = useState(() => new Date().toLocaleDateString("en-CA"));
+  const savedTasks =
+    dailyHomeTasks?.date === todayStr && Array.isArray(dailyHomeTasks.ids)
+      ? dailyHomeTasks.ids
+          .map((id) => HOME_TASKS.find((t) => t.id === id))
+          .filter(Boolean)
+      : [];
+  const activeTasks =
+    savedTasks.length === 3 ? savedTasks : getDailyTasks(HOME_TASKS, 3);
+  const visibleTasks = previewTasks ?? activeTasks;
+
   const completedCount = visibleTasks.filter(
     (t) => !!homeResetTasks[t.id],
   ).length;
   const isAllCompleted = completedCount === visibleTasks.length;
 
+  const buildNextThree = (sourceTasks) => {
+    const allDone = sourceTasks.every((t) => !!homeResetTasks[t.id]);
+    const kept = allDone
+      ? []
+      : sourceTasks.filter((t) => !!homeResetTasks[t.id]);
+    const keptIds = new Set(kept.map((t) => t.id));
+    const currentIds = new Set(sourceTasks.map((t) => t.id));
+    const needed = 3 - kept.length;
+
+    const freshPool = HOME_TASKS.filter((t) => !currentIds.has(t.id));
+    const fallbackPool = HOME_TASKS.filter((t) => !keptIds.has(t.id));
+    const replacements = pickRandomTasks(
+      freshPool.length >= needed ? freshPool : fallbackPool,
+      needed,
+    );
+
+    let rIdx = 0;
+    return sourceTasks.map((t) =>
+      !allDone && homeResetTasks[t.id] ? t : replacements[rIdx++],
+    );
+  };
+
   const handleSpinFlowerRoulette = () => {
     if (isSpinning) return;
     setIsSpinning(true);
 
-    const undonePool = HOME_TASKS.filter((t) => !homeResetTasks[t.id]);
-    const pool = undonePool.length > 0 ? undonePool : HOME_TASKS;
     let counter = 0;
-    const totalFlips = 12;
+    const totalFlips = 10;
 
     const flip = () => {
       counter += 1;
-      const randomIndex = Math.floor(Math.random() * pool.length);
-      setRouletteTask(pool[randomIndex]);
+      const nextThree = buildNextThree(activeTasks);
+      setPreviewTasks(nextThree);
 
       if (counter < totalFlips) {
         rouletteTimerRef.current = setTimeout(flip, 65 + counter * 15);
       } else {
+        setCabin((s) => ({
+          ...s,
+          dailyHomeTasks: {
+            date: todayStr,
+            ids: nextThree.map((t) => t.id),
+          },
+        }));
+        setPreviewTasks(null);
         setIsSpinning(false);
       }
     };
@@ -154,12 +203,31 @@ export default function HomeResetOrganization() {
     flip();
   };
 
+  const handleSwapSingleTask = (taskId) => {
+    if (isSpinning) return;
+    const currentIds = new Set(activeTasks.map((t) => t.id));
+    const candidates = HOME_TASKS.filter((t) => !currentIds.has(t.id));
+    if (candidates.length === 0) return;
+
+    const replacement =
+      candidates[Math.floor(Math.random() * candidates.length)];
+    const nextIds = activeTasks.map((t) =>
+      t.id === taskId ? replacement.id : t.id,
+    );
+
+    setCabin((s) => ({
+      ...s,
+      dailyHomeTasks: { date: todayStr, ids: nextIds },
+    }));
+  };
+
   const handleToggleTask = (taskId) => {
+    if (isSpinning) return;
     const isDone = !!homeResetTasks[taskId];
     const nextTasks = { ...homeResetTasks, [taskId]: !isDone };
 
-    // Check if completing daily tasks unlocks furniture
-    const newlyAllCompleted = dailyTasks.every((t) => nextTasks[t.id]);
+    // Check if completing today's 3 tasks unlocks furniture
+    const newlyAllCompleted = activeTasks.every((t) => nextTasks[t.id]);
     let nextFurniture = [...unlockedFurniture];
     let unlockedItem = null;
 
@@ -217,90 +285,43 @@ export default function HomeResetOrganization() {
         </span>
       </div>
 
-      {/* Flower Roulette Button & Result */}
-      <div className="space-y-2.5">
-        <button
-          type="button"
-          onClick={handleSpinFlowerRoulette}
-          disabled={isSpinning}
-          className="w-full flex items-center justify-center gap-2 rounded-2xl border border-pink-300/35 bg-gradient-to-r from-pink-400/20 via-lilac/20 to-mint/20 px-4 py-2.5 text-xs font-bold text-moon shadow-sm transition hover:brightness-110 active:scale-[0.98] disabled:opacity-70"
-        >
-          <Flower2
-            className={`h-4 w-4 text-pink-300 ${isSpinning ? "animate-spin" : ""}`}
-          />
-          <span>
-            {isSpinning
-              ? "🌸 הפרחים מסתובבים... 🌺"
-              : "🌸 רולטת פרחים — תבחרי לי מה לעשות! 🌼"}
-          </span>
-        </button>
-
-        {rouletteTask && (
-          <div className="rounded-2xl border border-pink-300/40 bg-pink-400/10 p-3.5 space-y-2 transition-all">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-pink-200">
-                🌺 רולטת הפרחים בחרה לך:
-              </span>
-              {!isSpinning && (
-                <button
-                  type="button"
-                  onClick={() => handleToggleTask(rouletteTask.id)}
-                  className={`rounded-xl px-2.5 py-1 text-[11px] font-bold transition active:scale-95 ${
-                    homeResetTasks[rouletteTask.id]
-                      ? "bg-mint text-space"
-                      : "bg-white/15 text-moon hover:bg-white/25"
-                  }`}
-                >
-                  {homeResetTasks[rouletteTask.id]
-                    ? "✅ בוצע!"
-                    : "סמן כבוצע (+15 🪙)"}
-                </button>
-              )}
-            </div>
-            <div>
-              <p className="text-xs font-bold text-moon">{rouletteTask.title}</p>
-              <p className="text-[11px] text-purple-200 mt-0.5">
-                {rouletteTask.desc}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Daily rotation toggle */}
-      <div className="flex items-center justify-between text-[11px] text-purple-300 px-1">
+      {/* Flower Roulette Button */}
+      <button
+        type="button"
+        onClick={handleSpinFlowerRoulette}
+        disabled={isSpinning}
+        className="w-full flex items-center justify-center gap-2 rounded-2xl border border-pink-300/35 bg-gradient-to-r from-pink-400/20 via-lilac/20 to-mint/20 px-4 py-2.5 text-xs font-bold text-moon shadow-sm transition hover:brightness-110 active:scale-[0.98] disabled:opacity-70"
+      >
+        <Flower2
+          className={`h-4 w-4 text-pink-300 ${isSpinning ? "animate-spin" : ""}`}
+        />
         <span>
-          {showAllTasks
-            ? `כל משימות הטיפוח (${HOME_TASKS.length})`
-            : "מתחלפות אוטומטית כל יום ✨"}
+          {isSpinning
+            ? "🌸 הפרחים מסתובבים... 🌺"
+            : "🌸 רולטת פרחים — החליפי לי משימות! 🌼"}
         </span>
-        <button
-          type="button"
-          onClick={() => setShowAllTasks((v) => !v)}
-          className="text-lilac font-semibold hover:underline"
-        >
-          {showAllTasks ? "הצג רק 3 להיום" : `הצג הכל (${HOME_TASKS.length})`}
-        </button>
-      </div>
+      </button>
 
-      {/* Checklist items */}
+      {/* Checklist items (3 daily tasks) */}
       <div className="space-y-2">
         {visibleTasks.map((task) => {
           const isDone = !!homeResetTasks[task.id];
           const Icon = task.icon;
 
           return (
-            <button
+            <div
               key={task.id}
-              type="button"
-              onClick={() => handleToggleTask(task.id)}
-              className={`w-full flex items-start justify-between rounded-2xl border p-3.5 transition-all active:scale-[0.98] ${
+              className={`flex items-start justify-between gap-2 rounded-2xl border p-3.5 transition-all ${
                 isDone
                   ? "bg-mint/15 border-mint/50 text-mint"
                   : "bg-white/5 border-white/10 text-moon hover:bg-white/[0.08]"
               }`}
             >
-              <div className="flex items-start gap-3">
+              <button
+                type="button"
+                onClick={() => handleToggleTask(task.id)}
+                className="flex flex-1 items-start gap-3 text-right active:scale-[0.99]"
+              >
                 <div
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border mt-0.5 transition ${
                     isDone
@@ -316,18 +337,35 @@ export default function HomeResetOrganization() {
                     {task.desc}
                   </p>
                 </div>
-              </div>
+              </button>
 
-              <div
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border mt-1 ${
-                  isDone
-                    ? "bg-mint text-space border-mint"
-                    : "border-white/20 bg-white/5"
-                }`}
-              >
-                {isDone && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+              <div className="flex items-center gap-2 shrink-0 mt-1">
+                {!isDone && (
+                  <button
+                    type="button"
+                    onClick={() => handleSwapSingleTask(task.id)}
+                    disabled={isSpinning}
+                    title="החלף משימה זו"
+                    aria-label={`החלף את ${task.title}`}
+                    className="flex h-6 w-6 items-center justify-center rounded-lg border border-pink-300/30 bg-pink-400/10 text-pink-300 hover:bg-pink-400/20 transition active:scale-95"
+                  >
+                    <Flower2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleToggleTask(task.id)}
+                  aria-label={isDone ? "בטל סימון" : "סמן כבוצע"}
+                  className={`flex h-5 w-5 items-center justify-center rounded-lg border ${
+                    isDone
+                      ? "bg-mint text-space border-mint"
+                      : "border-white/20 bg-white/5"
+                  }`}
+                >
+                  {isDone && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+                </button>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>
