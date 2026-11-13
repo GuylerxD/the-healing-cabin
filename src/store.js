@@ -17,6 +17,7 @@ const DEFAULTS = {
   prepPlan: [], // recipe ids planned for weekend prep
   recoveryStart: null, // ms timestamp while Active Recovery runs (survives closing the app)
   longGoal: "", // optional free-text long-term goal shown in the header
+  geminiApiKey: "", // optional user-supplied Gemini API key (stored locally in browser only)
   collapsedSections: {}, // { [sectionId]: boolean } - persisted collapse state
   customMealPlanDay: null, // optional overridden dayIndex (0..6) for today's nutrition tab
   currentWeight: 99, // Current weight in kg (starting baseline: 99kg)

@@ -6,14 +6,13 @@ import {
   Droplets,
   GlassWater,
   CheckCircle2,
-  Calendar,
-  Check,
+  Utensils,
   Sparkles,
-  RotateCcw,
+  Plus,
   Edit3,
+  Trash2,
 } from "lucide-react";
-import { updateToday, useCabin, useToday, setCabin } from "../store";
-import { useDailyPlan } from "../hooks/useDailyPlan";
+import { updateToday, useCabin, useToday } from "../store";
 import CollapsibleCard from "../components/CollapsibleCard";
 import CustomFoodLoggerModal from "../components/CustomFoodLoggerModal";
 import SweetBank from "../components/SweetBank";
@@ -38,79 +37,41 @@ const MEAL_SLOTS = [
 export default function Nutrition() {
   const { proteinGoal = 110, calorieGoal = 1650 } = useCabin();
   const today = useToday();
-  const { todayPlan, activeNutritionDayName, isCustomDayChosen } =
-    useDailyPlan();
 
   const [customLoggerSlot, setCustomLoggerSlot] = useState(null);
 
   const protein = today.protein ?? 0;
   const calories = today.calories ?? 0;
-  const meals = today.meals ?? 0;
   const waterCups = today.water ?? 0;
-  const eatenMeals = today.eatenMeals ?? [];
-  const customMeals = today.customMeals ?? {}; // { [slotKey]: { name, calories, protein } }
+  const customMeals = today.customMeals ?? {}; // { [slotKey]: { customName, calories, proteinGrams, breakdown, source } }
 
   const proteinPct = Math.min(100, Math.round((protein / proteinGoal) * 100));
   const caloriePct = Math.min(100, Math.round((calories / calorieGoal) * 100));
 
-  // Toggle planned meal check-off
-  const handleTogglePlannedMeal = (slotKey, mealCalories, mealProtein) => {
-    const isEaten = eatenMeals.includes(slotKey);
-    const updatedEaten = isEaten
-      ? eatenMeals.filter((m) => m !== slotKey)
-      : [...eatenMeals, slotKey];
-
-    const proteinDelta = isEaten ? -mealProtein : mealProtein;
-    const calorieDelta = isEaten ? -mealCalories : mealCalories;
-    const newProtein = Math.max(0, protein + proteinDelta);
-    const newCalories = Math.max(0, calories + calorieDelta);
-    const mealDelta = isEaten ? -1 : 1;
-    const newMeals = Math.max(0, meals + mealDelta);
-
-    updateToday(
-      {
-        protein: newProtein,
-        calories: newCalories,
-        meals: newMeals,
-        eatenMeals: updatedEaten,
-      },
-      isEaten ? -2 : 2,
-    );
-  };
-
-  // Save custom meal deviation for a slot
+  // Save AI / DB logged meal for a slot
   const handleSaveCustomMeal = (slotKey, customData) => {
-    // If slot had a planned meal or previous custom meal, subtract it first
-    const wasPlannedEaten = eatenMeals.includes(slotKey);
     const existingCustom = customMeals[slotKey];
-
     let currentCal = calories;
     let currentProt = protein;
 
-    if (wasPlannedEaten && todayPlan?.nutrition?.meals?.[slotKey]) {
-      const pm = todayPlan.nutrition.meals[slotKey];
-      currentCal -= pm.calories ?? 0;
-      currentProt -= pm.proteinGrams ?? 0;
-    } else if (existingCustom) {
+    if (existingCustom) {
       currentCal -= existingCustom.calories ?? 0;
       currentProt -= existingCustom.proteinGrams ?? 0;
     }
 
     const nextCalories = Math.max(0, currentCal + customData.calories);
     const nextProtein = Math.max(0, currentProt + customData.proteinGrams);
-    const updatedEaten = wasPlannedEaten
-      ? eatenMeals.filter((m) => m !== slotKey)
-      : eatenMeals;
+    const nextCustomMeals = {
+      ...customMeals,
+      [slotKey]: customData,
+    };
 
     updateToday(
       {
         calories: nextCalories,
         protein: nextProtein,
-        eatenMeals: updatedEaten,
-        customMeals: {
-          ...customMeals,
-          [slotKey]: customData,
-        },
+        meals: Object.keys(nextCustomMeals).length,
+        customMeals: nextCustomMeals,
       },
       existingCustom ? 0 : 2,
     );
@@ -129,6 +90,7 @@ export default function Nutrition() {
       {
         calories: nextCalories,
         protein: nextProtein,
+        meals: Object.keys(nextCustom).length,
         customMeals: nextCustom,
       },
       -2,
@@ -285,132 +247,59 @@ export default function Nutrition() {
           {waterCups >= WATER_GOAL_CUPS && (
             <div className="flex items-center gap-1.5 text-xs text-mint font-semibold">
               <CheckCircle2 className="h-4 w-4" />
-              <span>הגעת ליעד השתייה היומי! שתית 2 ליטר מלאים 🎉 (+5 🪙)</span>
+              <span>הגעת ליעד השתייה היומי! שתית 2 ליטר מלאים 🎉 (+2 🪙)</span>
             </div>
           )}
         </div>
       </CollapsibleCard>
 
-      {/* 3. ארוחות היום + יומן אכילה חריגה (Custom Food Logger) */}
-      {todayPlan && todayPlan.nutrition && (
-        <CollapsibleCard
-          id="nutrition-daily-meals"
-          title={`ארוחות יום ${activeNutritionDayName} (5 ארוחות)`}
-          badge={
-            isCustomDayChosen
-              ? `תפריט מותאם אישית מ-Meal Prep`
-              : `יעד מחושב: ${todayPlan.nutrition.targetCalories} קק״ל • ${todayPlan.nutrition.targetProteinGrams}ג׳ חלבון`
-          }
-          icon={Calendar}
-          defaultOpen={true}
-        >
-          <div className="space-y-3.5">
-            {isCustomDayChosen && (
-              <div className="flex items-center justify-between rounded-xl bg-lilac/15 border border-lilac/30 p-2.5 text-xs text-lilac">
-                <span>
-                  מוצג כעת תפריט יום <strong>{activeNutritionDayName}</strong>{" "}
-                  לבקשתך
-                </span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCabin((s) => ({ ...s, customMealPlanDay: null }))
-                  }
-                  className="flex items-center gap-1 rounded-lg bg-white/10 px-2 py-1 text-[11px] text-moon hover:bg-white/15"
-                >
-                  <RotateCcw className="h-3 w-3" />
-                  <span>חזור לתפריט היום</span>
-                </button>
-              </div>
-            )}
+      {/* 3. ארוחות היום — דיווח חופשי וחישוב AI / מאגר */}
+      <CollapsibleCard
+        id="nutrition-daily-meals"
+        title="ארוחות היום (5 ארוחות)"
+        badge={`${Object.keys(customMeals).length} / 5 ארוחות דווחו`}
+        icon={Utensils}
+        defaultOpen={true}
+      >
+        <div className="space-y-3 text-xs">
+          {MEAL_SLOTS.map(({ key: slotKey, label: slotLabel, color }) => {
+            const customMeal = customMeals[slotKey];
 
-            <div className="space-y-3 text-xs">
-              {MEAL_SLOTS.map(({ key: slotKey, label: slotLabel, color }) => {
-                const plannedMeal = todayPlan.nutrition.meals?.[slotKey];
-                const isPlannedEaten = eatenMeals.includes(slotKey);
-                const customMeal = customMeals[slotKey];
-
-                if (!plannedMeal) return null;
-
-                const cals = plannedMeal.calories ?? 0;
-                const prot = plannedMeal.proteinGrams ?? 0;
-
-                return (
-                  <div
-                    key={slotKey}
-                    className={`rounded-2xl border p-3.5 space-y-2.5 transition ${
-                      customMeal
-                        ? "border-lilac/50 bg-lilac/10"
-                        : isPlannedEaten
-                          ? "border-mint/50 bg-mint/10"
-                          : "border-white/10 bg-white/5"
-                    }`}
-                  >
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                      <span className={`font-bold text-sm ${color}`}>
-                        {slotLabel}:{" "}
-                        {customMeal ? customMeal.customName : plannedMeal.name}
+            return (
+              <div
+                key={slotKey}
+                className={`rounded-2xl border p-3.5 space-y-2.5 transition ${
+                  customMeal
+                    ? "border-lilac/50 bg-lilac/10"
+                    : "border-white/10 bg-white/5"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className={`font-bold text-sm ${color}`}>
+                    {customMeal
+                      ? `${slotLabel}: ${customMeal.customName}`
+                      : slotLabel}
+                  </span>
+                  {customMeal && (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-moon">
+                        {customMeal.calories} קק״ל
                       </span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-moon">
-                          {customMeal ? customMeal.calories : cals} קק״ל
-                        </span>
-                        <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[11px] font-bold text-mint">
-                          +{customMeal ? customMeal.proteinGrams : prot}ג׳ חלבון
-                        </span>
-                      </div>
+                      <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[11px] font-bold text-mint">
+                        +{customMeal.proteinGrams}ג׳ חלבון
+                      </span>
                     </div>
+                  )}
+                </div>
 
-                    {/* Notes / deviation details */}
-                    {customMeal ? (
-                      <div className="flex items-center justify-between rounded-xl bg-white/5 px-2.5 py-1.5 text-[11px] text-purple-200">
-                        <span>✨ נרשמה ארוחה מותאמת אישית</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveCustomMeal(slotKey)}
-                          className="text-blush hover:underline"
-                        >
-                          הסר וחזור לתפריט המקורי
-                        </button>
-                      </div>
-                    ) : (
-                      <p className="text-purple-200 text-xs">
-                        {plannedMeal.notes}
+                {customMeal ? (
+                  <>
+                    {customMeal.breakdown && (
+                      <p className="text-[11px] text-purple-200/80">
+                        {customMeal.breakdown}
                       </p>
                     )}
-
-                    {/* Action Buttons: Check off planned OR Add custom meal */}
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      {!customMeal && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleTogglePlannedMeal(slotKey, cals, prot)
-                          }
-                          className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition active:scale-95 ${
-                            isPlannedEaten
-                              ? "bg-mint text-space shadow-sm shadow-mint/20"
-                              : "bg-white/10 text-moon hover:bg-white/15"
-                          }`}
-                        >
-                          {isPlannedEaten ? (
-                            <>
-                              <Check className="h-3.5 w-3.5" />
-                              <span>
-                                אכלתי לפי התוכנית! (+{cals} קק״ל, +{prot}ג׳)
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="h-3.5 w-3.5 text-mint" />
-                              <span>סמן שאכלתי לפי התוכנית (+2 🪙)</span>
-                            </>
-                          )}
-                        </button>
-                      )}
-
-                      {/* Custom food logger trigger */}
+                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
                       <button
                         type="button"
                         onClick={() =>
@@ -419,25 +308,41 @@ export default function Nutrition() {
                             label: slotLabel,
                           })
                         }
-                        className={`flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition active:scale-95 ${
-                          customMeal
-                            ? "border-lilac bg-lilac text-space font-bold"
-                            : "border-white/15 bg-white/5 text-purple-200 hover:bg-white/10"
-                        }`}
+                        className="flex items-center gap-1.5 rounded-xl border border-lilac/40 bg-lilac/20 px-2.5 py-1.5 text-xs font-bold text-moon transition hover:bg-lilac/30 active:scale-95"
                       >
                         <Edit3 className="h-3.5 w-3.5" />
-                        <span>
-                          {customMeal ? "ערוך ארוחה מותאמת" : "אכלתי משהו אחר"}
-                        </span>
+                        <span>ערוך</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomMeal(slotKey)}
+                        className="flex items-center gap-1 rounded-xl border border-blush/30 bg-blush/10 px-2.5 py-1.5 text-xs font-semibold text-blush transition hover:bg-blush/20 active:scale-95"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span>הסר</span>
                       </button>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </CollapsibleCard>
-      )}
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCustomLoggerSlot({
+                        key: slotKey,
+                        label: slotLabel,
+                      })
+                    }
+                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-moon transition hover:bg-white/10 active:scale-95"
+                  >
+                    <Plus className="h-3.5 w-3.5 text-lilac" />
+                    <span>מה אכלתי ב{slotLabel}? (+2 🪙)</span>
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </CollapsibleCard>
 
       {/* 4. שמירה מצרבות (3 שעות לפני שינה - Collapsible) */}
       <CollapsibleCard

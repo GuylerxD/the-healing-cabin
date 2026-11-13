@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { X, Sparkles, Plus, Loader2 } from "lucide-react";
+import { X, Sparkles, Plus, Loader2, KeyRound } from "lucide-react";
 import { parseCustomFood } from "../lib/foodLogger";
+import { useCabin, setCabin } from "../store";
+
+const SOURCE_LABELS = {
+  ai: "✨ חושב ע״י Gemini AI",
+  db: "🌐 מאגר תזונה מהאינטרנט (Open Food Facts)",
+  local: "📋 הערכה חכמה מקומית",
+};
 
 export default function CustomFoodLoggerModal({
   isOpen,
@@ -8,9 +15,11 @@ export default function CustomFoodLoggerModal({
   onClose,
   onSaveCustomMeal,
 }) {
+  const { geminiApiKey = "" } = useCabin();
   const [text, setText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [estimate, setEstimate] = useState(null);
+  const [showKeyInput, setShowKeyInput] = useState(false);
 
   if (!isOpen) return null;
 
@@ -21,7 +30,7 @@ export default function CustomFoodLoggerModal({
     if (!estimate) {
       setIsAnalyzing(true);
       try {
-        const result = await parseCustomFood(text);
+        const result = await parseCustomFood(text, geminiApiKey);
         setEstimate(result);
       } finally {
         setIsAnalyzing(false);
@@ -32,6 +41,8 @@ export default function CustomFoodLoggerModal({
         customName: estimate.name,
         calories: Number(estimate.calories),
         proteinGrams: Number(estimate.protein),
+        breakdown: estimate.breakdown || "",
+        source: estimate.source || "local",
       });
       handleClose();
     }
@@ -61,10 +72,10 @@ export default function CustomFoodLoggerModal({
           </button>
           <div className="text-right">
             <h3 className="font-bold text-sm text-moon">
-              רישום ארוחה חריגה / מותאמת
+              מה אכלת ב{mealSlotTitle}?
             </h3>
             <span className="text-[11px] text-purple-300">
-              עבור {mealSlotTitle}
+              חישוב קלוריות וחלבון אוטומטי מהאינטרנט / AI
             </span>
           </div>
         </div>
@@ -87,13 +98,23 @@ export default function CustomFoodLoggerModal({
             />
           </div>
 
-          {/* AI / Heuristic estimate preview */}
+          {/* AI / DB estimate preview */}
           {estimate && (
             <div className="rounded-2xl border border-mint/40 bg-mint/10 p-3.5 space-y-2 text-xs">
-              <div className="flex items-center gap-1.5 text-mint font-bold">
-                <Sparkles className="h-4 w-4" />
-                <span>הערכת מאקרו מחושבת:</span>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-mint font-bold">
+                  <Sparkles className="h-4 w-4" />
+                  <span>תוצאת חישוב:</span>
+                </div>
+                <span className="text-[10px] text-purple-200">
+                  {SOURCE_LABELS[estimate.source] || SOURCE_LABELS.local}
+                </span>
               </div>
+              {estimate.breakdown && (
+                <p className="text-[11px] text-purple-100 leading-snug">
+                  {estimate.breakdown}
+                </p>
+              )}
               <div className="grid grid-cols-2 gap-2 text-center pt-1">
                 <div className="rounded-xl bg-white/10 p-2">
                   <span className="text-[10px] text-purple-200 block">
@@ -163,6 +184,35 @@ export default function CustomFoodLoggerModal({
             </button>
           </div>
         </form>
+
+        {/* Optional Gemini AI Key setup */}
+        <div className="border-t border-white/10 pt-2.5">
+          <button
+            type="button"
+            onClick={() => setShowKeyInput((v) => !v)}
+            className="flex items-center gap-1.5 text-[11px] text-purple-300 hover:text-lilac transition"
+          >
+            <KeyRound className="h-3.5 w-3.5" />
+            <span>
+              {geminiApiKey
+                ? "מפתח Gemini AI מחובר (לחצי לעריכה)"
+                : "חיבור מפתח Gemini AI חינמי (אופציונלי)"}
+            </span>
+          </button>
+          {showKeyInput && (
+            <div className="mt-2 space-y-1.5">
+              <input
+                type="password"
+                value={geminiApiKey}
+                onChange={(e) =>
+                  setCabin((s) => ({ ...s, geminiApiKey: e.target.value }))
+                }
+                placeholder="הדביקי מפתח Gemini API (נשמר בדפדפן שלך בלבד)"
+                className="w-full rounded-xl bg-white/5 border border-white/15 px-3 py-1.5 text-[11px] text-moon placeholder:text-purple-400 focus:outline-none focus:border-lilac"
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
