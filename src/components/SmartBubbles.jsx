@@ -152,13 +152,13 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
               <div className="flex justify-end pt-1">
                 <button
                   disabled={today.diffuserOn}
-                  onClick={() => updateToday({ diffuserOn: true }, 5)}
+                  onClick={() => updateToday({ diffuserOn: true }, 2)}
                   className="flex items-center gap-1.5 rounded-xl bg-mint px-3 py-1.5 text-xs font-bold text-space disabled:opacity-50 transition active:scale-95"
                 >
                   <Check className="h-3.5 w-3.5" />
                   {today.diffuserOn
-                    ? "הדלקתי אדים (+5 🪙)"
-                    : "הדלקתי את המכשיר (+5 🪙)"}
+                    ? "הדלקתי אדים (+2 🪙)"
+                    : "הדלקתי את המכשיר (+2 🪙)"}
                 </button>
               </div>
             </div>
@@ -251,13 +251,13 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
             <button
               disabled={today.teaLogged}
               onClick={() => {
-                updateToday({ teaLogged: true }, 5);
+                updateToday({ teaLogged: true }, 2);
               }}
               className="flex items-center gap-1.5 rounded-xl bg-blush px-3 py-1.5 text-xs font-bold text-space disabled:opacity-50 transition active:scale-95"
             >
               {today.teaLogged
-                ? "נשתתה חליטה (+5 🪙)"
-                : "שתיתי חליטה מרגיעה (+5 🪙)"}
+                ? "נשתתה חליטה (+2 🪙)"
+                : "שתיתי חליטה מרגיעה (+2 🪙)"}
             </button>
           </div>
         </section>
@@ -346,14 +346,14 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
             <button
               disabled={today.pcosWalk}
               onClick={() => {
-                updateToday({ pcosWalk: true }, 5);
+                updateToday({ pcosWalk: true }, 2);
               }}
               className="flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-bold text-purple-100 hover:bg-white/20 disabled:opacity-50 transition"
             >
               <Check className="h-3.5 w-3.5 text-mint" />
               {today.pcosWalk
-                ? "הליכה קלה סומנה (+5 🪙)"
-                : "עשיתי סיבוב קל (+5 🪙)"}
+                ? "הליכה קלה סומנה (+2 🪙)"
+                : "עשיתי סיבוב קל (+2 🪙)"}
             </button>
           </div>
         </section>

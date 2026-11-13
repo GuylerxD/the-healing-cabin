@@ -95,14 +95,14 @@ export default function Quests() {
         badge={
           activeDayData.acid
             ? `רמת חומציות: ${activeDayData.acid}`
-            : "1 = רגוע • 5 = צורב (+5 🪙)"
+            : "1 = רגוע • 5 = צורב (+2 🪙)"
         }
         icon={Flame}
         defaultOpen={true}
       >
         <div className="space-y-3">
           <p className="text-xs text-purple-200">
-            1 = רגוע לגמרי • 5 = צורב מאוד (+5 מטבעות על הבדיקה)
+            1 = רגוע לגמרי • 5 = צורב מאוד (+2 מטבעות על הבדיקה)
           </p>
           <div className="flex gap-2">
             {[1, 2, 3, 4, 5].map((lvl) => (
@@ -113,7 +113,7 @@ export default function Quests() {
                   updateDay(
                     activeDateKey,
                     { acid: lvl },
-                    activeDayData.acid ? 0 : 5,
+                    activeDayData.acid ? 0 : 2,
                   )
                 }
                 className={`flex-1 rounded-2xl py-2.5 font-bold transition ${
@@ -141,7 +141,7 @@ export default function Quests() {
         badge={
           activeDayData.qlaira
             ? `נלקחה (${displayDateTitle}) ✨`
-            : "גלולה יומית (+10 🪙)"
+            : "גלולה יומית (+4 🪙)"
         }
         icon={Pill}
         defaultOpen={true}
@@ -173,7 +173,7 @@ export default function Quests() {
                 updateDay(
                   activeDateKey,
                   { qlaira: !activeDayData.qlaira },
-                  activeDayData.qlaira ? -10 : 10,
+                  activeDayData.qlaira ? -4 : 4,
                 )
               }
               className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
@@ -182,7 +182,7 @@ export default function Quests() {
                   : "bg-white/10 text-moon"
               }`}
             >
-              {activeDayData.qlaira ? "✅ נלקחה (+10)" : "סמן שלקחתי 💊"}
+              {activeDayData.qlaira ? "✅ נלקחה (+4)" : "סמן שלקחתי 💊"}
             </button>
           </div>
         </div>

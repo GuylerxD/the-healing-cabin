@@ -19,3 +19,34 @@ body {
   @apply bg-space text-moon font-sans antialiased;
   -webkit-tap-highlight-color: transparent;
 }
+
+@keyframes gentle-vibrate {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-2px, 1px, 0); }
+  40% { transform: translate3d(2px, -1px, 0); }
+  60% { transform: translate3d(-2px, -1px, 0); }
+  80% { transform: translate3d(2px, 1px, 0); }
+}
+
+@keyframes heart-float {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.7);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--drift, 0px)), -45px) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--drift, 0px) * 1.6), -110px) scale(0.9);
+  }
+}
+
+.animate-gentle-vibrate {
+  animation: gentle-vibrate 0.22s ease-in-out;
+}
+
+.animate-heart-float {
+  animation: heart-float 1.15s ease-out forwards;
+}

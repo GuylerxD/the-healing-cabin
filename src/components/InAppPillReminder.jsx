@@ -50,7 +50,7 @@ export default function InAppPillReminder() {
   }, [pillTakenToday]);
 
   const handleMarkAsTaken = useCallback(() => {
-    updateToday({ qlaira: true }, pillTakenToday ? 0 : 10);
+    updateToday({ qlaira: true }, pillTakenToday ? 0 : 4);
     setCelebration(true);
     setTimeout(() => {
       setCelebration(false);

@@ -74,7 +74,7 @@ export default function Nutrition() {
         meals: newMeals,
         eatenMeals: updatedEaten,
       },
-      isEaten ? -5 : 5,
+      isEaten ? -2 : 2,
     );
   };
 
@@ -112,7 +112,7 @@ export default function Nutrition() {
           [slotKey]: customData,
         },
       },
-      existingCustom ? 0 : 5,
+      existingCustom ? 0 : 2,
     );
   };
 
@@ -131,7 +131,7 @@ export default function Nutrition() {
         protein: nextProtein,
         customMeals: nextCustom,
       },
-      -5,
+      -2,
     );
   };
 
@@ -139,7 +139,7 @@ export default function Nutrition() {
     const targetCups = cupIndex + 1;
     const nextWater = waterCups === targetCups ? cupIndex : targetCups;
     const rewardCoins =
-      nextWater === WATER_GOAL_CUPS && waterCups < WATER_GOAL_CUPS ? 5 : 0;
+      nextWater === WATER_GOAL_CUPS && waterCups < WATER_GOAL_CUPS ? 2 : 0;
     updateToday({ water: nextWater }, rewardCoins);
   };
 
@@ -404,7 +404,7 @@ export default function Nutrition() {
                           ) : (
                             <>
                               <Sparkles className="h-3.5 w-3.5 text-mint" />
-                              <span>סמן שאכלתי לפי התוכנית (+5 🪙)</span>
+                              <span>סמן שאכלתי לפי התוכנית (+2 🪙)</span>
                             </>
                           )}
                         </button>
@@ -452,7 +452,7 @@ export default function Nutrition() {
           onClick={() =>
             updateToday(
               { earlyDinner: !today.earlyDinner },
-              today.earlyDinner ? -10 : 10,
+              today.earlyDinner ? -4 : 4,
             )
           }
           className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-right text-xs transition ${
@@ -464,7 +464,7 @@ export default function Nutrition() {
           <span>
             סיימתי ארוחת ערב 3 שעות לפני השינה
             <span className="block text-[11px] opacity-70">
-              שומר מצרבת וריפלוקס • +10 מטבעות
+              שומר מצרבת וריפלוקס • +4 מטבעות
             </span>
           </span>
           <span className="text-lg">{today.earlyDinner ? "✅" : "⬜"}</span>

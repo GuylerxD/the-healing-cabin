@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Sparkles, Moon, Sun } from "lucide-react";
 import { useCabin, setCabin } from "../store";
 import { RECOVERY_DAILY_CAP } from "../lib/recovery";
+
+const HEART_EMOJIS = ["❤️", "💖", "💕", "💗", "💓", "💞", "🩷", "🩵", "💜", "🫶"];
 
 const LIGHTING_MODES = [
   {
@@ -53,61 +55,90 @@ export default function CozyPetRoom({
   const [mochiReaction, setMochiReaction] = useState(null); // 'happy' | 'bark' | 'heart'
   const [charlieReaction, setCharlieReaction] = useState(null); // 'purr' | 'sleep' | 'heart'
   const [activeTab, setActiveTab] = useState("interact"); // 'interact' | 'decor' | 'nap'
-  const [floatingHeart, setFloatingHeart] = useState(null);
+  const [heartBursts, setHeartBursts] = useState([]);
+  const [isVibrating, setIsVibrating] = useState(false);
+  const burstIdRef = useRef(0);
+  const vibrateTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => clearTimeout(vibrateTimerRef.current);
+  }, []);
 
   const currentLighting =
     LIGHTING_MODES.find((l) => l.id === roomLighting) || LIGHTING_MODES[1];
 
+  const triggerPetFeedback = (pet) => {
+    // Gentle screen vibration + mobile haptic
+    setIsVibrating(false);
+    requestAnimationFrame(() => setIsVibrating(true));
+    clearTimeout(vibrateTimerRef.current);
+    vibrateTimerRef.current = setTimeout(() => setIsVibrating(false), 230);
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(18);
+    }
+
+    // Spawn burst of varied heart emojis
+    const count = 8;
+    const newHearts = Array.from({ length: count }, () => {
+      burstIdRef.current += 1;
+      return {
+        id: burstIdRef.current,
+        pet,
+        emoji: HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)],
+        drift: Math.round((Math.random() - 0.5) * 90),
+        delay: Math.round(Math.random() * 140),
+        size: Math.random() > 0.45 ? "text-xl" : "text-base",
+      };
+    });
+    const ids = new Set(newHearts.map((h) => h.id));
+    setHeartBursts((prev) => [...prev.slice(-24), ...newHearts]);
+    setTimeout(() => {
+      setHeartBursts((prev) => prev.filter((h) => !ids.has(h.id)));
+    }, 1350);
+  };
+
   // Petting Mochi
   const handlePetMochi = () => {
     setMochiReaction("bark");
-    setFloatingHeart("mochi");
+    triggerPetFeedback("mochi");
     setCabin((s) => ({
       ...s,
-      coins: s.coins + 1,
       petHappiness: {
         ...s.petHappiness,
         mochi: Math.min(100, (s.petHappiness?.mochi || 85) + 3),
       },
     }));
-    setTimeout(() => {
-      setMochiReaction(null);
-      setFloatingHeart(null);
-    }, 2500);
+    setTimeout(() => setMochiReaction(null), 2000);
   };
 
   // Petting Charlie
   const handlePetCharlie = () => {
     setCharlieReaction("purr");
-    setFloatingHeart("charlie");
+    triggerPetFeedback("charlie");
     setCabin((s) => ({
       ...s,
-      coins: s.coins + 1,
       petHappiness: {
         ...s.petHappiness,
         charlie: Math.min(100, (s.petHappiness?.charlie || 85) + 3),
       },
     }));
-    setTimeout(() => {
-      setCharlieReaction(null);
-      setFloatingHeart(null);
-    }, 2500);
+    setTimeout(() => setCharlieReaction(null), 2000);
   };
 
   // Give Dog Treat to Mochi
   const handleFeedMochi = () => {
     if (dogTreats <= 0) return;
     setMochiReaction("happy");
+    triggerPetFeedback("mochi");
     setCabin((s) => ({
       ...s,
       dogTreats: Math.max(0, s.dogTreats - 1),
-      coins: s.coins + 5,
       petHappiness: {
         ...s.petHappiness,
         mochi: Math.min(100, (s.petHappiness?.mochi || 85) + 10),
       },
     }));
-    setTimeout(() => setMochiReaction(null), 3000);
+    setTimeout(() => setMochiReaction(null), 2500);
   };
 
   // Toggle Decor Item
@@ -128,7 +159,9 @@ export default function CozyPetRoom({
     <div className="space-y-4 text-right" dir="rtl">
       {/* 3D-Like Cozy Virtual Room Canvas */}
       <div
-        className={`relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b ${currentLighting.bgClass} p-5 shadow-2xl transition-all duration-700 min-h-[310px] flex flex-col justify-between`}
+        className={`relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b ${currentLighting.bgClass} p-5 shadow-2xl transition-all duration-700 min-h-[310px] flex flex-col justify-between ${
+          isVibrating ? "animate-gentle-vibrate" : ""
+        }`}
       >
         {/* Cozy Lighting Glow Orb */}
         <div
@@ -204,12 +237,22 @@ export default function CozyPetRoom({
         {/* Pets in Room Stage (Interactive Play Zone) */}
         <div className="relative z-10 flex items-end justify-around pt-3 pb-2">
           {/* Mochi (Tiny Chihuahua) */}
-          <div className="flex flex-col items-center">
-            {floatingHeart === "mochi" && (
-              <span className="text-lg animate-bounce text-pink-400 absolute -top-4">
-                💖 יאיי! +1 🪙
-              </span>
-            )}
+          <div className="relative flex flex-col items-center">
+            {heartBursts
+              .filter((h) => h.pet === "mochi")
+              .map((h) => (
+                <span
+                  key={h.id}
+                  style={{
+                    "--drift": `${h.drift}px`,
+                    animationDelay: `${h.delay}ms`,
+                  }}
+                  className={`pointer-events-none absolute top-0 left-1/2 z-20 select-none animate-heart-float ${h.size}`}
+                  aria-hidden
+                >
+                  {h.emoji}
+                </span>
+              ))}
 
             <button
               type="button"
@@ -222,8 +265,9 @@ export default function CozyPetRoom({
               {/* Pet Accessory */}
               <div className="flex h-5 gap-0.5 text-sm" aria-hidden>
                 {owned.includes("mochi-bow") && <span>🎀</span>}
-                {owned.includes("mochi-crown") && <span>👑</span>}
                 {owned.includes("mochi-scarf") && <span>🧣</span>}
+                {owned.includes("mochi-bone") && <span>🦴</span>}
+                {owned.includes("mochi-crown") && <span>👑</span>}
               </div>
 
               {/* Mochi Emoji Body */}
@@ -265,12 +309,22 @@ export default function CozyPetRoom({
           )}
 
           {/* Charlie (Big Black Cat) */}
-          <div className="flex flex-col items-center">
-            {floatingHeart === "charlie" && (
-              <span className="text-lg animate-bounce text-lilac absolute -top-4">
-                💜 גרגור! +1 🪙
-              </span>
-            )}
+          <div className="relative flex flex-col items-center">
+            {heartBursts
+              .filter((h) => h.pet === "charlie")
+              .map((h) => (
+                <span
+                  key={h.id}
+                  style={{
+                    "--drift": `${h.drift}px`,
+                    animationDelay: `${h.delay}ms`,
+                  }}
+                  className={`pointer-events-none absolute top-0 left-1/2 z-20 select-none animate-heart-float ${h.size}`}
+                  aria-hidden
+                >
+                  {h.emoji}
+                </span>
+              ))}
 
             <button
               type="button"
@@ -282,6 +336,7 @@ export default function CozyPetRoom({
             >
               {/* Pet Accessory */}
               <div className="flex h-5 gap-0.5 text-sm" aria-hidden>
+                {owned.includes("charlie-bell") && <span>🔔</span>}
                 {owned.includes("charlie-hat") && <span>🎩</span>}
                 {owned.includes("charlie-fish") && <span>🐟</span>}
               </div>
@@ -385,7 +440,7 @@ export default function CozyPetRoom({
               <div className="text-right">
                 <span className="font-bold block">לטפי את מוצ׳י</span>
                 <span className="text-[10px] text-purple-300">
-                  קשקוש בזנב (+1 🪙)
+                  קשקוש בזנב 💛
                 </span>
               </div>
             </button>
@@ -399,7 +454,7 @@ export default function CozyPetRoom({
               <div className="text-right">
                 <span className="font-bold block">לטפי את צ׳ארלי</span>
                 <span className="text-[10px] text-purple-300">
-                  גרגור מרגיע (+1 🪙)
+                  גרגור מרגיע 💜
                 </span>
               </div>
             </button>
@@ -422,7 +477,7 @@ export default function CozyPetRoom({
 
           <p className="text-purple-200 leading-relaxed text-[11.5px]">
             בהפעלת המנוחה, האורות בבקתה מתעמעמים, מוצ׳י וצ׳ארלי עוברים למצב שינה
-            ומתכרבלים יחד איתך. כל 2 דקות מנוחה צוברות מטבע לחדר — גם כשהמסך
+            ומתכרבלים יחד איתך. כל 5 דקות מנוחה צוברות מטבע לחדר — גם כשהמסך
             כבוי!
           </p>
 

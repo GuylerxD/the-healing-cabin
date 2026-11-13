@@ -16,7 +16,7 @@ const ALL_BADGES = [
     id: "metabolic-master",
     title: "אלופת המטבוליזם (Metabolic Master)",
     desc: "שמירה על 5 ארוחות עשירות בחלבון ללא כוסברה, ללא שעועית ירוקה וללא תורמוס",
-    reward: 40,
+    reward: 20,
     icon: Flame,
     color:
       "from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/30",
@@ -35,7 +35,7 @@ const ALL_BADGES = [
     id: "spine-guardian",
     title: "שומרת עמוד השדרה (Spine Guardian)",
     desc: "השלמת 3 אימונים מוגני דיסק ללא פיתולים וללא כפיפות בטן",
-    reward: 35,
+    reward: 15,
     icon: Shield,
     color: "from-emerald-500/20 to-teal-500/20 text-mint border-mint/30",
     check: (cabin) => {
@@ -50,7 +50,7 @@ const ALL_BADGES = [
     id: "qlaira-consistency",
     title: "התמדה הורמונלית (Qlaira Streak)",
     desc: "מעקב ונטילת גלולת קלייר לפי השעון לאיזון הורמונלי",
-    reward: 30,
+    reward: 15,
     icon: HeartHandshake,
     color: "from-purple-500/20 to-pink-500/20 text-lilac border-lilac/30",
     check: (cabin) => {
@@ -64,7 +64,7 @@ const ALL_BADGES = [
     id: "kpop-pilgrim",
     title: "צועדת למזרח (Seoul Explorer)",
     desc: "צבירת קילומטרים וירטואליים במסע לקוריאה ויפן",
-    reward: 45,
+    reward: 20,
     icon: Footprints,
     color: "from-sky-500/20 to-blue-500/20 text-sky-400 border-sky-400/30",
     check: (cabin) => (cabin.walkingMinutes || 0) >= 45,

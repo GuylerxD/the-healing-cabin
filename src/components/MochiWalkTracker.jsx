@@ -58,7 +58,7 @@ export default function MochiWalkTracker() {
       setIsWalking(false);
       const minutesWalked = Math.max(1, Math.round(walkSeconds / 60));
       const treatsEarned = probioticChecked ? 3 : 2;
-      const coinsEarned = probioticChecked ? 25 : 15;
+      const coinsEarned = probioticChecked ? 8 : 5;
 
       setCabin((s) => ({
         ...s,

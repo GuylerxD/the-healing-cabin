@@ -77,7 +77,7 @@ export default function QlairaChallenge28() {
   );
 
   const handleClaimChallengeReward = () => {
-    addCoins(50);
+    addCoins(25);
   };
 
   return (
@@ -168,7 +168,7 @@ export default function QlairaChallenge28() {
             className="flex items-center gap-1 rounded-xl bg-mint px-3 py-1.5 text-space font-bold text-xs"
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span>קבלת 50 מטבעות</span>
+            <span>קבלת 25 מטבעות</span>
           </button>
         </div>
       )}

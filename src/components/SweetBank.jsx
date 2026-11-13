@@ -11,7 +11,7 @@ import {
 import { useCabin, setCabin, useToday, updateToday } from "../store";
 
 const TOTAL_WEEKLY_SWEET_TOKENS = 4;
-const IDLE_COIN_BONUS_PER_SAVED_TOKEN = 30; // 30 coins per unspent token on Saturday night
+const IDLE_COIN_BONUS_PER_SAVED_TOKEN = 10; // 10 coins per unspent token on Saturday night
 
 export default function SweetBank() {
   const { sweetTokensSpent = 0 } = useCabin();
@@ -61,7 +61,7 @@ export default function SweetBank() {
   const isTimingQuestDone = !!today.sweetTimingQuest;
   const handleToggleTimingQuest = () => {
     const nextState = !isTimingQuestDone;
-    updateToday({ sweetTimingQuest: nextState }, nextState ? 15 : -15);
+    updateToday({ sweetTimingQuest: nextState }, nextState ? 5 : -5);
   };
 
   return (
@@ -200,7 +200,7 @@ export default function SweetBank() {
                   אתגר התזמון: מגן הגלוקוז (Glucose Shield) 🛡️
                 </span>
                 <span className="rounded-full bg-lilac/20 border border-lilac/30 px-2 py-0.2 text-[10px] font-bold text-lilac">
-                  +15 🪙 קומבו
+                  +5 🪙 קומבו
                 </span>
               </div>
               <p className="text-[11px] text-purple-200 mt-0.5">

@@ -244,7 +244,7 @@ export default function HomeResetOrganization() {
 
     setCabin((s) => ({
       ...s,
-      coins: s.coins + (!isDone ? 15 : -15),
+      coins: s.coins + (!isDone ? 5 : -5),
       homeResetTasks: nextTasks,
       unlockedFurniture: nextFurniture,
     }));
@@ -390,7 +390,7 @@ export default function HomeResetOrganization() {
           <div className="flex items-center justify-between rounded-xl bg-mint/15 border border-mint/40 p-2 text-mint font-bold text-[11px]">
             <span className="flex items-center gap-1">
               <CheckCircle2 className="h-4 w-4" />
-              <span>כל משימות הבית הושלמו לשבוע זה! ✨ (+45 🪙)</span>
+              <span>כל משימות הבית הושלמו לשבוע זה! ✨ (+15 🪙)</span>
             </span>
             <button
               type="button"

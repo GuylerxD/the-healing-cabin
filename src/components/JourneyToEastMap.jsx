@@ -31,7 +31,7 @@ export default function JourneyToEastMap() {
     setCabin((s) => ({
       ...s,
       walkingMinutes: (s.walkingMinutes || 0) + mins,
-      coins: s.coins + 10,
+      coins: s.coins + 4,
     }));
   };
 

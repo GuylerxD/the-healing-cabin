@@ -65,7 +65,7 @@ const WORKOUTS = [
   },
 ];
 
-const REWARD = 15;
+const REWARD = 6;
 
 export default function Movement() {
   const today = useToday();

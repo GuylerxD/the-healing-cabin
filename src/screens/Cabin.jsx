@@ -7,41 +7,55 @@ import CollapsibleCard from "../components/CollapsibleCard";
 import CozyPetRoom from "../components/CozyPetRoom";
 
 const SHOP = [
-  { id: "mochi-bow", pet: "mochi", emoji: "🎀", name: "פפיון ורוד", price: 30 },
+  { id: "mochi-bow", pet: "mochi", emoji: "🎀", name: "פפיון ורוד", price: 100 },
+  {
+    id: "charlie-bell",
+    pet: "charlie",
+    emoji: "🔔",
+    name: "קולר פעמון",
+    price: 100,
+  },
   {
     id: "mochi-scarf",
     pet: "mochi",
     emoji: "🧣",
     name: "צעיף חורף",
-    price: 50,
-  },
-  {
-    id: "mochi-crown",
-    pet: "mochi",
-    emoji: "👑",
-    name: "כתר נסיכה",
-    price: 150,
-  },
-  {
-    id: "charlie-fish",
-    pet: "charlie",
-    emoji: "🐟",
-    name: "צעצוע דג",
-    price: 40,
+    price: 180,
   },
   {
     id: "charlie-hat",
     pet: "charlie",
     emoji: "🎩",
     name: "כובע ג׳נטלמן",
-    price: 60,
+    price: 180,
+  },
+  {
+    id: "mochi-bone",
+    pet: "mochi",
+    emoji: "🦴",
+    name: "צעצוע עצם",
+    price: 280,
+  },
+  {
+    id: "charlie-fish",
+    pet: "charlie",
+    emoji: "🐟",
+    name: "צעצוע דג",
+    price: 280,
+  },
+  {
+    id: "mochi-crown",
+    pet: "mochi",
+    emoji: "👑",
+    name: "כתר נסיכה",
+    price: 450,
   },
   {
     id: "charlie-bed",
     pet: "charlie",
     emoji: "🛏️",
-    name: "כרית ענקית",
-    price: 100,
+    name: "כרית מלוכה ענקית",
+    price: 450,
   },
 ];
 

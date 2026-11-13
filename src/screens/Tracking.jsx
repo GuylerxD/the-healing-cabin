@@ -12,7 +12,7 @@ const FIT = [
 ];
 const PAIN = ["אין", "קל", "בינוני", "חזק"]; // index = 0..3
 const MOOD = ["שפוף 🌧️", "רגוע ⛅", "טוב ☀️", "קורן ✨"];
-const WEIGH_REWARD = 10;
+const WEIGH_REWARD = 4;
 
 function TrendChart({ weighIns }) {
   if (weighIns.length < 2)

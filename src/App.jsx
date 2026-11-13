@@ -54,7 +54,7 @@ export default function App() {
       return;
     const handler = (event) => {
       if (event.data?.type === "QLAIRA_PILL_TAKEN") {
-        updateToday({ qlaira: true }, 10);
+        updateToday({ qlaira: true }, 4);
       }
     };
     navigator.serviceWorker.addEventListener("message", handler);
