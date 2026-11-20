@@ -9,8 +9,15 @@ import {
   ChevronsUp,
   ChevronsDown,
   Compass,
+  Settings,
 } from "lucide-react";
-import { useCabin, updateToday, setAllSectionsCollapsed } from "./store";
+import SettingsModal from "./components/SettingsModal";
+import {
+  useCabin,
+  setAllSectionsCollapsed,
+  areAllSectionsCollapsed,
+  rolloverSweetBank,
+} from "./store";
 import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
 import Movement from "./screens/Movement";
@@ -36,36 +43,32 @@ const TABS = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("quests");
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { coins, longGoal, collapsedSections } = useCabin();
   const { Screen } = TABS.find((t) => t.id === activeTab);
 
-  // Check if all known sections are currently collapsed
-  const isAllCollapsed =
-    collapsedSections &&
-    Object.keys(collapsedSections).length > 0 &&
-    Object.values(collapsedSections).filter(Boolean).length >= 5;
+  const isAllCollapsed = areAllSectionsCollapsed(collapsedSections);
+
+  // Weekly sweet-bank reset, checked on load and whenever the app comes back to the foreground
+  useEffect(() => {
+    rolloverSweetBank();
+    document.addEventListener("visibilitychange", rolloverSweetBank);
+    return () =>
+      document.removeEventListener("visibilitychange", rolloverSweetBank);
+  }, []);
 
   const handleToggleCollapseAll = () => {
     setAllSectionsCollapsed(!isAllCollapsed);
   };
 
-  useEffect(() => {
-    if (typeof window === "undefined" || !("serviceWorker" in navigator))
-      return;
-    const handler = (event) => {
-      if (event.data?.type === "QLAIRA_PILL_TAKEN") {
-        updateToday({ qlaira: true }, 4);
-      }
-    };
-    navigator.serviceWorker.addEventListener("message", handler);
-    return () =>
-      navigator.serviceWorker.removeEventListener("message", handler);
-  }, []);
-
   return (
     <div className="min-h-dvh pb-[calc(7rem+env(safe-area-inset-bottom))] select-none">
       {/* In-App Floating Pill Reminder Popup */}
       <InAppPillReminder />
+      <SettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
       <header className="sticky top-0 z-20 border-b border-white/10 bg-space/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
           <div>
@@ -77,6 +80,15 @@ export default function App() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              aria-label="הגדרות"
+              title="הגדרות"
+              className="flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 p-2 text-moon transition hover:bg-white/15 active:scale-95"
+            >
+              <Settings className="h-4 w-4 text-lilac" />
+            </button>
             {/* כפתור כווץ הכל / פתח הכל למעלה */}
             <button
               type="button"

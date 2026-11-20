@@ -8,13 +8,11 @@ import {
   ShieldCheck,
   LifeBuoy,
   Compass,
-  Pill,
   Dumbbell,
 } from "lucide-react";
 import { updateToday, useToday, useCabin, setCabin } from "../store";
 import { useDailyPlan } from "../hooks/useDailyPlan";
 import CastToTvButton from "../components/CastToTvButton";
-import QlairaChallenge28 from "../components/QlairaChallenge28";
 import JourneyToEastMap from "../components/JourneyToEastMap";
 import CollapsibleCard from "../components/CollapsibleCard";
 
@@ -305,17 +303,6 @@ export default function Movement() {
         defaultOpen={false}
       >
         <JourneyToEastMap />
-      </CollapsibleCard>
-
-      {/* 28-Day Qlaira Challenge Progress Tracker (Collapsible) */}
-      <CollapsibleCard
-        id="movement-qlaira-28"
-        title="אתגר 28 הימים של קלייר"
-        badge="סנכרון חפיסת גלולות"
-        icon={Pill}
-        defaultOpen={false}
-      >
-        <QlairaChallenge28 />
       </CollapsibleCard>
 
       {/* Extra Workouts Library (Collapsible) */}

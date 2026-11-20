@@ -1,8 +1,10 @@
 // Service Worker for The Healing Cabin PWA & Web Push Notifications
-const CACHE_NAME = "healing-cabin-v3";
-const DEFAULT_PILL_TITLE = "תזכורת גלולת קלייר 💊";
+const CACHE_NAME = "healing-cabin-v5";
+const APP_URL = "/the-healing-cabin/";
+const SNOOZE_MS = 10 * 60 * 1000;
+const DEFAULT_PILL_TITLE = "תזכורת גלולת זואלי 💊";
 const DEFAULT_PILL_BODY =
-  "הזמן היומי שלך לקחת גלולת קלייר (Qlaira) לאיזון הורמונלי ובריאות ✨";
+  "הזמן היומי שלך לקחת גלולת זואלי (Zoely) לאיזון הורמונלי ובריאות ✨";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -102,14 +104,55 @@ self.addEventListener("notificationclick", (event) => {
     "/the-healing-cabin/";
 
   if (event.action === "taken") {
-    // Notify open clients that pill was logged
+    // Tell open app windows; if none is open, open the app so it records the pill on load.
     event.waitUntil(
       self.clients
         .matchAll({ type: "window", includeUncontrolled: true })
         .then((clientList) => {
-          for (const client of clientList) {
-            client.postMessage({ type: "QLAIRA_PILL_TAKEN" });
+          if (clientList.length) {
+            for (const client of clientList) {
+              client.postMessage({ type: "QLAIRA_PILL_TAKEN" });
+            }
+            return;
           }
+          if (self.clients.openWindow) {
+            return self.clients.openWindow(`${APP_URL}?pillTaken=1`);
+          }
+        }),
+    );
+    return;
+  }
+
+  if (event.action === "snooze") {
+    // Open app windows schedule the re-reminder themselves. With no window open, the browser may
+    // stop this worker before 10 minutes pass, so this fallback is best effort only.
+    event.waitUntil(
+      self.clients
+        .matchAll({ type: "window", includeUncontrolled: true })
+        .then((clientList) => {
+          if (clientList.length) {
+            for (const client of clientList) {
+              client.postMessage({ type: "QLAIRA_PILL_SNOOZE" });
+            }
+            return;
+          }
+          return new Promise((resolve) => setTimeout(resolve, SNOOZE_MS)).then(
+            () =>
+              self.registration.showNotification(DEFAULT_PILL_TITLE, {
+                body: DEFAULT_PILL_BODY,
+                icon: `${APP_URL}icon-192.png`,
+                badge: `${APP_URL}icon-192.png`,
+                dir: "rtl",
+                lang: "he",
+                tag: "qlaira-reminder",
+                renotify: true,
+                data: { url: APP_URL },
+                actions: [
+                  { action: "taken", title: "לקחתי! ✨" },
+                  { action: "snooze", title: "הזכר לי בעוד 10 דק'" },
+                ],
+              }),
+          );
         }),
     );
     return;

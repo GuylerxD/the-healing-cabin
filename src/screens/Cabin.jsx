@@ -78,7 +78,7 @@ function useNow(active) {
 }
 
 export default function Cabin() {
-  const { coins, owned, recoveryStart, longGoal } = useCabin();
+  const { coins, owned, recoveryStart } = useCabin();
   const today = useToday();
   const resting = recoveryStart != null;
   const now = useNow(resting);
@@ -87,7 +87,6 @@ export default function Cabin() {
   const elapsedMin = resting
     ? Math.floor(Math.max(0, now - recoveryStart) / 60_000)
     : 0;
-  const [goalDraft, setGoalDraft] = useState(longGoal);
 
   const toggleRecovery = () =>
     setCabin((s) => {
@@ -173,42 +172,6 @@ export default function Cabin() {
               </button>
             );
           })}
-        </div>
-      </CollapsibleCard>
-
-      {/* 5. המטרה הגדולה שלי (Collapsible) */}
-      <CollapsibleCard
-        id="cabin-goal"
-        title="המטרה הגדולה שלי"
-        badge={longGoal ? `🌟 ${longGoal}` : "הגדרת מטרה ארוכת טווח"}
-        icon={Star}
-        defaultOpen={false}
-      >
-        <div className="space-y-3">
-          <p className="text-xs text-purple-300">
-            אופציונלי — חלום רחוק שיופיע בראש המסך.
-          </p>
-          <form
-            className="flex gap-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setCabin((s) => ({
-                ...s,
-                longGoal: goalDraft.trim().slice(0, 40),
-              }));
-            }}
-          >
-            <input
-              value={goalDraft}
-              maxLength={40}
-              onChange={(e) => setGoalDraft(e.target.value)}
-              placeholder="למשל: טיול חלומות 🌸"
-              className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-sm text-moon placeholder:text-purple-300"
-            />
-            <button className="rounded-2xl bg-blush px-4 py-2 text-sm font-bold text-space">
-              שמירה
-            </button>
-          </form>
         </div>
       </CollapsibleCard>
     </div>

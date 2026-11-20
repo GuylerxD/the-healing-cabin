@@ -25,8 +25,8 @@ const DEFAULTS = {
   goalWeight: 60, // Final goal weight (60kg)
   unlockedWeightMilestones: [], // IDs of claimed / unlocked milestones
   sweetTokensSpent: 0, // Weekly used tokens (max allowance: 4)
-  sweetBankWeekKey: null, // "YYYY-Www" to detect weekly Saturday night reset & idle coins conversion
-  dogTreats: 0, // Virtual Dog Treats for Mochi in the Idle Room
+  sweetBankWeekKey: null, // Sunday date (YYYY-MM-DD) of the week the tokens belong to
+  sweetBankClaimedWeek: null, // week key whose leftover-token bonus was already paid  dogTreats: 0, // Virtual Dog Treats for Mochi in the Idle Room
   homeResetTasks: {}, // { [taskId]: boolean } weekly home checklist
   dailyHomeTasks: null, // { date: 'YYYY-MM-DD', ids: string[] } today's 3 home tasks
   unlockedFurniture: [], // aesthetic furniture unlocked for idle cabin (e.g. "salt-lamp", "tarnaby-lamp")
@@ -66,7 +66,79 @@ export const dateKeyWithOffset = (offsetDays = 0) => {
   return d.toLocaleDateString("en-CA");
 };
 
+export const getCabin = () => state;
+
+// ---- Sweet bank (weekly sweet tokens, week starts Sunday) ----
+export const SWEET_TOKENS_PER_WEEK = 4;
+export const SWEET_BONUS_PER_TOKEN = 10;
+
+export const sweetWeekKey = (d = new Date()) => {
+  const sunday = new Date(d);
+  sunday.setDate(d.getDate() - d.getDay());
+  return sunday.toLocaleDateString("en-CA");
+};
+
+// Motzei Shabbat: Saturday from 18:00
+export const isSweetBonusWindow = (d = new Date()) =>
+  d.getDay() === 6 && d.getHours() >= 18;
+
+const leftoverTokens = (s) =>
+  Math.max(0, SWEET_TOKENS_PER_WEEK - (s.sweetTokensSpent ?? 0));
+
+// New week: reset tokens; leftovers from a week whose bonus wasn't collected convert automatically.
+export function rolloverSweetBank() {
+  const wk = sweetWeekKey();
+  if (state.sweetBankWeekKey === wk) return;
+  setCabin((s) => {
+    if (s.sweetBankWeekKey === wk) return s;
+    if (!s.sweetBankWeekKey) return { ...s, sweetBankWeekKey: wk }; // first run: keep current count
+    const bonus =
+      s.sweetBankClaimedWeek === s.sweetBankWeekKey
+        ? 0
+        : leftoverTokens(s) * SWEET_BONUS_PER_TOKEN;
+    return {
+      ...s,
+      coins: s.coins + bonus,
+      sweetTokensSpent: 0,
+      sweetBankWeekKey: wk,
+    };
+  });
+}
+
+export function claimSweetBankBonus() {
+  if (!isSweetBonusWindow()) return 0;
+  const wk = sweetWeekKey();
+  let bonus = 0;
+  setCabin((s) => {
+    if (s.sweetBankClaimedWeek === wk) return s;
+    bonus = leftoverTokens(s) * SWEET_BONUS_PER_TOKEN;
+    if (!bonus) return s;
+    return {
+      ...s,
+      coins: s.coins + bonus,
+      sweetTokensSpent: SWEET_TOKENS_PER_WEEK, // leftovers were converted to coins
+      sweetBankClaimedWeek: wk,
+      sweetBankWeekKey: wk,
+    };
+  });
+  return bonus;
+}
 export const useCabin = () => useSyncExternalStore(subscribe, () => state);
+
+export const PILL_REWARD = 4;
+
+// Idempotent: coins are granted only the first time the pill is marked for that day.
+export function markPillTaken(dateKey = todayKey()) {
+  setCabin((s) => {
+    const day = s.days[dateKey] ?? {};
+    if (day.qlaira) return s;
+    return {
+      ...s,
+      coins: s.coins + PILL_REWARD,
+      days: { ...s.days, [dateKey]: { ...day, qlaira: true } },
+    };
+  });
+}
 export const useToday = () => useCabin().days[todayKey()] ?? {};
 export const useDay = (dateKey) => useCabin().days[dateKey] ?? {};
 
@@ -97,33 +169,40 @@ export function toggleSectionCollapsed(id, forcedState = null) {
   });
 }
 
+// Every CollapsibleCard id in the app. Keep in sync when adding a card.
+export const SECTION_IDS = [
+  "quests-acid",
+  "quests-qlaira",
+  "movement-breathing",
+  "movement-sos",
+  "movement-daily-workout",
+  "movement-map",
+  "movement-extra-workouts",
+  "nutrition-protein-bar",
+  "nutrition-sweet-bank",
+  "nutrition-water",
+  "nutrition-daily-meals",
+  "nutrition-reflux",
+  "lifestyle-mochi-walks",
+  "lifestyle-home-reset",
+  "lifestyle-date-roulette",
+  "tracking-journey-weight",
+  "tracking-weighin",
+  "tracking-quick-check",
+  "tracking-energy",
+  "tracking-history",
+  "cabin-pet-room",
+  "cabin-badges",
+  "cabin-shop",
+];
+
+export const areAllSectionsCollapsed = (collapsedSections = {}) =>
+  SECTION_IDS.every((id) => collapsedSections[id] === true);
+
 export function setAllSectionsCollapsed(collapsed = true) {
   setCabin((s) => {
-    const knownKeys = [
-      "quests-shift",
-      "quests-acid",
-      "quests-qlaira",
-      "quests-push-settings",
-      "movement-breathing",
-      "movement-sos",
-      "movement-daily-workout",
-      "movement-map",
-      "movement-qlaira-28",
-      "movement-extra-workouts",
-      "nutrition-protein-bar",
-      "nutrition-water",
-      "nutrition-daily-meals",
-      "nutrition-reflux",
-      "tracking-quick-check",
-      "tracking-weighin",
-      "tracking-history",
-      "cabin-recovery",
-      "cabin-pet-room",
-      "cabin-badges",
-      "cabin-shop",
-    ];
     const updated = { ...(s.collapsedSections ?? {}) };
-    knownKeys.forEach((k) => {
+    SECTION_IDS.forEach((k) => {
       updated[k] = collapsed;
     });
     return {

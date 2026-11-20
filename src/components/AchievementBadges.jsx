@@ -48,8 +48,8 @@ const ALL_BADGES = [
   },
   {
     id: "qlaira-consistency",
-    title: "התמדה הורמונלית (Qlaira Streak)",
-    desc: "מעקב ונטילת גלולת קלייר לפי השעון לאיזון הורמונלי",
+    title: "התמדה הורמונלית (Zoely Streak)",
+    desc: "מעקב ונטילת גלולת זואלי לפי השעון לאיזון הורמונלי",
     reward: 15,
     icon: HeartHandshake,
     color: "from-purple-500/20 to-pink-500/20 text-lilac border-lilac/30",

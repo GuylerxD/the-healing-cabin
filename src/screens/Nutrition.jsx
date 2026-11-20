@@ -11,6 +11,7 @@ import {
   Plus,
   Edit3,
   Trash2,
+  Undo2,
 } from "lucide-react";
 import { updateToday, useCabin, useToday } from "../store";
 import CollapsibleCard from "../components/CollapsibleCard";
@@ -97,6 +98,22 @@ export default function Nutrition() {
     );
   };
 
+  // Quick protein adds are logged per day so the last one can be undone.
+  const quickProtein = today.quickProtein ?? [];
+  const handleQuickProtein = (grams) =>
+    updateToday({
+      protein: protein + grams,
+      quickProtein: [...quickProtein, grams],
+    });
+  const handleUndoQuickProtein = () => {
+    if (!quickProtein.length) return;
+    const last = quickProtein[quickProtein.length - 1];
+    updateToday({
+      protein: Math.max(0, protein - last),
+      quickProtein: quickProtein.slice(0, -1),
+    });
+  };
+
   const handleSetWater = (cupIndex) => {
     const targetCups = cupIndex + 1;
     const nextWater = waterCups === targetCups ? cupIndex : targetCups;
@@ -177,15 +194,29 @@ export default function Nutrition() {
 
           {/* Quick protein buttons */}
           <div className="border-t border-white/10 pt-2.5">
-            <span className="text-[11px] text-purple-300 block mb-1.5">
-              הוספה מהירה של חלבון:
-            </span>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] text-purple-300">
+                הוספה מהירה של חלבון:
+              </span>
+              {quickProtein.length > 0 && (
+                <button
+                  type="button"
+                  onClick={handleUndoQuickProtein}
+                  className="flex items-center gap-1 text-[11px] text-purple-300 hover:text-moon"
+                >
+                  <Undo2 className="h-3 w-3" />
+                  <span>
+                    ביטול +{quickProtein[quickProtein.length - 1]}ג׳ אחרון
+                  </span>
+                </button>
+              )}
+            </div>
             <div className="flex gap-2">
               {PROTEIN_ADDS.map(({ label, grams }) => (
                 <button
                   key={label}
                   type="button"
-                  onClick={() => updateToday({ protein: protein + grams })}
+                  onClick={() => handleQuickProtein(grams)}
                   className="flex-1 rounded-2xl bg-white/5 py-2 text-xs text-moon transition active:scale-95 hover:bg-white/10"
                 >
                   {label}

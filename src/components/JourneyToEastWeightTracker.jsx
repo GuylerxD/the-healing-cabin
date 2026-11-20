@@ -11,17 +11,24 @@ import {
   PartyPopper,
   Coins,
 } from "lucide-react";
-import { useCabin, setCabin, todayKey } from "../store";
+import { useCabin } from "../store";
+import {
+  WEIGHT_MILESTONE_REWARDS,
+  WEIGHT_MAX,
+  WEIGHT_MIN,
+  isValidWeight,
+  latestWeight,
+  recordWeighIn,
+} from "../lib/weight";
 
-const WEIGHT_MILESTONES = [
+// Display data only; thresholds and rewards come from lib/weight.js
+const MILESTONE_DISPLAY = [
   {
     id: "m90",
-    kgThreshold: 90,
     title: "כרטיסים הוזמנו! ✈️",
     subtitle: "Flight Booked!",
     city: "נמל תעופה בן גוריון 🛫",
     desc: "ירדת ל-90 ק״ג! כרטיסי הטיסה לקוריאה ויפן הוזמנו רשמית ל-2027!",
-    coinsReward: 50,
     icon: Plane,
     color: "from-sky-400 to-blue-500",
     textColor: "text-sky-300",
@@ -29,12 +36,10 @@ const WEIGHT_MILESTONES = [
   },
   {
     id: "m80",
-    kgThreshold: 80,
     title: "נוחתים בסיאול 🇰🇷",
     subtitle: "Landing in Seoul",
     city: "סיאול, דרום קוריאה",
     desc: "משקל 80 ק״ג הושג! מוצ׳י וצ׳ארלי לובשים צעיפים ונוחתים ברחובות מיונגדונג המוארים!",
-    coinsReward: 75,
     icon: MapPin,
     color: "from-blush to-pink-500",
     textColor: "text-blush",
@@ -42,12 +47,10 @@ const WEIGHT_MILESTONES = [
   },
   {
     id: "m70",
-    kgThreshold: 70,
     title: "רכבת קליע לקיוטו 🚅",
     subtitle: "Bullet Train to Kyoto",
     city: "קיוטו, יפן (שינקנסן)",
     desc: "70 ק״ג! נוסעים בשינקנסן המהירה בין מקדשי במבוק וגני זן שלווים ביפן!",
-    coinsReward: 100,
     icon: Train,
     color: "from-lilac to-purple-500",
     textColor: "text-lilac",
@@ -55,12 +58,10 @@ const WEIGHT_MILESTONES = [
   },
   {
     id: "m60",
-    kgThreshold: 60,
     title: "אלופת טוקיו - הגענו ליעד! 🗼🌸",
     subtitle: "Tokyo Champion - Final Goal",
     city: "טוקיו, יפן (היעד הסופי)",
     desc: "60 ק״ג! הניצחון המושלם: 39 ק״ג של ריפוי, בריאות ועוצמה. הגעת ליעד החלומות שלך!",
-    coinsReward: 250,
     icon: Crown,
     color: "from-mint via-emerald-400 to-teal-500",
     textColor: "text-mint",
@@ -68,13 +69,15 @@ const WEIGHT_MILESTONES = [
   },
 ];
 
+const WEIGHT_MILESTONES = MILESTONE_DISPLAY.map((d) => ({
+  ...d,
+  ...WEIGHT_MILESTONE_REWARDS.find((r) => r.id === d.id),
+}));
+
 export default function JourneyToEastWeightTracker() {
-  const {
-    currentWeight = 99,
-    startWeight = 99,
-    goalWeight = 60,
-    unlockedWeightMilestones = [],
-  } = useCabin();
+  const cabin = useCabin();
+  const { startWeight = 99, goalWeight = 60 } = cabin;
+  const currentWeight = latestWeight(cabin);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputWeight, setInputWeight] = useState(currentWeight.toString());
@@ -89,7 +92,7 @@ export default function JourneyToEastWeightTracker() {
     100,
     Math.max(0, Math.round((lostKg / totalJourneyKg) * 100)),
   );
-  const remainingKg = Math.max(0, (currentWeight - goalWeight).toFixed(1));
+  const remainingKg = Math.max(0, currentWeight - goalWeight);
 
   const handleOpenModal = () => {
     setInputWeight(currentWeight.toString());
@@ -99,34 +102,16 @@ export default function JourneyToEastWeightTracker() {
   const handleSaveWeight = (e) => {
     e.preventDefault();
     const newWeight = parseFloat(inputWeight);
-    if (isNaN(newWeight) || newWeight < 40 || newWeight > 200) return;
+    if (!isValidWeight(newWeight)) return;
 
-    // Check newly unlocked milestones
-    const alreadyUnlocked = new Set(unlockedWeightMilestones || []);
-    const newlyUnlocked = [];
-    let addedCoins = 0;
-
-    WEIGHT_MILESTONES.forEach((m) => {
-      if (newWeight <= m.kgThreshold && !alreadyUnlocked.has(m.id)) {
-        newlyUnlocked.push(m);
-        alreadyUnlocked.add(m.id);
-        addedCoins += m.coinsReward;
-      }
-    });
-
-    setCabin((s) => ({
-      ...s,
-      currentWeight: newWeight,
-      coins: s.coins + addedCoins,
-      unlockedWeightMilestones: Array.from(alreadyUnlocked),
-      weighIns: [...(s.weighIns || []), { date: todayKey(), kg: newWeight }],
-    }));
-
+    const { ids } = recordWeighIn(newWeight);
     setIsModalOpen(false);
 
     // If milestone unlocked, trigger pet celebration pop-up!
-    if (newlyUnlocked.length > 0) {
-      setCelebrationMilestone(newlyUnlocked[newlyUnlocked.length - 1]);
+    if (ids.length > 0) {
+      setCelebrationMilestone(
+        WEIGHT_MILESTONES.find((m) => m.id === ids[ids.length - 1]),
+      );
     }
   };
 
@@ -202,9 +187,9 @@ export default function JourneyToEastWeightTracker() {
               {totalJourneyKg} ק״ג ({progressPct}%)
             </span>
             <span className="text-mint font-bold">
-              {remainingKg === "0.0"
+              {remainingKg <= 0
                 ? "הגעת ליעד הסופי! 👑"
-                : `עוד ${remainingKg} ק״ג ליעד 🌸`}
+                : `עוד ${remainingKg.toFixed(1)} ק״ג ליעד 🌸`}
             </span>
           </div>
 
@@ -338,8 +323,8 @@ export default function JourneyToEastWeightTracker() {
                   <input
                     type="number"
                     step="0.1"
-                    min="40"
-                    max="200"
+                    min={WEIGHT_MIN}
+                    max={WEIGHT_MAX}
                     autoFocus
                     value={inputWeight}
                     onChange={(e) => setInputWeight(e.target.value)}

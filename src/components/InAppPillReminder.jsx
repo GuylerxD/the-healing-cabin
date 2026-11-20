@@ -1,74 +1,107 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Pill, CheckCircle2, Clock, X, Sparkles } from "lucide-react";
-import { updateToday, useToday } from "../store";
+import { getCabin, markPillTaken, todayKey, PILL_REWARD } from "../store";
+import {
+  DEFAULT_REMINDER_TIME,
+  REMINDER_ENABLED_KEY,
+  REMINDER_LAST_FIRED_KEY,
+  REMINDER_TIME_KEY,
+  minutesOfDay,
+  showPillNotification,
+} from "../lib/pillReminder";
+
+const SNOOZE_MS = 10 * 60 * 1000;
+
+// Read fresh state at call time so timers never act on a stale render.
+const isTakenToday = () => Boolean(getCabin().days[todayKey()]?.qlaira);
+
+function notifyPill() {
+  showPillNotification(
+    "תזכורת גלולת זואלי 💊",
+    "הגיע הזמן לקחת את גלולת הזואלי היומית שלך לבריאות ואיזון הורמונלי ✨",
+    "qlaira-daily",
+  );
+}
 
 export default function InAppPillReminder() {
-  const today = useToday();
   const [isOpen, setIsOpen] = useState(false);
   const [celebration, setCelebration] = useState(false);
+  const snoozeRef = useRef(null);
 
-  const pillTakenToday = Boolean(today.qlaira);
-
-  // Check scheduled time and listen for custom trigger events
-  useEffect(() => {
-    const handleCustomTrigger = () => {
+  const scheduleSnooze = () => {
+    clearTimeout(snoozeRef.current);
+    snoozeRef.current = setTimeout(() => {
+      if (isTakenToday()) return;
       setIsOpen(true);
-    };
+      notifyPill();
+    }, SNOOZE_MS);
+  };
 
-    window.addEventListener(
-      "trigger-qlaira-pill-reminder",
-      handleCustomTrigger,
-    );
+  useEffect(() => {
+    // "לקחתי!" tapped on a notification while the app was closed → app opened with ?pillTaken=1
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("pillTaken") === "1") {
+      markPillTaken();
+      params.delete("pillTaken");
+      const qs = params.toString();
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + (qs ? `?${qs}` : "") + window.location.hash,
+      );
+    }
 
-    // Also check every minute if current time equals scheduled time and pill not taken
-    const interval = setInterval(() => {
-      if (pillTakenToday) return;
+    const open = () => setIsOpen(true);
+    window.addEventListener("trigger-qlaira-pill-reminder", open);
 
-      const reminderTime =
-        localStorage.getItem("qlaira_reminder_time") || "21:00";
-      const isEnabled =
-        localStorage.getItem("qlaira_reminder_enabled") === "true";
-      if (!isEnabled) return;
-
+    // Fire once per day, any time after the chosen hour (survives throttled timers / reopening).
+    const check = () => {
+      if (localStorage.getItem(REMINDER_ENABLED_KEY) !== "true") return;
+      if (isTakenToday()) return;
+      const k = todayKey();
+      if (localStorage.getItem(REMINDER_LAST_FIRED_KEY) === k) return;
+      const time =
+        localStorage.getItem(REMINDER_TIME_KEY) || DEFAULT_REMINDER_TIME;
       const now = new Date();
-      const currentH = String(now.getHours()).padStart(2, "0");
-      const currentM = String(now.getMinutes()).padStart(2, "0");
-      const currentTimeStr = `${currentH}:${currentM}`;
+      if (now.getHours() * 60 + now.getMinutes() < minutesOfDay(time)) return;
+      localStorage.setItem(REMINDER_LAST_FIRED_KEY, k);
+      setIsOpen(true);
+      notifyPill();
+    };
+    check();
+    const interval = setInterval(check, 30_000);
+    document.addEventListener("visibilitychange", check);
 
-      if (currentTimeStr === reminderTime) {
-        setIsOpen(true);
-      }
-    }, 30_000);
+    // Action buttons on the system notification (relayed by the Service Worker)
+    const onSwMessage = (event) => {
+      if (event.data?.type === "QLAIRA_PILL_TAKEN") markPillTaken();
+      if (event.data?.type === "QLAIRA_PILL_SNOOZE") scheduleSnooze();
+    };
+    const sw = "serviceWorker" in navigator ? navigator.serviceWorker : null;
+    sw?.addEventListener("message", onSwMessage);
 
     return () => {
-      window.removeEventListener(
-        "trigger-qlaira-pill-reminder",
-        handleCustomTrigger,
-      );
+      window.removeEventListener("trigger-qlaira-pill-reminder", open);
       clearInterval(interval);
+      document.removeEventListener("visibilitychange", check);
+      sw?.removeEventListener("message", onSwMessage);
+      clearTimeout(snoozeRef.current);
     };
-  }, [pillTakenToday]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleMarkAsTaken = useCallback(() => {
-    updateToday({ qlaira: true }, pillTakenToday ? 0 : 4);
+  const handleMarkAsTaken = () => {
+    markPillTaken();
     setCelebration(true);
     setTimeout(() => {
       setCelebration(false);
       setIsOpen(false);
     }, 1800);
-  }, [pillTakenToday]);
+  };
 
   const handleSnooze = () => {
     setIsOpen(false);
-    // Re-prompt in 10 minutes
-    setTimeout(
-      () => {
-        if (!today.qlaira) {
-          setIsOpen(true);
-        }
-      },
-      10 * 60 * 1000,
-    );
+    scheduleSnooze();
   };
 
   if (!isOpen) return null;
@@ -98,7 +131,7 @@ export default function InAppPillReminder() {
               תזכורת פנימית מהאפליקציה
             </span>
             <h3 className="text-base font-bold text-moon">
-              זמן לגלולת קלייר (Qlaira) 💊
+              זמן לגלולת זואלי (Zoely) 💊
             </h3>
           </div>
         </div>
@@ -112,7 +145,7 @@ export default function InAppPillReminder() {
         {celebration ? (
           <div className="flex items-center justify-center gap-2 rounded-2xl bg-mint/20 p-4 text-sm font-bold text-mint border border-mint/40 animate-pulse">
             <Sparkles className="h-5 w-5" />
-            <span>נפלא! נטילת קלייר נרשמה (+10 מטבעות ריפוי ✨)</span>
+            <span>נפלא! נטילת זואלי נרשמה (+{PILL_REWARD} מטבעות ריפוי ✨)</span>
           </div>
         ) : (
           <div className="space-y-2.5 pt-2">
@@ -122,7 +155,7 @@ export default function InAppPillReminder() {
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-mint to-teal-400 p-3.5 text-sm font-bold text-space shadow-lg shadow-mint/25 transition active:scale-95"
             >
               <CheckCircle2 className="h-5 w-5" />
-              <span>לקחתי עכשיו! (+10 🪙)</span>
+              <span>לקחתי עכשיו! (+{PILL_REWARD} 🪙)</span>
             </button>
 
             <button

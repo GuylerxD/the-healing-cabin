@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Scale, Shirt, Zap, Sparkles } from "lucide-react";
-import { setCabin, todayKey, updateToday, useCabin, useToday } from "../store";
+import { todayKey, updateToday, useCabin, useToday } from "../store";
 import { compareBy, daysUntilNextWeighIn, smooth } from "../lib/tracking";
+import {
+  isValidWeight,
+  recordWeighIn,
+  WEEKLY_WEIGH_REWARD as WEIGH_REWARD,
+} from "../lib/weight";
 import CollapsibleCard from "../components/CollapsibleCard";
 import JourneyToEastWeightTracker from "../components/JourneyToEastWeightTracker";
 
@@ -12,7 +17,6 @@ const FIT = [
 ];
 const PAIN = ["אין", "קל", "בינוני", "חזק"]; // index = 0..3
 const MOOD = ["שפוף 🌧️", "רגוע ⛅", "טוב ☀️", "קורן ✨"];
-const WEIGH_REWARD = 4;
 
 function TrendChart({ weighIns }) {
   if (weighIns.length < 2)
@@ -50,7 +54,7 @@ function TrendChart({ weighIns }) {
 }
 
 function Insight({ label, days, predicate }) {
-  const pain = compareBy(days, "pain", predicate);
+  const pain = compareBy(days, "backPain", predicate);
   const energy = compareBy(days, "energy", predicate);
   const fmt = (n) => (n == null ? "—" : n.toFixed(1));
   return (
@@ -72,15 +76,11 @@ export default function Tracking() {
   const [kg, setKg] = useState("");
   const wait = daysUntilNextWeighIn(weighIns, todayKey());
   const kgNum = Number(kg);
-  const validKg = kgNum >= 30 && kgNum <= 250;
+  const validKg = isValidWeight(kgNum);
 
   const saveWeight = () => {
     if (!validKg || wait > 0) return;
-    setCabin((s) => ({
-      ...s,
-      coins: s.coins + WEIGH_REWARD,
-      weighIns: [...s.weighIns, { date: todayKey(), kg: kgNum }],
-    }));
+    recordWeighIn(kgNum);
     setKg("");
   };
 

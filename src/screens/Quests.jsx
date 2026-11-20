@@ -8,7 +8,6 @@ import {
   Calendar,
 } from "lucide-react";
 import { updateDay, useCabin, dateKeyWithOffset } from "../store";
-import PillReminderToggle from "../components/PillReminderToggle";
 import { triggerInAppPillReminder } from "../lib/pillReminder";
 import CollapsibleCard from "../components/CollapsibleCard";
 
@@ -134,10 +133,10 @@ export default function Quests() {
         </div>
       </CollapsibleCard>
 
-      {/* 3. נטילת קליירה (Collapsible) */}
+      {/* 3. נטילת זואלי (Collapsible) */}
       <CollapsibleCard
         id="quests-qlaira"
-        title={`נטילת קליירה (Qlaira) ${!isToday ? `(${dayNameHe})` : ""}`}
+        title={`נטילת זואלי (Zoely) ${!isToday ? `(${dayNameHe})` : ""}`}
         badge={
           activeDayData.qlaira
             ? `נלקחה (${displayDateTitle}) ✨`
@@ -186,17 +185,6 @@ export default function Quests() {
             </button>
           </div>
         </div>
-      </CollapsibleCard>
-
-      {/* Push Notification Toggle for Qlaira Reminder (Collapsible) */}
-      <CollapsibleCard
-        id="quests-push-settings"
-        title="הגדרות תזכורת יומית (Push)"
-        badge="שעת התראה ובדיקה"
-        icon={Bell}
-        defaultOpen={false}
-      >
-        <PillReminderToggle />
       </CollapsibleCard>
     </div>
   );

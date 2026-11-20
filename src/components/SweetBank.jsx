@@ -8,13 +8,22 @@ import {
   Coins,
   RotateCcw,
 } from "lucide-react";
-import { useCabin, setCabin, useToday, updateToday } from "../store";
-
-const TOTAL_WEEKLY_SWEET_TOKENS = 4;
-const IDLE_COIN_BONUS_PER_SAVED_TOKEN = 10; // 10 coins per unspent token on Saturday night
+import {
+  useCabin,
+  setCabin,
+  useToday,
+  updateToday,
+  SWEET_TOKENS_PER_WEEK as TOTAL_WEEKLY_SWEET_TOKENS,
+  SWEET_BONUS_PER_TOKEN as IDLE_COIN_BONUS_PER_SAVED_TOKEN,
+  isSweetBonusWindow,
+  claimSweetBankBonus,
+  sweetWeekKey,
+} from "../store";
 
 export default function SweetBank() {
-  const { sweetTokensSpent = 0 } = useCabin();
+  const { sweetTokensSpent = 0, sweetBankClaimedWeek } = useCabin();
+  const canClaimNow =
+    isSweetBonusWindow() && sweetBankClaimedWeek !== sweetWeekKey();
   const today = useToday();
   const [conversionBonusClaimed, setConversionBonusClaimed] = useState(false);
 
@@ -46,15 +55,10 @@ export default function SweetBank() {
 
   // Convert unused tokens to coins (Saturday night Idle Room reward simulation)
   const handleClaimIdleReward = () => {
-    if (availableTokens <= 0) return;
-    const bonusCoins = availableTokens * IDLE_COIN_BONUS_PER_SAVED_TOKEN;
-    setCabin((s) => ({
-      ...s,
-      coins: s.coins + bonusCoins,
-      sweetTokensSpent: 0, // Reset for new week
-    }));
-    setConversionBonusClaimed(true);
-    setTimeout(() => setConversionBonusClaimed(false), 5000);
+    if (claimSweetBankBonus() > 0) {
+      setConversionBonusClaimed(true);
+      setTimeout(() => setConversionBonusClaimed(false), 5000);
+    }
   };
 
   // Timing quest: ate sweet right after full protein meal
@@ -144,7 +148,14 @@ export default function SweetBank() {
         </div>
 
         {/* Saturday Night Idle Conversion Simulation Button */}
-        {availableTokens > 0 && (
+        {availableTokens > 0 && !canClaimNow && (
+          <p className="border-t border-white/10 pt-2.5 text-[11px] text-purple-300">
+            במוצ״ש (משבת 18:00) אפשר לאסוף +
+            {availableTokens * IDLE_COIN_BONUS_PER_SAVED_TOKEN} 🪙 על אסימונים
+            שלא נוצלו — ואם שכחת, זה יומר אוטומטית בתחילת השבוע
+          </p>
+        )}
+        {availableTokens > 0 && canClaimNow && (
           <div className="border-t border-white/10 pt-2.5 flex items-center justify-between">
             <span className="text-[11px] text-moon font-medium">
               בונוס סופ״ש: המרת {availableTokens} אסימונים שנותרו

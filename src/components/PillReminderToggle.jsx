@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState } from "react";
 import {
   Bell,
   BellOff,
@@ -8,11 +8,17 @@ import {
   AlertCircle,
   Pill,
 } from "lucide-react";
-import { triggerInAppPillReminder } from "../lib/pillReminder";
+import {
+  triggerInAppPillReminder,
+  showPillNotification,
+  resetReminderSchedule,
+  REMINDER_ENABLED_KEY as STORAGE_KEY_ENABLED,
+  REMINDER_TIME_KEY as STORAGE_KEY_TIME,
+  DEFAULT_REMINDER_TIME as DEFAULT_TIME,
+} from "../lib/pillReminder";
+import { todayKey } from "../store";
 
-const STORAGE_KEY_ENABLED = "qlaira_reminder_enabled";
-const STORAGE_KEY_TIME = "qlaira_reminder_time";
-const DEFAULT_TIME = "21:00"; // ברירת מחדל: 21:00 בערב
+// The daily schedule itself lives in InAppPillReminder (always mounted); this card only edits settings.
 
 function checkIsSupported() {
   return (
@@ -34,78 +40,12 @@ export default function PillReminderToggle({ onNotificationSent }) {
     return localStorage.getItem(STORAGE_KEY_TIME) || DEFAULT_TIME;
   });
   const [statusMessage, setStatusMessage] = useState("");
-  const timerRef = useRef(null);
 
-  // Show notification via Service Worker registration
-  const triggerNotification = useCallback(
-    async (title, body, tag = "qlaira-reminder") => {
-      try {
-        const registration = await navigator.serviceWorker.ready;
-        if (registration && registration.showNotification) {
-          await registration.showNotification(title, {
-            body,
-            icon: "/the-healing-cabin/icon-192.png",
-            badge: "/the-healing-cabin/icon-192.png",
-            dir: "rtl",
-            lang: "he",
-            tag,
-            renotify: true,
-            vibrate: [200, 100, 200],
-            data: { url: "/the-healing-cabin/" },
-            actions: [
-              { action: "taken", title: "לקחתי! ✨" },
-              { action: "snooze", title: "הזכר לי בעוד 10 דק'" },
-            ],
-          });
-          if (onNotificationSent) onNotificationSent();
-          return true;
-        }
-      } catch (err) {
-        console.error("שגיאה בהצגת התראה:", err);
-      }
-      return false;
-    },
-    [onNotificationSent],
-  );
-
-  // Schedule daily recurring reminder
-  useEffect(() => {
-    if (!enabled || permission !== "granted") {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      return;
-    }
-
-    const [targetHour, targetMinute] = reminderTime.split(":").map(Number);
-
-    const scheduleNext = () => {
-      const now = new Date();
-      const nextTime = new Date();
-      nextTime.setHours(targetHour, targetMinute, 0, 0);
-
-      // If scheduled time has already passed today, set for tomorrow
-      if (nextTime <= now) {
-        nextTime.setDate(nextTime.getDate() + 1);
-      }
-
-      const delayMs = nextTime.getTime() - now.getTime();
-
-      timerRef.current = setTimeout(async () => {
-        await triggerNotification(
-          "תזכורת גלולת קלייר 💊",
-          "הגיע הזמן לקחת את גלולת הקלייר היומית שלך לבריאות ואיזון הורמונלי ✨",
-          "qlaira-daily",
-        );
-        // Repeat next day
-        scheduleNext();
-      }, delayMs);
-    };
-
-    scheduleNext();
-
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [enabled, reminderTime, permission, triggerNotification]);
+  const triggerNotification = async (title, body, tag) => {
+    const ok = await showPillNotification(title, body, tag);
+    if (ok && onNotificationSent) onNotificationSent();
+    return ok;
+  };
 
   // Handle toggle switch
   const handleToggle = async () => {
@@ -124,11 +64,12 @@ export default function PillReminderToggle({ onNotificationSent }) {
       if (currentPerm === "granted") {
         setEnabled(true);
         localStorage.setItem(STORAGE_KEY_ENABLED, "true");
+        resetReminderSchedule(reminderTime, todayKey());
         setStatusMessage(`התזכורת היומית הופעלה לשעה ${reminderTime} ⏰`);
         // Trigger small confirmation
         triggerNotification(
-          "תזכורת קלייר הופעלה בהצלחה ✨",
-          `נזכיר לך לקחת את גלולת קלייר מדי יום בשעה ${reminderTime}.`,
+          "תזכורת זואלי הופעלה בהצלחה ✨",
+          `נזכיר לך לקחת את גלולת זואלי מדי יום בשעה ${reminderTime}.`,
           "qlaira-setup",
         );
       } else {
@@ -147,6 +88,7 @@ export default function PillReminderToggle({ onNotificationSent }) {
     const newTime = e.target.value;
     setReminderTime(newTime);
     localStorage.setItem(STORAGE_KEY_TIME, newTime);
+    if (newTime) resetReminderSchedule(newTime, todayKey());
     if (enabled) {
       setStatusMessage(`שעת התזכורת עודכנה ל-${newTime}`);
     }
@@ -162,8 +104,8 @@ export default function PillReminderToggle({ onNotificationSent }) {
       }
     }
     const success = await triggerNotification(
-      "בדיקה: תזכורת גלולת קלייר 💊",
-      "כך תיראה התזכורת היומית שלך לנטילת קלייר בזמן! ✨",
+      "בדיקה: תזכורת גלולת זואלי 💊",
+      "כך תיראה התזכורת היומית שלך לנטילת זואלי בזמן! ✨",
       "qlaira-test",
     );
     if (success) {
@@ -196,10 +138,10 @@ export default function PillReminderToggle({ onNotificationSent }) {
           </div>
           <div>
             <h3 className="font-bold text-moon text-sm">
-              תזכורת יומית לגלולת קלייר
+              תזכורת יומית לגלולת זואלי
             </h3>
             <p className="text-xs text-purple-300">
-              התראת Push מקומית מדויקת (Qlaira Reminder)
+              התראת Push מקומית מדויקת (Zoely Reminder)
             </p>
           </div>
         </div>
