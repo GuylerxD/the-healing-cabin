@@ -9,71 +9,50 @@ import {
   LifeBuoy,
   Compass,
   Dumbbell,
+  Shuffle,
+  CalendarClock,
 } from "lucide-react";
 import { updateToday, useToday, useCabin, setCabin } from "../store";
-import { useDailyPlan } from "../hooks/useDailyPlan";
 import CastToTvButton from "../components/CastToTvButton";
 import JourneyToEastMap from "../components/JourneyToEastMap";
 import CollapsibleCard from "../components/CollapsibleCard";
-
-const WORKOUTS = [
-  {
-    id: "stretch",
-    name: "מתיחות עדינות ושחרור גב 🧘‍♀️",
-    minutes: 10,
-    cardio: false,
-    query: "gentle stretching lower back relief beginner",
-  },
-  {
-    id: "cat-cow",
-    name: "חתול-פרה ותנוחת הילד לגב 🐱",
-    minutes: 8,
-    cardio: false,
-    backFocused: true,
-    query: "cat cow child pose lower back decompression",
-  },
-  {
-    id: "nerve-glide",
-    name: "שחרור עצב סיאטיקה וגב תחתון 🌸",
-    minutes: 12,
-    cardio: false,
-    backFocused: true,
-    query: "sciatica nerve flossing lower back relief",
-  },
-  {
-    id: "pilates",
-    name: "פילאטיס קיר עדין 🧱",
-    minutes: 15,
-    cardio: false,
-    query: "wall pilates beginner low impact",
-  },
-  {
-    id: "boxing",
-    name: "איגרוף קצב POV 🥊",
-    minutes: 15,
-    cardio: true,
-    query: "POV rhythm boxing workout low impact",
-  },
-  {
-    id: "kpop",
-    name: "הליכת K-pop 🎧",
-    minutes: 20,
-    cardio: true,
-    query: "kpop walking workout low impact",
-  },
-];
+import { WORKOUT_TYPES } from "../data/workoutPool";
+import {
+  getDailyExtras,
+  getDailyWorkout,
+  getTomorrowWorkout,
+} from "../lib/workoutRotation";
 
 const REWARD = 6;
+const HEBREW_DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
+const ADAPTED_NOTE = {
+  back: "הותאם להיום בגלל כאב גב — אימון ממוקד הקלה 💆‍♀️",
+  breathing: "הנשימה כבדה היום — האירובי הוחלף בתנועה רגועה 🫁",
+};
 
 export default function Movement() {
   const today = useToday();
   const cabin = useCabin();
   const sosMode = Boolean(cabin.sosMode);
-  const { todayPlan, dayNameHe } = useDailyPlan(null, { sosMode });
   const heavy = !!today.heavyBreathing;
   const backPainLevel = today.backPain ?? 0;
   const isBackPainHigh = backPainLevel >= 2; // בינוני או חזק
   const done = today.workouts ?? [];
+
+  const [now] = useState(() => new Date());
+  const dayNameHe = HEBREW_DAYS[now.getDay()];
+  const swap = today.workoutSwap ?? 0;
+  const { workout, type, adaptedReason } = getDailyWorkout(now, {
+    swap,
+    sos: sosMode,
+    backPainHigh: isBackPainHigh,
+    heavyBreathing: heavy,
+  });
+  const typeInfo = WORKOUT_TYPES[type];
+  const dailyDoneId = `daily:${workout.id}`;
+  const dailyDone = done.includes(dailyDoneId);
+  const tomorrow = getTomorrowWorkout(now);
+  const extras = getDailyExtras(now, workout.id);
 
   // Hot pad timer (10 mins = 600 secs)
   const [timerSeconds, setTimerSeconds] = useState(600);
@@ -107,10 +86,10 @@ export default function Movement() {
     return `${m}:${s < 10 ? "0" : ""}${s}`;
   };
 
-  // If back pain is high, prioritize back stretches and filter/lock cardio
+  // If back pain is high, prioritize back stretches and hide cardio
   const visibleWorkouts = isBackPainHigh
-    ? WORKOUTS.filter((w) => !w.cardio)
-    : WORKOUTS;
+    ? extras.filter((w) => w.type !== "cardio")
+    : extras;
 
   return (
     <div className="space-y-4">
@@ -232,67 +211,95 @@ export default function Movement() {
         </div>
       </CollapsibleCard>
 
-      {/* Daily Spine-Safe Workout from plansDB (Collapsible) */}
-      {todayPlan && todayPlan.workout && (
-        <CollapsibleCard
-          id="movement-daily-workout"
-          title={
-            sosMode
-              ? "אימון מצב SOS מותאם אישית"
-              : `אימון יום ${dayNameHe}: תנועה מותאמת לגב 🌸`
-          }
-          badge={`${todayPlan.workout.category} • ${todayPlan.workout.durationMinutes} דק׳`}
-          icon={ShieldCheck}
-          defaultOpen={true}
-          headerClassName={sosMode ? "!border-blush/50" : "!border-mint/40"}
-        >
-          <div className="space-y-3.5">
-            <div>
-              <h3 className="font-bold text-moon text-sm">
-                {todayPlan.workout.title}
-              </h3>
-              <p className="text-xs text-purple-200 mt-1">
-                {todayPlan.workout.description}
-              </p>
-            </div>
+      {/* Daily Spine-Safe Workout — rotates every day (lib/workoutRotation.js) */}
+      <CollapsibleCard
+        id="movement-daily-workout"
+        title={
+          sosMode
+            ? "אימון מצב SOS מותאם אישית"
+            : `אימון יום ${dayNameHe}: תנועה מותאמת לגב 🌸`
+        }
+        badge={`${typeInfo.emoji} ${typeInfo.label} • ${workout.durationMinutes} דק׳`}
+        icon={ShieldCheck}
+        defaultOpen={true}
+        headerClassName={sosMode ? "!border-blush/50" : "!border-mint/40"}
+      >
+        <div className="space-y-3.5">
+          {ADAPTED_NOTE[adaptedReason] && (
+            <p className="rounded-xl border border-mint/30 bg-mint/10 px-3 py-2 text-[11px] font-semibold text-mint">
+              {ADAPTED_NOTE[adaptedReason]}
+            </p>
+          )}
+          <div>
+            <h3 className="font-bold text-moon text-sm">{workout.title}</h3>
+            <p className="text-xs text-purple-200 mt-1">{workout.description}</p>
+          </div>
 
-            <div className="rounded-2xl bg-white/5 p-3 space-y-1.5 text-xs">
-              <div
-                className={`flex items-center gap-2 ${sosMode ? "text-blush" : "text-mint"}`}
+          <div className="rounded-2xl bg-white/5 p-3 space-y-1.5 text-xs">
+            <div
+              className={`flex items-center gap-2 ${sosMode ? "text-blush" : "text-mint"}`}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0" />
+              <span>{workout.spineSafety}</span>
+            </div>
+            <div className="text-purple-300">
+              ⚡ {workout.impact} • ⏱️ {workout.durationMinutes} דקות
+            </div>
+          </div>
+
+          {/* Smart TV Cast Integration */}
+          <CastToTvButton
+            workoutTitle={workout.title}
+            youtubeQuery={workout.youtubeQuery}
+          />
+
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(workout.youtubeQuery)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold text-space shadow-lg transition active:scale-95 ${
+              sosMode ? "bg-blush shadow-blush/20" : "bg-mint shadow-mint/20"
+            }`}
+          >
+            <PlayCircle className="h-4 w-4" />
+            <span>
+              {sosMode
+                ? "נגן מתיחות SOS עדינות"
+                : `סרטון מודרך ביוטיוב (${workout.durationMinutes} דק׳)`}
+            </span>
+          </a>
+
+          <div className="flex gap-2">
+            {!sosMode && !dailyDone && (
+              <button
+                type="button"
+                onClick={() => updateToday({ workoutSwap: swap + 1 })}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl border border-white/15 bg-white/5 py-2 text-xs font-semibold text-moon transition hover:bg-white/10 active:scale-95"
               >
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>{todayPlan.workout.spineSafety}</span>
-              </div>
-              <div className="text-purple-300">
-                ⚡ {todayPlan.workout.impact} • ⏱️{" "}
-                {todayPlan.workout.durationMinutes} דקות
-              </div>
-            </div>
-
-            {/* Smart TV Cast Integration */}
-            <CastToTvButton
-              workoutTitle={todayPlan.workout.title}
-              youtubeQuery={todayPlan.workout.youtubeQuery}
-            />
-
-            <a
-              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(todayPlan.workout.youtubeQuery)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold text-space shadow-lg transition active:scale-95 ${
-                sosMode ? "bg-blush shadow-blush/20" : "bg-mint shadow-mint/20"
+                <Shuffle className="h-3.5 w-3.5 text-lilac" />
+                <span>אימון אחר</span>
+              </button>
+            )}
+            <button
+              type="button"
+              aria-pressed={dailyDone}
+              onClick={() => toggleDone(dailyDoneId)}
+              className={`flex-1 rounded-2xl py-2 text-xs font-bold transition active:scale-95 ${
+                dailyDone ? "bg-mint/20 text-mint" : "bg-lilac text-space"
               }`}
             >
-              <PlayCircle className="h-4 w-4" />
-              <span>
-                {sosMode
-                  ? "נגן מתיחות SOS עדינות"
-                  : `סרטון מודרך ביוטיוב (${todayPlan.workout.durationMinutes} דק׳)`}
-              </span>
-            </a>
+              {dailyDone ? "✅ בוצע" : `סיימתי +${REWARD} 🪙`}
+            </button>
           </div>
-        </CollapsibleCard>
-      )}
+
+          {!sosMode && (
+            <p className="flex items-center gap-1.5 text-[11px] text-purple-300">
+              <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+              <span>מחר: {tomorrow.title}</span>
+            </p>
+          )}
+        </div>
+      </CollapsibleCard>
 
       {/* Virtual Distance Pedometer: Journey to East Map (Collapsible) */}
       <CollapsibleCard
@@ -308,8 +315,8 @@ export default function Movement() {
       {/* Extra Workouts Library (Collapsible) */}
       <CollapsibleCard
         id="movement-extra-workouts"
-        title="ספריית אימונים ומתיחות נוספת"
-        badge={`${visibleWorkouts.length} תרגילים`}
+        title="עוד אפשרויות להיום"
+        badge={`${visibleWorkouts.length} אימונים • מתחלפים כל יום`}
         icon={Dumbbell}
         defaultOpen={false}
       >
@@ -321,10 +328,11 @@ export default function Movement() {
             </div>
           )}
           {visibleWorkouts.map((w) => {
-            const locked = heavy && w.cardio;
+            const locked = heavy && w.type === "cardio";
             const recommended =
               (isBackPainHigh && w.backFocused) ||
-              (heavy && w.id === "stretch");
+              (heavy && w.type === "recovery");
+            const t = WORKOUT_TYPES[w.type];
             const isDone = done.includes(w.id);
             return (
               <article
@@ -333,10 +341,15 @@ export default function Movement() {
                   recommended ? "!border-mint/60 ring-2 ring-mint/30" : ""
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <h3 className="font-bold">{w.name}</h3>
-                  <span className="text-xs text-purple-300">
-                    {w.minutes} דק׳
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="block text-[11px] font-semibold text-lilac">
+                      {t.emoji} {t.label}
+                    </span>
+                    <h3 className="font-bold">{w.title}</h3>
+                  </div>
+                  <span className="shrink-0 text-xs text-purple-300">
+                    {w.durationMinutes} דק׳
                   </span>
                 </div>
                 {recommended && (
@@ -353,7 +366,7 @@ export default function Movement() {
                 ) : (
                   <div className="flex gap-2">
                     <a
-                      href={`https://www.youtube.com/results?search_query=${encodeURIComponent(w.query)}`}
+                      href={`https://www.youtube.com/results?search_query=${encodeURIComponent(w.youtubeQuery)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-white/10 py-2 text-sm"

@@ -1,0 +1,410 @@
+// Workout pool for the daily rotation (see lib/workoutRotation.js).
+// Every workout here must stay: spine-safe after disc surgery (no twisting, no crunches,
+// no loaded forward bends), low impact (no jumping) and asthma friendly.
+//
+// type: "cardio" | "strength" | "mobility" | "recovery"
+// backFocused: good choice on a high back-pain day
+
+const SAFE_STANDING =
+  "עבודה בעמידה בלבד, גו זקוף, ללא פיתולי מותן וללא כפיפות בטן";
+const NO_JUMP = "אפס קפיצות, דופק מתון וידידותי לאסתמה";
+
+export const WORKOUT_TYPES = {
+  cardio: { label: "אירובי", emoji: "💓" },
+  strength: { label: "כוח", emoji: "💪" },
+  mobility: { label: "גמישות ויציבה", emoji: "🧘‍♀️" },
+  recovery: { label: "התאוששות", emoji: "🌊" },
+};
+
+export const WORKOUT_POOL = [
+  // ---------- Cardio ----------
+  {
+    id: "kpop-walking",
+    type: "cardio",
+    title: "אירובי קיי-פופ (Low Impact) 🎧",
+    durationMinutes: 25,
+    impact: NO_JUMP,
+    spineSafety: "צעידה רכה במקום, ללא פיתולי מותן וללא כפיפות גב",
+    description:
+      "צעידה קצבית לצלילי K-pop: יציבה זקופה, נשימה מבוקרת וקצב לב מתון.",
+    youtubeQuery: "Low impact Kpop walking workout",
+  },
+  {
+    id: "pov-boxing",
+    type: "cardio",
+    title: "איגרוף קצב POV + שחרור גב 🥊",
+    durationMinutes: 25,
+    impact: "אימפקט נמוך (15 דק׳ איגרוף + 10 דק׳ שחרור)",
+    spineSafety: "מכות ישרות בלבד ללא רוטציות מותן, ושחרור גב ניטרלי בסוף",
+    description:
+      "15 דקות איגרוף קצבי מול המסך, ואחריו 10 דקות מתיחות עדינות להפחתת לחץ מהחוליות.",
+    youtubeQuery: "POV Boxing Workout low impact",
+  },
+  {
+    id: "virtual-walk-game",
+    type: "cardio",
+    title: "משחק צעידה וירטואלי מול המסך 🎮",
+    durationMinutes: 30,
+    impact: NO_JUMP,
+    spineSafety: "הליכה במקום וקדימה-אחורה, גו זקוף, ללא כיפוף או רוטציות",
+    description:
+      "צעידה בקצב של עולם וירטואלי מול המסך — כיף, משחקי ומשחרר מתחים.",
+    youtubeQuery: "30 minute POV walking rhythm game",
+  },
+  {
+    id: "tokyo-walk",
+    type: "cardio",
+    title: "הליכה וירטואלית ברחובות טוקיו 🗼",
+    durationMinutes: 30,
+    impact: NO_JUMP,
+    spineSafety: "צעידה במקום בקצב נוח, גו זקוף לאורך כל ההליכה",
+    description:
+      "פותחים סיור הליכה 4K בטוקיו וצועדים איתו במקום — עוד כמה צעדים במסע למזרח.",
+    youtubeQuery: "Tokyo walking tour 4K",
+  },
+  {
+    id: "seoul-walk",
+    type: "cardio",
+    title: "הליכה וירטואלית בסיאול 🇰🇷",
+    durationMinutes: 30,
+    impact: NO_JUMP,
+    spineSafety: "צעידה במקום בקצב נוח, גו זקוף לאורך כל ההליכה",
+    description:
+      "סיור הליכה בשכונות סיאול — צועדים במקום ונהנים מהנוף בדרך לקוריאה.",
+    youtubeQuery: "Seoul walking tour 4K",
+  },
+  {
+    id: "home-walk-3k",
+    type: "cardio",
+    title: "הליכה מהירה בבית — 3 ק״מ 🏠",
+    durationMinutes: 30,
+    impact: NO_JUMP,
+    spineSafety: "צעדי הליכה, צעדים צידיים והרמות ברכיים נמוכות, ללא פיתולים",
+    description:
+      "הליכה מודרכת בסלון: צעדים קדימה, צידה וברכיים — מצטבר ל-3 ק״מ בלי לצאת מהבית.",
+    youtubeQuery: "walk at home 2 mile low impact walking workout",
+  },
+  {
+    id: "disney-walk",
+    type: "cardio",
+    title: "הליכת פסקולי דיסני 🏰",
+    durationMinutes: 20,
+    impact: NO_JUMP,
+    spineSafety: SAFE_STANDING,
+    description: "צעידה קצבית לשירי דיסני אהובים — אירובי עדין ומחייך.",
+    youtubeQuery: "disney walking workout low impact",
+  },
+  {
+    id: "pop-2000s-walk",
+    type: "cardio",
+    title: "הליכת להיטי שנות ה-2000 🎤",
+    durationMinutes: 25,
+    impact: NO_JUMP,
+    spineSafety: SAFE_STANDING,
+    description: "צעידה וצעדים צידיים לשירי פופ נוסטלגיים, קצב מתון ויציב.",
+    youtubeQuery: "2000s pop walking workout low impact",
+  },
+  {
+    id: "step-touch-cardio",
+    type: "cardio",
+    title: "קרדיו סטפ-טאץ׳ וצעדים צידיים 👟",
+    durationMinutes: 20,
+    impact: NO_JUMP,
+    spineSafety: SAFE_STANDING,
+    description:
+      "צעדים צידיים, הליכה לאחור ותנועות ידיים — מעלה דופק בעדינות בלי קפיצה אחת.",
+    youtubeQuery: "step touch cardio workout beginner standing no jumping",
+  },
+  {
+    id: "dance-cardio-gentle",
+    type: "cardio",
+    title: "ריקוד אירובי עדין 💃",
+    durationMinutes: 20,
+    impact: NO_JUMP,
+    spineSafety: "תנועות רגליים וידיים בלבד — מדלגים על סיבובי מותן חדים",
+    description:
+      "כוריאוגרפיה פשוטה למתחילות. אם יש סיבוב אגן בסרטון — ממשיכות לצעוד במקום.",
+    youtubeQuery: "low impact dance cardio beginner no jumping",
+  },
+  {
+    id: "arm-cardio",
+    type: "cardio",
+    title: "אירובי ידיים בעמידה 🙌",
+    durationMinutes: 15,
+    impact: "דופק מתון דרך פלג גוף עליון, רגליים יציבות",
+    spineSafety: "עמידה יציבה, ידיים בלבד, בלי סיבובי גו",
+    description:
+      "מעגלים, הרמות ומכות ישרות באוויר — אירובי קצר כשהרגליים עייפות ממשמרת.",
+    youtubeQuery: "standing arm cardio workout low impact",
+  },
+
+  // ---------- Strength ----------
+  {
+    id: "standing-strength",
+    type: "strength",
+    title: "חיזוק ועיצוב בעמידה מול המסך 🧍‍♀️",
+    durationMinutes: 20,
+    impact: "אפס קפיצות, עמידה יציבה",
+    spineSafety: "מנח ניטרלי: ללא כפיפות בטן וללא פיתולים",
+    description:
+      "כוח עדין לכל הגוף ללא ציוד: סקווטים רדודים מבוקרים, הרמות עקבים וייצוב כתפיים.",
+    youtubeQuery: "Standing full body strength no equipment",
+  },
+  {
+    id: "standing-liit",
+    type: "strength",
+    title: "אינטרוולים ללא קפיצות (LIIT) 🔥",
+    durationMinutes: 25,
+    impact: "Low-Intensity Interval, מותאם אסתמה",
+    spineSafety: "עבודה בעמידה בלבד, ללא שכיבה על הרצפה, ללא כפיפות בטן",
+    description:
+      "אינטרוולים בעצימות מבוקרת: מעלים דופק במתינות ומאיצים חילוף חומרים בלי קוצר נשימה.",
+    youtubeQuery: "Standing LIIT workout for weight loss",
+  },
+  {
+    id: "water-bottle-arms",
+    type: "strength",
+    title: "ידיים וכתפיים עם בקבוקי מים 💪",
+    durationMinutes: 15,
+    impact: "משקל קל, עמידה יציבה",
+    spineSafety: "הרמות מעל הראש רק עם בטן אסופה, ללא הקשתת גב",
+    description:
+      "כפיפות מרפק, הרחקות ופשיטות עם בקבוקי מים או משקולות קלות — חיזוק שרירי יציבה.",
+    youtubeQuery: "standing arm workout light weights beginner",
+  },
+  {
+    id: "standing-glutes",
+    type: "strength",
+    title: "ישבן ורגליים בעמידה 🍑",
+    durationMinutes: 20,
+    impact: "אפס קפיצות",
+    spineSafety: "אחיזה בכיסא לשיווי משקל, אגן ניטרלי, בלי כפיפת גב",
+    description:
+      "הרחקות רגל, בעיטות אחורה וסקווטים חלקיים — ישבן חזק תומך בגב התחתון.",
+    youtubeQuery: "standing glute workout no equipment low impact",
+    backFocused: true,
+  },
+  {
+    id: "resistance-band",
+    type: "strength",
+    title: "גומיית התנגדות לכל הגוף 🎗️",
+    durationMinutes: 20,
+    impact: "עצימות מתכווננת, בלי קפיצות",
+    spineSafety: "חתירה, לחיצות והרחקות בעמידה זקופה — ללא סיבובי גו",
+    description:
+      "אימון כוח עם גומייה: חתירות לגב העליון, לחיצות חזה ועבודת ירכיים.",
+    youtubeQuery: "resistance band full body workout standing beginner",
+  },
+  {
+    id: "wall-strength",
+    type: "strength",
+    title: "אימון קיר: וול-סיט ושכיבות סמיכה על הקיר 🧱",
+    durationMinutes: 15,
+    impact: "אפס קפיצות",
+    spineSafety: "הגב נשען על הקיר וזוכה לתמיכה מלאה",
+    description:
+      "ישיבה על קיר, שכיבות סמיכה על הקיר והרמות עקבים — כוח בלי עומס על החוליות.",
+    youtubeQuery: "wall workout beginner wall push ups wall sit",
+  },
+  {
+    id: "chair-strength",
+    type: "strength",
+    title: "אימון כוח עם כיסא 🪑",
+    durationMinutes: 20,
+    impact: "אפס קפיצות",
+    spineSafety: "קימות מכיסא וחיזוק רגליים עם גב זקוף",
+    description:
+      "קימה-ישיבה מבוקרת, הרמות רגליים ותמיכות על הכיסא — מעולה אחרי יום עבודה.",
+    youtubeQuery: "chair workout full body beginner",
+  },
+  {
+    id: "standing-core",
+    type: "strength",
+    title: "ליבה בעמידה — בלי כפיפות בטן 🎯",
+    durationMinutes: 15,
+    impact: "אפס קפיצות",
+    spineSafety: "ייצוב בטן בעמידה, ללא Crunches וללא פיתולים",
+    description:
+      "הרמות ברך מבוקרות, ייצוב בטן עמוקה ונשימה — ליבה חזקה שמגינה על הגב.",
+    youtubeQuery: "standing abs workout no crunches low impact",
+    backFocused: true,
+  },
+
+  // ---------- Mobility ----------
+  {
+    id: "standing-barre",
+    type: "mobility",
+    title: "פילאטיס עמידה / אימון בר (Barre) 🩰",
+    durationMinutes: 25,
+    impact: "אפס קפיצות, תנועות מיקרו מדויקות",
+    spineSafety: "אחיזה במשענת כיסא, עמוד שדרה ארוך וניטרלי, אגן מאוזן",
+    description:
+      "חיזוק שרירי יציבה, ישבן ושוקיים ללא זעזועים — מצוין לשרירי התמיכה בגב.",
+    youtubeQuery: "Beginner standing barre workout",
+  },
+  {
+    id: "wall-pilates",
+    type: "mobility",
+    title: "פילאטיס קיר עדין 🧱",
+    durationMinutes: 15,
+    impact: "אפס קפיצות",
+    spineSafety: "הקיר נותן משוב ליציבה; מדלגות על כל תרגיל עם פיתול",
+    description: "פילאטיס עדין בעזרת הקיר — שליטה, נשימה ויציבה.",
+    youtubeQuery: "wall pilates beginner low impact",
+  },
+  {
+    id: "gentle-stretch",
+    type: "mobility",
+    title: "מתיחות עדינות ושחרור גב 🧘‍♀️",
+    durationMinutes: 10,
+    impact: "מנוחה פעילה",
+    spineSafety: "מתיחות ניטרליות, ללא כפיפה עמוקה קדימה וללא פיתולים",
+    description: "רוטינה קצרה לשחרור הגב התחתון והירכיים.",
+    youtubeQuery: "gentle stretching lower back relief beginner",
+    backFocused: true,
+  },
+  {
+    id: "cat-cow",
+    type: "mobility",
+    title: "חתול-פרה ותנוחת הילד לגב 🐱",
+    durationMinutes: 8,
+    impact: "מנוחה פעילה",
+    spineSafety: "תנועה בטווח נוח בלבד, בלי לדחוף לכאב",
+    description: "תנועה עדינה של עמוד השדרה בשש נקודות ושחרור בתנוחת הילד.",
+    youtubeQuery: "cat cow child pose lower back decompression",
+    backFocused: true,
+  },
+  {
+    id: "nerve-glide",
+    type: "mobility",
+    title: "שחרור עצב סיאטיקה וגב תחתון 🌸",
+    durationMinutes: 12,
+    impact: "מנוחה פעילה",
+    spineSafety: "החלקות עצב עדינות ללא מתיחה אגרסיבית",
+    description: "תרגילי החלקת עצב (Nerve Flossing) להקלה על דקירות ברגל ובגב.",
+    youtubeQuery: "sciatica nerve flossing lower back relief",
+    backFocused: true,
+  },
+  {
+    id: "hip-mobility",
+    type: "mobility",
+    title: "פתיחת אגן וירכיים בעמידה 🦋",
+    durationMinutes: 12,
+    impact: "אפס קפיצות",
+    spineSafety: "תנועה מהירך בלבד, הגב נשאר ארוך ויציב",
+    description: "מעגלי ירך, מתיחת כופפי ירך ושחרור אגן — מפחית עומס מהגב התחתון.",
+    youtubeQuery: "standing hip mobility routine",
+    backFocused: true,
+  },
+  {
+    id: "gentle-yoga-standing",
+    type: "mobility",
+    title: "יוגה עדינה בעמידה — בלי פיתולים 🌿",
+    durationMinutes: 20,
+    impact: "מנוחה פעילה",
+    spineSafety: "תנוחות עמידה ושיווי משקל, מדלגות על פיתולים וכפיפות עמוקות",
+    description: "זרימת יוגה רכה לשיווי משקל, נשימה ושחרור כתפיים.",
+    youtubeQuery: "gentle standing yoga for back pain no twists",
+  },
+  {
+    id: "posture-reset",
+    type: "mobility",
+    title: "שחרור צוואר, כתפיים ויציבה אחרי משמרת 🪷",
+    durationMinutes: 10,
+    impact: "מנוחה פעילה",
+    spineSafety: "תנועות עדינות של צוואר וכתפיים, גו זקוף",
+    description: "פותחות את החזה ומשחררות כתפיים תפוסות אחרי יום עבודה.",
+    youtubeQuery: "neck and shoulder stretch posture routine",
+    backFocused: true,
+  },
+  {
+    id: "tai-chi",
+    type: "mobility",
+    title: "טאי צ׳י למתחילות ☯️",
+    durationMinutes: 20,
+    impact: "איטי ונושם, מצוין לאסתמה",
+    spineSafety: "תנועות איטיות בעמידה; פונות עם כל הגוף ולא מסובבות מותן",
+    description: "תנועה מדיטטיבית שמשפרת שיווי משקל ומרגיעה את מערכת העצבים.",
+    youtubeQuery: "tai chi for beginners",
+  },
+
+  // ---------- Recovery ----------
+  {
+    id: "promenade-mcgill",
+    type: "recovery",
+    title: "הליכת מישור בטיילת + יציבות גב McGill 🌊",
+    durationMinutes: 35,
+    impact: "הליכה מישורית באוויר הפתוח + חיזוק עדין",
+    spineSafety:
+      "McGill Big 3: Bird-Dog, Side Bridge ו-Curl-up מותאם — תרגילי שיקום פריצות דיסק",
+    description:
+      "הליכה ארוכה במישור מול הים, ואחריה תרגילי היציבות של פרופ׳ מקגיל.",
+    youtubeQuery: "McGill Big 3 spine safe lower back exercises",
+    backFocused: true,
+  },
+  {
+    id: "diaphragm-breathing",
+    type: "recovery",
+    title: "נשימה סרעפתית והרפיה 🫁",
+    durationMinutes: 10,
+    impact: "מנוחה מלאה, מקל על אסתמה",
+    spineSafety: "ישיבה או שכיבה נוחה עם תמיכה לגב",
+    description: "תרגול נשימה איטית מהבטן להרגעת הגוף ושיפור השליטה בנשימה.",
+    youtubeQuery: "diaphragmatic breathing exercises asthma",
+  },
+  {
+    id: "bedtime-stretch",
+    type: "recovery",
+    title: "מתיחות ערב לפני שינה 🌙",
+    durationMinutes: 12,
+    impact: "מנוחה פעילה",
+    spineSafety: "מתיחות רכות ללא פיתולים — מדלגות על כל תנוחת סיבוב",
+    description: "רוטינה רגועה שמשחררת את היום ומכינה את הגוף לשינה.",
+    youtubeQuery: "bedtime stretch routine gentle no twisting",
+    backFocused: true,
+  },
+  {
+    id: "walking-meditation",
+    type: "recovery",
+    title: "הליכה רגועה ומדיטציית צעידה 🍃",
+    durationMinutes: 20,
+    impact: "הליכה איטית בחוץ או בבית",
+    spineSafety: "קצב איטי וגו זקוף",
+    description: "הליכה מודעת עם הקשבה לנשימה ולצעדים — מנוחה פעילה לגוף ולראש.",
+    youtubeQuery: "guided walking meditation",
+  },
+  {
+    id: "legs-up-wall",
+    type: "recovery",
+    title: "רגליים על הקיר והרפיית גב 🛋️",
+    durationMinutes: 10,
+    impact: "מנוחה מלאה",
+    spineSafety: "שכיבה על הגב עם תמיכה מלאה, ללא עומס על החוליות",
+    description: "מנח מרגיע שמקל על רגליים עייפות ומרפה את הגב התחתון.",
+    youtubeQuery: "legs up the wall relaxation",
+    backFocused: true,
+  },
+  {
+    id: "rest-day-flow",
+    type: "recovery",
+    title: "זרימת תנועה עדינה ליום מנוחה ✨",
+    durationMinutes: 15,
+    impact: "מנוחה פעילה",
+    spineSafety: SAFE_STANDING,
+    description: "תנועה רכה לכל המפרקים — שומרת על הגוף זז גם ביום חופשי.",
+    youtubeQuery: "gentle mobility routine rest day",
+  },
+];
+
+export const SOS_WORKOUT = {
+  id: "sos-stretch",
+  type: "recovery",
+  title: "מתיחות עדינות בעמידה והסדרת נשימה (מצב SOS) 🫁",
+  durationMinutes: 8,
+  impact: "אפס קפיצות, מנוחה מלאה והקלה לאסתמה",
+  spineSafety:
+    "ללא כיפוף גב, ללא פיתולים, נשימות סרעפתיות והרפיית שכמות בעמידה זקופה",
+  description:
+    "רוטינת חירום מרגיעה (8 דק׳) אחרי משמרת מעייפת או קוצר נשימה: סיבובי כתפיים רכים, פתיחת בית חזה והארכת עמוד שדרה ניטרלי.",
+  youtubeQuery: "gentle standing stretch spine safe asthma friendly",
+};
