@@ -1,4 +1,10 @@
 import { useSyncExternalStore } from "react";
+import {
+  advancePets,
+  applyPetAction,
+  boostPetState,
+  initialPets,
+} from "./lib/pets";
 
 // Single localStorage-backed store. Bump the key version if the shape changes incompatibly.
 const KEY = "healing-cabin-v1";
@@ -33,7 +39,9 @@ const DEFAULTS = {
   lastMochiWalk: null, // timestamp or date of last walk
   roomLighting: "sunset", // "sunset" | "lofi" | "cozy" | "night"
   placedDecor: ["rug", "plant", "salt-lamp"], // active decor placed in room
-  petHappiness: { mochi: 85, charlie: 85 }, // happiness levels 0..100
+  petHappiness: { mochi: 85, charlie: 85 }, // legacy; migrated into `pets` on first tick
+  pets: null, // tamagotchi state, see lib/pets.js: { mochi, charlie, updatedAt }
+  selfCare: null, // personal-care routine, see components/SelfCareRoutine.jsx
 };
 
 function load() {
@@ -67,6 +75,42 @@ export const dateKeyWithOffset = (offsetDays = 0) => {
 };
 
 export const getCabin = () => state;
+
+// ---- Tamagotchi pets ----
+const withPetsUpToDate = (s, now) =>
+  advancePets(s.pets ?? initialPets(s.petHappiness, now), now, s.recoveryStart);
+
+export function tickPets(now = Date.now()) {
+  setCabin((s) => {
+    // Skip sub-minute ticks to avoid needless writes
+    if (s.pets && now - (s.pets.updatedAt ?? 0) < 60_000) return s;
+    return { ...s, pets: withPetsUpToDate(s, now) };
+  });
+}
+
+// Returns { ok, message } so the UI can explain a refused action.
+export function petAction(petId, action) {
+  const now = Date.now();
+  let result = { ok: false, message: "" };
+  setCabin((s) => {
+    const r = applyPetAction(
+      { ...s, pets: withPetsUpToDate(s, now) },
+      petId,
+      action,
+      now,
+    );
+    result = { ok: r.ok, message: r.message };
+    return r.ok ? r.state : s;
+  });
+  return result;
+}
+
+export function boostPet(petId, deltas, options) {
+  const now = Date.now();
+  setCabin((s) =>
+    boostPetState({ ...s, pets: withPetsUpToDate(s, now) }, petId, deltas, options),
+  );
+}
 
 // ---- Sweet bank (weekly sweet tokens, week starts Sunday) ----
 export const SWEET_TOKENS_PER_WEEK = 4;
@@ -184,6 +228,7 @@ export const SECTION_IDS = [
   "nutrition-daily-meals",
   "nutrition-reflux",
   "lifestyle-mochi-walks",
+  "lifestyle-selfcare",
   "lifestyle-home-reset",
   "lifestyle-date-roulette",
   "tracking-journey-weight",

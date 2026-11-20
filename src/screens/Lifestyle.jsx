@@ -1,4 +1,5 @@
-import { Compass, Dog, Home, Heart } from "lucide-react";
+import { Compass, Dog, Home, Heart, Sparkles } from "lucide-react";
+import SelfCareRoutine from "../components/SelfCareRoutine";
 import CollapsibleCard from "../components/CollapsibleCard";
 import MochiWalkTracker from "../components/MochiWalkTracker";
 import HomeResetOrganization from "../components/HomeResetOrganization";
@@ -34,7 +35,18 @@ export default function Lifestyle() {
         <MochiWalkTracker />
       </CollapsibleCard>
 
-      {/* 2. Home Reset & Organization */}
+      {/* 2. Personal care routine: daily / weekly / monthly */}
+      <CollapsibleCard
+        id="lifestyle-selfcare"
+        title="שגרת טיפוח אישית 🧴"
+        badge="יומי • שבועי • חודשי — רשימות שאפשר לערוך"
+        icon={Sparkles}
+        defaultOpen={true}
+      >
+        <SelfCareRoutine />
+      </CollapsibleCard>
+
+      {/* 3. Home Reset & Organization */}
       <CollapsibleCard
         id="lifestyle-home-reset"
         title="שגרת טיפוח הבית ואיפוס שבועי"

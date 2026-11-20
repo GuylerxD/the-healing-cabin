@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Play, Square, MapPin, Sparkles, Check, Bone } from "lucide-react";
-import { useCabin, setCabin, todayKey } from "../store";
+import { useCabin, setCabin, todayKey, boostPet } from "../store";
 
 const HAIFA_LOCATIONS = [
   {
@@ -74,6 +74,8 @@ export default function MochiWalkTracker() {
           hadProbiotic: probioticChecked,
         },
       }));
+      // A real walk cares for virtual Mochi too — and brings her home if she ran away
+      boostPet("mochi", { happiness: 20, energy: 15 }, { bringHome: true });
 
       setWalkSuccessMessage(
         `טיול נהדר של ${minutesWalked} דק׳! הרווחת +${treatsEarned} חטיפי כלבים ו-+${coinsEarned} 🪙`,

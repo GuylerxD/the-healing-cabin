@@ -17,7 +17,9 @@ import {
   setAllSectionsCollapsed,
   areAllSectionsCollapsed,
   rolloverSweetBank,
+  tickPets,
 } from "./store";
+import { PET_IDS, needsAttention } from "./lib/pets";
 import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
 import Movement from "./screens/Movement";
@@ -44,18 +46,29 @@ const TABS = [
 export default function App() {
   const [activeTab, setActiveTab] = useState("quests");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { coins, longGoal, collapsedSections } = useCabin();
+  const { coins, longGoal, collapsedSections, pets } = useCabin();
   const { Screen } = TABS.find((t) => t.id === activeTab);
 
   const isAllCollapsed = areAllSectionsCollapsed(collapsedSections);
 
-  // Weekly sweet-bank reset, checked on load and whenever the app comes back to the foreground
+  // Time-based updates: weekly sweet-bank reset and pet meters decay.
+  // Run on load, every minute while open, and whenever the app returns to the foreground.
   useEffect(() => {
-    rolloverSweetBank();
-    document.addEventListener("visibilitychange", rolloverSweetBank);
-    return () =>
-      document.removeEventListener("visibilitychange", rolloverSweetBank);
+    const tick = () => {
+      rolloverSweetBank();
+      tickPets();
+    };
+    tick();
+    const interval = setInterval(tick, 60_000);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", tick);
+    };
   }, []);
+
+  const petsNeedCare =
+    pets != null && PET_IDS.some((id) => needsAttention(pets[id]));
 
   const handleToggleCollapseAll = () => {
     setAllSectionsCollapsed(!isAllCollapsed);
@@ -138,10 +151,21 @@ export default function App() {
               key={id}
               onClick={() => setActiveTab(id)}
               aria-current={isActive ? "page" : undefined}
-              className={`flex flex-col items-center gap-1 rounded-2xl px-1.5 py-1.5 transition ${
+              aria-label={
+                id === "cabin" && petsNeedCare
+                  ? `${label} — מוצ׳י וצ׳ארלי צריכים טיפול`
+                  : undefined
+              }
+              className={`relative flex flex-col items-center gap-1 rounded-2xl px-1.5 py-1.5 transition ${
                 isActive ? "bg-lilac/20 text-mint" : "text-purple-300/70"
               }`}
             >
+              {id === "cabin" && petsNeedCare && (
+                <span
+                  className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-400 ring-2 ring-space-light animate-pulse"
+                  aria-hidden
+                />
+              )}
               <Icon className="h-4 w-4" aria-hidden />
               <span className="text-[9.5px] font-medium leading-none">
                 {label}

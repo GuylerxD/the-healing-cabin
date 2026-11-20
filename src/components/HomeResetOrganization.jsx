@@ -15,7 +15,9 @@ import {
   Flower2,
   Gift,
 } from "lucide-react";
-import { useCabin, setCabin } from "../store";
+import { useCabin, setCabin, boostPet } from "../store";
+
+const BRUSH_TASK_PET = { "brush-mochi": "mochi", "brush-charlie": "charlie" };
 
 const HOME_TASKS = [
   {
@@ -248,6 +250,10 @@ export default function HomeResetOrganization() {
       homeResetTasks: nextTasks,
       unlockedFurniture: nextFurniture,
     }));
+
+    // Brushing the real pets cleans the virtual ones too
+    const brushedPet = BRUSH_TASK_PET[taskId];
+    if (brushedPet && !isDone) boostPet(brushedPet, { clean: 40 });
 
     if (unlockedItem) {
       setJustUnlocked(unlockedItem);
