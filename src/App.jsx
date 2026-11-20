@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  Sparkles,
   Dumbbell,
   Utensils,
   HeartHandshake,
@@ -24,7 +23,6 @@ import {
 } from "./store";
 import { PET_IDS, needsAttention } from "./lib/pets";
 import { EATEN_LOG_KEY, syncEatenMeals } from "./lib/recipesSync";
-import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
 import Movement from "./screens/Movement";
 import Tracking from "./screens/Tracking";
@@ -34,7 +32,6 @@ import SmartBubbles from "./components/SmartBubbles";
 import InAppPillReminder from "./components/InAppPillReminder";
 
 const TABS = [
-  { id: "quests", label: "הקצב", icon: Sparkles, Screen: Quests },
   { id: "movement", label: "אימונים", icon: Dumbbell, Screen: Movement },
   { id: "nutrition", label: "תזונה", icon: Utensils, Screen: Nutrition },
   {
@@ -48,7 +45,8 @@ const TABS = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState("quests");
+  // Opens on Tracking: the morning check-in (acid + Zoely) lives at its top
+  const [activeTab, setActiveTab] = useState("tracking");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [storageFull, setStorageFull] = useState(false);
   const [backupDue, setBackupDue] = useState(() => isBackupDue());

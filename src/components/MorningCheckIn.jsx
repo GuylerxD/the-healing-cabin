@@ -9,14 +9,14 @@ import {
 } from "lucide-react";
 import { updateDay, useCabin, dateKeyWithOffset } from "../store";
 import { triggerInAppPillReminder } from "../lib/pillReminder";
-import CollapsibleCard from "../components/CollapsibleCard";
+import CollapsibleCard from "./CollapsibleCard";
+
+const HEBREW_DAYS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 
 function getFormattedDayDetails(dayOffset) {
   const d = new Date();
   d.setDate(d.getDate() + dayOffset);
-  const dayName = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"][
-    d.getDay()
-  ];
+  const dayName = HEBREW_DAYS[d.getDay()];
   const formatted = d.toLocaleDateString("he-IL", {
     day: "numeric",
     month: "numeric",
@@ -32,62 +32,68 @@ function getFormattedDayDetails(dayOffset) {
   return { displayDateTitle: title, dayNameHe: dayName };
 }
 
-export default function Quests() {
+// Morning check-in: acid level + Zoely pill, with a date switcher for marking past days.
+// Card ids stay "quests-*" (from the removed הקצב tab) so saved collapse state is kept.
+export default function MorningCheckIn() {
   const { days = {} } = useCabin();
   const [dayOffset, setDayOffset] = useState(0); // 0 = today, -1 = yesterday, etc.
   const activeDateKey = dateKeyWithOffset(dayOffset);
   const activeDayData = days[activeDateKey] ?? {};
 
-  // Date formatting in Hebrew
   const isToday = dayOffset === 0;
   const { displayDateTitle, dayNameHe } = getFormattedDayDetails(dayOffset);
 
   return (
     <div className="space-y-4">
-      {/* Date Switcher Bar (מעבר בין ימים לעדכון רטרואקטיבי) */}
-      <div className="flex items-center justify-between rounded-2xl bg-white/5 border border-white/10 p-2.5 text-xs text-moon">
-        <button
-          type="button"
-          onClick={() => setDayOffset((prev) => prev - 1)}
-          className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 hover:bg-white/15 transition active:scale-95"
-          title="יום קודם"
-        >
-          <ChevronRight className="h-4 w-4" />
-          <span>יום קודם</span>
-        </button>
+      {/* Date switcher — applies only to the acid check and the pill */}
+      <div className="space-y-1.5 rounded-2xl border border-white/10 bg-white/5 p-2.5 text-xs text-moon">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setDayOffset((prev) => prev - 1)}
+            className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 transition hover:bg-white/15 active:scale-95"
+            title="יום קודם"
+          >
+            <ChevronRight className="h-4 w-4" />
+            <span>יום קודם</span>
+          </button>
 
-        <div className="flex items-center gap-1.5 font-bold">
-          <Calendar className="h-4 w-4 text-lilac" />
-          <span className={isToday ? "text-mint" : "text-blush font-extrabold"}>
-            {displayDateTitle}
-          </span>
-        </div>
+          <div className="flex items-center gap-1.5 font-bold">
+            <Calendar className="h-4 w-4 text-lilac" />
+            <span className={isToday ? "text-mint" : "font-extrabold text-blush"}>
+              {displayDateTitle}
+            </span>
+          </div>
 
-        <div className="flex items-center gap-1">
-          {dayOffset < 0 ? (
-            <button
-              type="button"
-              onClick={() => setDayOffset((prev) => Math.min(0, prev + 1))}
-              className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 hover:bg-white/15 transition active:scale-95"
-              title="יום הבא"
-            >
-              <span>יום הבא</span>
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-          ) : (
-            <div className="w-16" />
-          )}
+          <div className="flex items-center gap-1">
+            {dayOffset < 0 ? (
+              <button
+                type="button"
+                onClick={() => setDayOffset((prev) => Math.min(0, prev + 1))}
+                className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 transition hover:bg-white/15 active:scale-95"
+                title="יום הבא"
+              >
+                <span>יום הבא</span>
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            ) : (
+              <div className="w-16" />
+            )}
+          </div>
         </div>
+        <p className="text-center text-[11px] text-purple-300">
+          📅 צ׳ק-אין בוקר — אפשר לחזור לימים קודמים כדי לסמן חומציות וגלולה
+        </p>
       </div>
 
       {!isToday && (
-        <div className="rounded-xl border border-blush/40 bg-blush/10 p-2.5 text-center text-xs text-blush font-semibold">
-          💡 את נמצאת בעריכת נתוני עבר ({displayDateTitle}). כל סימון יעודכן
-          רטרואקטיבית לתאריך זה.
+        <div className="rounded-xl border border-blush/40 bg-blush/10 p-2.5 text-center text-xs font-semibold text-blush">
+          💡 את נמצאת בעריכת נתוני עבר ({displayDateTitle}). הסימון של חומציות
+          וגלולה יעודכן רטרואקטיבית לתאריך זה.
         </div>
       )}
 
-      {/* 1. בדיקת חומציות בוקר (Collapsible) */}
+      {/* Morning acid check */}
       <CollapsibleCard
         id="quests-acid"
         title={`בדיקת חומציות בוקר ${!isToday ? `(${dayNameHe})` : ""}`}
@@ -133,7 +139,7 @@ export default function Quests() {
         </div>
       </CollapsibleCard>
 
-      {/* 3. נטילת זואלי (Collapsible) */}
+      {/* Zoely pill */}
       <CollapsibleCard
         id="quests-qlaira"
         title={`נטילת זואלי (Zoely) ${!isToday ? `(${dayNameHe})` : ""}`}
@@ -160,7 +166,7 @@ export default function Quests() {
               <button
                 type="button"
                 onClick={triggerInAppPillReminder}
-                className="flex items-center gap-1 rounded-xl bg-blush/20 px-2.5 py-1.5 text-xs font-semibold text-blush hover:bg-blush/30 transition active:scale-95"
+                className="flex items-center gap-1 rounded-xl bg-blush/20 px-2.5 py-1.5 text-xs font-semibold text-blush transition hover:bg-blush/30 active:scale-95"
               >
                 <Bell className="h-3.5 w-3.5" />
                 <span>הקפץ תזכורת</span>

@@ -30,10 +30,8 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
   // 4. Asthma / Heavy breathing: heavyBreathing is true (shown when relevant)
   const showAsthma = !!today.heavyBreathing;
 
-  // 5. Glucose / PCOS balance: meals logged > 0 (shown on quests/nutrition)
-  const showGlucose =
-    (activeTab === "quests" || activeTab === "nutrition") &&
-    (today.meals ?? 0) > 0;
+  // 5. Glucose / PCOS balance: a meal was eaten today (shown on nutrition)
+  const showGlucose = activeTab === "nutrition" && (today.meals ?? 0) > 0;
 
   // Mood Haven Tab selection
   const [moodTab, setMoodTab] = useState("diffuser"); // diffuser | audio | mindfulness
@@ -324,7 +322,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
         </section>
       )}
 
-      {/* Bubble 4: Glucose / PCOS Walk & Balance (Only on Quests / Nutrition) */}
+      {/* Bubble 4: Glucose / PCOS Walk & Balance (Only on Nutrition) */}
       {showGlucose && (
         <section className="space-y-2 rounded-3xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
           <div className="flex items-center justify-between">

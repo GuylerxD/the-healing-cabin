@@ -9,6 +9,7 @@ import {
 } from "../lib/weight";
 import CollapsibleCard from "../components/CollapsibleCard";
 import JourneyToEastWeightTracker from "../components/JourneyToEastWeightTracker";
+import MorningCheckIn from "../components/MorningCheckIn";
 
 const FIT = [
   ["tight", "צמוד"],
@@ -86,89 +87,10 @@ export default function Tracking() {
 
   return (
     <div className="space-y-4">
-      {/* 1. המסע למזרח 2027: מפת ירידה במשקל (Gamified Weight Tracker) */}
-      <CollapsibleCard
-        id="tracking-journey-weight"
-        title="המסע למזרח 2027: מפת ירידה במשקל"
-        badge="מ-99 ק״ג עד 60 ק״ג • תחנות סיאול וטוקיו"
-        icon={Scale}
-        defaultOpen={true}
-      >
-        <JourneyToEastWeightTracker />
-      </CollapsibleCard>
+      {/* 1. צ׳ק-אין בוקר: חומציות + זואלי (moved from the removed הקצב tab) */}
+      <MorningCheckIn />
 
-      {/* 2. שקילה שבועית וגרף מגמה (Collapsible) */}
-      <CollapsibleCard
-        id="tracking-weighin"
-        title="שקילה שבועית רגועה וגרף מגמה"
-        badge={
-          weighIns.length > 0
-            ? `${weighIns[weighIns.length - 1].kg} ק״ג אחרון • ${wait > 0 ? `עוד ${wait} ימים לשקילה` : "מוכנה לשקילה"}`
-            : "שקילה אחת לשבוע"
-        }
-        icon={Scale}
-        defaultOpen={true}
-      >
-        <div className="space-y-3">
-          <TrendChart weighIns={weighIns} />
-          {wait > 0 ? (
-            <p className="rounded-2xl bg-white/5 p-3 text-xs text-purple-200">
-              השקילה הבאה בעוד {wait} ימים 🌙 הגוף משתנה לאט — וזה בסדר גמור.
-            </p>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                type="number"
-                inputMode="decimal"
-                step="0.1"
-                placeholder="משקל בק״ג"
-                value={kg}
-                onChange={(e) => setKg(e.target.value)}
-                className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-moon placeholder:text-purple-300"
-              />
-              <button
-                disabled={!validKg}
-                onClick={saveWeight}
-                className="rounded-2xl bg-mint px-4 py-2 text-sm font-bold text-space disabled:opacity-40"
-              >
-                שמירה +{WEIGH_REWARD}
-              </button>
-            </div>
-          )}
-        </div>
-      </CollapsibleCard>
-
-      {/* 2. בגדי היעד (Collapsible) */}
-      <CollapsibleCard
-        id="tracking-quick-check"
-        title="איך מרגישים בגדי היעד היום?"
-        badge={
-          today.fit
-            ? FIT.find(([id]) => id === today.fit)?.[1] || "סומן"
-            : "בחירת תחושת בגדים"
-        }
-        icon={Shirt}
-        defaultOpen={true}
-      >
-        <div className="grid grid-cols-3 gap-2 text-sm font-bold">
-          {FIT.map(([id, label]) => (
-            <button
-              key={id}
-              aria-pressed={today.fit === id}
-              onClick={() => updateToday({ fit: id })}
-              className={`rounded-2xl py-3 transition ${
-                today.fit === id
-                  ? "bg-mint/20 text-mint ring-1 ring-mint"
-                  : "bg-white/5 text-purple-200"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </CollapsibleCard>
-
-      {/* 3. אנרגיה, מצב רוח ו-PCOS (Collapsible) */}
+      {/* 2. אנרגיה, מצב רוח ו-PCOS (Collapsible) */}
       <CollapsibleCard
         id="tracking-energy"
         title="אנרגיה, מצב רוח ו-PCOS"
@@ -243,7 +165,89 @@ export default function Tracking() {
         </div>
       </CollapsibleCard>
 
-      {/* 4. מה עוזר לי? (Collapsible) */}
+      {/* 3. בגדי היעד (Collapsible) */}
+      <CollapsibleCard
+        id="tracking-quick-check"
+        title="איך מרגישים בגדי היעד היום?"
+        badge={
+          today.fit
+            ? FIT.find(([id]) => id === today.fit)?.[1] || "סומן"
+            : "בחירת תחושת בגדים"
+        }
+        icon={Shirt}
+        defaultOpen={true}
+      >
+        <div className="grid grid-cols-3 gap-2 text-sm font-bold">
+          {FIT.map(([id, label]) => (
+            <button
+              key={id}
+              aria-pressed={today.fit === id}
+              onClick={() => updateToday({ fit: id })}
+              className={`rounded-2xl py-3 transition ${
+                today.fit === id
+                  ? "bg-mint/20 text-mint ring-1 ring-mint"
+                  : "bg-white/5 text-purple-200"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </CollapsibleCard>
+
+      {/* 4. המסע למזרח 2027: מפת ירידה במשקל (Gamified Weight Tracker) */}
+      <CollapsibleCard
+        id="tracking-journey-weight"
+        title="המסע למזרח 2027: מפת ירידה במשקל"
+        badge="מ-99 ק״ג עד 60 ק״ג • תחנות סיאול וטוקיו"
+        icon={Scale}
+        defaultOpen={true}
+      >
+        <JourneyToEastWeightTracker />
+      </CollapsibleCard>
+
+      {/* 5. שקילה שבועית וגרף מגמה (Collapsible) */}
+      <CollapsibleCard
+        id="tracking-weighin"
+        title="שקילה שבועית רגועה וגרף מגמה"
+        badge={
+          weighIns.length > 0
+            ? `${weighIns[weighIns.length - 1].kg} ק״ג אחרון • ${wait > 0 ? `עוד ${wait} ימים לשקילה` : "מוכנה לשקילה"}`
+            : "שקילה אחת לשבוע"
+        }
+        icon={Scale}
+        defaultOpen={true}
+      >
+        <div className="space-y-3">
+          <TrendChart weighIns={weighIns} />
+          {wait > 0 ? (
+            <p className="rounded-2xl bg-white/5 p-3 text-xs text-purple-200">
+              השקילה הבאה בעוד {wait} ימים 🌙 הגוף משתנה לאט — וזה בסדר גמור.
+            </p>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="number"
+                inputMode="decimal"
+                step="0.1"
+                placeholder="משקל בק״ג"
+                value={kg}
+                onChange={(e) => setKg(e.target.value)}
+                className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-moon placeholder:text-purple-300"
+              />
+              <button
+                disabled={!validKg}
+                onClick={saveWeight}
+                className="rounded-2xl bg-mint px-4 py-2 text-sm font-bold text-space disabled:opacity-40"
+              >
+                שמירה +{WEIGH_REWARD}
+              </button>
+            </div>
+          )}
+        </div>
+      </CollapsibleCard>
+
+      {/* 6. מה עוזר לי? (Collapsible) */}
       <CollapsibleCard
         id="tracking-history"
         title="מה עוזר לי? (תובנות)"
