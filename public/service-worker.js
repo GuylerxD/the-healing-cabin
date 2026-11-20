@@ -1,5 +1,8 @@
 // Service Worker for The Healing Cabin PWA & Web Push Notifications
-const CACHE_NAME = "healing-cabin-v5";
+// My Recipes shares this origin (guylerxd.github.io) and the Cache Storage with us,
+// so only caches with our own prefix may be cleaned up.
+const CACHE_PREFIX = "healing-cabin-";
+const CACHE_NAME = `${CACHE_PREFIX}v6`;
 const APP_URL = "/the-healing-cabin/";
 const SNOOZE_MS = 10 * 60 * 1000;
 const DEFAULT_PILL_TITLE = "תזכורת גלולת זואלי 💊";
@@ -17,7 +20,7 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((key) => key !== CACHE_NAME)
+            .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
             .map((key) => caches.delete(key)),
         ),
       )

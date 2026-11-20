@@ -18,6 +18,7 @@ import {
   areAllSectionsCollapsed,
   rolloverSweetBank,
   tickPets,
+  STORAGE_ERROR_EVENT,
 } from "./store";
 import { PET_IDS, needsAttention } from "./lib/pets";
 import { EATEN_LOG_KEY, syncEatenMeals } from "./lib/recipesSync";
@@ -47,6 +48,13 @@ const TABS = [
 export default function App() {
   const [activeTab, setActiveTab] = useState("quests");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [storageFull, setStorageFull] = useState(false);
+
+  useEffect(() => {
+    const onError = () => setStorageFull(true);
+    window.addEventListener(STORAGE_ERROR_EVENT, onError);
+    return () => window.removeEventListener(STORAGE_ERROR_EVENT, onError);
+  }, []);
   const { coins, longGoal, collapsedSections, pets } = useCabin();
   const { Screen } = TABS.find((t) => t.id === activeTab);
 
@@ -143,6 +151,26 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-md space-y-4 px-4 pt-4">
+        {storageFull && (
+          <div
+            role="alert"
+            className="flex items-start justify-between gap-2 rounded-2xl border border-blush/50 bg-blush/15 p-3 text-right text-xs text-blush"
+            dir="rtl"
+          >
+            <span>
+              ⚠️ האחסון בדפדפן מלא — השינויים האחרונים לא נשמרו. כדאי לפנות
+              מקום (למשל מתכונים ישנים ב-My Recipes) ולרענן.
+            </span>
+            <button
+              type="button"
+              onClick={() => setStorageFull(false)}
+              aria-label="סגירת ההתראה"
+              className="shrink-0 font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        )}
         {/* Context-aware Adaptive Health Bubbles */}
         <SmartBubbles onNavigateTab={setActiveTab} activeTab={activeTab} />
         <Screen />

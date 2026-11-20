@@ -16,11 +16,8 @@ const DEFAULTS = {
   badges: [], // earned badge ids
   walkingMinutes: 65, // total accumulated indoor walking minutes (initial baseline)
   sosMode: false, // low energy / asthma mode
-  shift: { start: "08:00", end: "16:00" },
   proteinGoal: 110, // grams/day target (range 100g - 120g)
   calorieGoal: 1650, // kcal/day target (range 1600 - 1700 kcal)
-  inventory: [], // ingredient names at home
-  prepPlan: [], // recipe ids planned for weekend prep
   recoveryStart: null, // ms timestamp while Active Recovery runs (survives closing the app)
   longGoal: "", // optional free-text long-term goal shown in the header
   collapsedSections: {}, // { [sectionId]: boolean } - persisted collapse state
@@ -30,7 +27,8 @@ const DEFAULTS = {
   unlockedWeightMilestones: [], // IDs of claimed / unlocked milestones
   sweetTokensSpent: 0, // Weekly used tokens (max allowance: 4)
   sweetBankWeekKey: null, // Sunday date (YYYY-MM-DD) of the week the tokens belong to
-  sweetBankClaimedWeek: null, // week key whose leftover-token bonus was already paid  dogTreats: 0, // Virtual Dog Treats for Mochi in the Idle Room
+  sweetBankClaimedWeek: null, // week key whose leftover-token bonus was already paid
+  dogTreats: 0, // Virtual Dog Treats for Mochi in the Idle Room
   homeResetTasks: {}, // { [taskId]: boolean } weekly home checklist
   dailyHomeTasks: null, // { date: 'YYYY-MM-DD', ids: string[] } today's 3 home tasks
   unlockedFurniture: [], // aesthetic furniture unlocked for idle cabin (e.g. "salt-lamp", "tarnaby-lamp")
@@ -44,8 +42,18 @@ const DEFAULTS = {
 
 function load() {
   try {
-    // eslint-disable-next-line no-unused-vars -- geminiApiKey: dropped with the AI meal logger
-    const { geminiApiKey, ...saved } = JSON.parse(localStorage.getItem(KEY)) ?? {};
+    const saved = JSON.parse(localStorage.getItem(KEY)) ?? {};
+    // Drop fields no feature uses any more (geminiApiKey: removed AI meal logger;
+    // shift / inventory / prepPlan / customMealPlanDay: never read)
+    for (const k of [
+      "geminiApiKey",
+      "shift",
+      "inventory",
+      "prepPlan",
+      "customMealPlanDay",
+    ]) {
+      delete saved[k];
+    }
     return { ...DEFAULTS, ...saved };
   } catch {
     return DEFAULTS;
@@ -55,9 +63,18 @@ function load() {
 let state = load();
 const listeners = new Set();
 
+// localStorage (~5MB) is shared with My Recipes on the same origin, so a write can fail
+// when it is full. Keep working from memory and let the UI warn instead of crashing.
+export const STORAGE_ERROR_EVENT = "cabin-storage-error";
+
 export function setCabin(fn) {
   state = fn(state);
-  localStorage.setItem(KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(state));
+  } catch (err) {
+    console.error("Healing Cabin: saving failed", err);
+    window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT));
+  }
   listeners.forEach((l) => l());
 }
 
