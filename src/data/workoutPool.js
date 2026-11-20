@@ -1,6 +1,11 @@
 // Workout pool for the daily rotation (see lib/workoutRotation.js).
-// Every workout here must stay: spine-safe after disc surgery (no twisting, no crunches,
-// no loaded forward bends), low impact (no jumping) and asthma friendly.
+// Every workout here must fit all of these goals:
+// - Lower back / disc herniation: neutral spine, no twisting, no crunches or roll-ups,
+//   no deep or loaded forward bends (no child's pose / toe touches), no jumping.
+// - PCOS + insulin: lots of muscle work and moderate cardio (improve insulin sensitivity).
+// - Weight loss: consistent, moderate volume rather than rare exhausting sessions.
+// - Cortisol: moderate intensity (talk test), never to exhaustion, finish with slow breathing.
+// - Asthma friendly.
 //
 // type: "cardio" | "strength" | "mobility" | "recovery"
 // backFocused: good choice on a high back-pain day
@@ -9,12 +14,45 @@ const SAFE_STANDING =
   "עבודה בעמידה בלבד, גו זקוף, ללא פיתולי מותן וללא כפיפות בטן";
 const NO_JUMP = "אפס קפיצות, דופק מתון וידידותי לאסתמה";
 
+// `benefit`: why this type of workout helps back + PCOS + weight + cortisol/insulin
 export const WORKOUT_TYPES = {
-  cardio: { label: "אירובי", emoji: "💓" },
-  strength: { label: "כוח", emoji: "💪" },
-  mobility: { label: "גמישות ויציבה", emoji: "🧘‍♀️" },
-  recovery: { label: "התאוששות", emoji: "🌊" },
+  cardio: {
+    label: "אירובי",
+    emoji: "💓",
+    benefit:
+      "שורף קלוריות ומשפר רגישות לאינסולין. בעצימות מתונה (אפשר לדבר תוך כדי) — לא מקפיץ קורטיזול.",
+  },
+  strength: {
+    label: "כוח",
+    emoji: "💪",
+    benefit:
+      "שריר הוא ״ספוג״ לסוכר: משפר רגישות לאינסולין ב-PCOS, מעלה חילוף חומרים ומחזק את השרירים שמגינים על הגב.",
+  },
+  mobility: {
+    label: "גמישות ויציבה",
+    emoji: "🧘‍♀️",
+    benefit:
+      "מחזק את שרירי הייצוב סביב עמוד השדרה, משחרר עומס מהדיסק ומוריד מתח.",
+  },
+  recovery: {
+    label: "התאוששות",
+    emoji: "🌊",
+    benefit:
+      "מוריד קורטיזול ומאפשר לגוף להתאושש — קורטיזול נמוך עוזר לאזן אינסולין ולרדת במשקל.",
+  },
 };
+
+// Shown with every workout
+export const SAFETY_RULES = [
+  "בטן אסופה ו״גב ארוך״ לאורך כל האימון",
+  "מדלגות על כל תרגיל עם פיתול, כפיפה עמוקה קדימה, Crunch או קפיצה — וצועדות במקום במקום",
+  "מבחן הדיבור: צריך להצליח לדבר במשפטים. מתנשפת? מאטים",
+  "כאב שמקרין לרגל, נימול או עקצוץ — עוצרים מיד",
+  "מסיימות ב-2 דקות נשימה איטית (שאיפה 4, נשיפה 6) להורדת קורטיזול",
+];
+
+export const POST_MEAL_TIP =
+  "בונוס ל-PCOS: 10 דקות הליכה קלה אחרי הארוחה הגדולה של היום מורידות את קפיצת הסוכר והאינסולין.";
 
 export const WORKOUT_POOL = [
   // ---------- Cardio ----------
@@ -35,7 +73,8 @@ export const WORKOUT_POOL = [
     title: "איגרוף קצב POV + שחרור גב 🥊",
     durationMinutes: 25,
     impact: "אימפקט נמוך (15 דק׳ איגרוף + 10 דק׳ שחרור)",
-    spineSafety: "מכות ישרות בלבד ללא רוטציות מותן, ושחרור גב ניטרלי בסוף",
+    spineSafety:
+      "מכות ישרות בלבד עם בטן אסופה — בלי לסובב אגן ובלי להסתובב על כף הרגל. מדלגות על הוקים ואפרקטים",
     description:
       "15 דקות איגרוף קצבי מול המסך, ואחריו 10 דקות מתיחות עדינות להפחתת לחץ מהחוליות.",
     youtubeQuery: "POV Boxing Workout low impact",
@@ -116,15 +155,16 @@ export const WORKOUT_POOL = [
     youtubeQuery: "step touch cardio workout beginner standing no jumping",
   },
   {
-    id: "dance-cardio-gentle",
+    id: "post-meal-walk",
     type: "cardio",
-    title: "ריקוד אירובי עדין 💃",
-    durationMinutes: 20,
+    title: "הליכת ״אחרי ארוחה״ מאזנת סוכר 🍽️🚶‍♀️",
+    durationMinutes: 15,
     impact: NO_JUMP,
-    spineSafety: "תנועות רגליים וידיים בלבד — מדלגים על סיבובי מותן חדים",
+    spineSafety: "הליכה רגילה בקצב נוח, גו זקוף — הכי עדין שיש לגב",
     description:
-      "כוריאוגרפיה פשוטה למתחילות. אם יש סיבוב אגן בסרטון — ממשיכות לצעוד במקום.",
-    youtubeQuery: "low impact dance cardio beginner no jumping",
+      "15 דקות הליכה מיד אחרי ארוחת הצהריים או הערב — אחת הדרכים היעילות ביותר להוריד את קפיצת הסוכר והאינסולין ב-PCOS.",
+    youtubeQuery: "15 minute walk after eating indoor walking",
+    backFocused: true,
   },
   {
     id: "arm-cardio",
@@ -248,7 +288,8 @@ export const WORKOUT_POOL = [
     title: "פילאטיס קיר עדין 🧱",
     durationMinutes: 15,
     impact: "אפס קפיצות",
-    spineSafety: "הקיר נותן משוב ליציבה; מדלגות על כל תרגיל עם פיתול",
+    spineSafety:
+      "הקיר נותן משוב ליציבה; מדלגות על Roll-up, כפיפות בטן ופיתולים — גשר ועבודת רגליים בגב ניטרלי",
     description: "פילאטיס עדין בעזרת הקיר — שליטה, נשימה ויציבה.",
     youtubeQuery: "wall pilates beginner low impact",
   },
@@ -258,20 +299,23 @@ export const WORKOUT_POOL = [
     title: "מתיחות עדינות ושחרור גב 🧘‍♀️",
     durationMinutes: 10,
     impact: "מנוחה פעילה",
-    spineSafety: "מתיחות ניטרליות, ללא כפיפה עמוקה קדימה וללא פיתולים",
+    spineSafety:
+      "מתיחות ניטרליות לירכיים ולישבן — מדלגות על פיתולים, ברכיים-לחזה חזק וכפיפה קדימה",
     description: "רוטינה קצרה לשחרור הגב התחתון והירכיים.",
     youtubeQuery: "gentle stretching lower back relief beginner",
     backFocused: true,
   },
   {
-    id: "cat-cow",
+    id: "cat-camel-birddog",
     type: "mobility",
-    title: "חתול-פרה ותנוחת הילד לגב 🐱",
-    durationMinutes: 8,
+    title: "חתול-גמל בטווח קטן + Bird-Dog 🐱",
+    durationMinutes: 10,
     impact: "מנוחה פעילה",
-    spineSafety: "תנועה בטווח נוח בלבד, בלי לדחוף לכאב",
-    description: "תנועה עדינה של עמוד השדרה בשש נקודות ושחרור בתנוחת הילד.",
-    youtubeQuery: "cat cow child pose lower back decompression",
+    spineSafety:
+      "5-8 תנועות חתול-גמל בטווח קטן ונוח (בלי עיגול מלא), ואז Bird-Dog עם גב ישר כמו שולחן",
+    description:
+      "חימום עדין לעמוד השדרה בשש נקודות ואחריו הושטת יד ורגל נגדית — תרגיל ייצוב מוביל לשיקום דיסק.",
+    youtubeQuery: "cat camel bird dog McGill lower back",
     backFocused: true,
   },
   {
@@ -291,8 +335,10 @@ export const WORKOUT_POOL = [
     title: "פתיחת אגן וירכיים בעמידה 🦋",
     durationMinutes: 12,
     impact: "אפס קפיצות",
-    spineSafety: "תנועה מהירך בלבד, הגב נשאר ארוך ויציב",
-    description: "מעגלי ירך, מתיחת כופפי ירך ושחרור אגן — מפחית עומס מהגב התחתון.",
+    spineSafety:
+      "תנועה ממפרק הירך בלבד עם אחיזה בכיסא — האגן והגב נשארים יציבים (בלי סיבובי אגן)",
+    description:
+      "מעגלי רגל, מתיחת כופפי ירך בעמידה ושחרור ישבן — ירכיים גמישות מורידות עומס מהגב התחתון.",
     youtubeQuery: "standing hip mobility routine",
     backFocused: true,
   },
@@ -302,7 +348,8 @@ export const WORKOUT_POOL = [
     title: "יוגה עדינה בעמידה — בלי פיתולים 🌿",
     durationMinutes: 20,
     impact: "מנוחה פעילה",
-    spineSafety: "תנוחות עמידה ושיווי משקל, מדלגות על פיתולים וכפיפות עמוקות",
+    spineSafety:
+      "תנוחות עמידה ושיווי משקל בלבד (לוחמת, עץ, הר). מדלגות על כפיפה קדימה (Forward Fold) ועל פיתולים",
     description: "זרימת יוגה רכה לשיווי משקל, נשימה ושחרור כתפיים.",
     youtubeQuery: "gentle standing yoga for back pain no twists",
   },
@@ -358,7 +405,8 @@ export const WORKOUT_POOL = [
     title: "מתיחות ערב לפני שינה 🌙",
     durationMinutes: 12,
     impact: "מנוחה פעילה",
-    spineSafety: "מתיחות רכות ללא פיתולים — מדלגות על כל תנוחת סיבוב",
+    spineSafety:
+      "מתיחות רכות בשכיבה על הגב — מדלגות על פיתולים, ברכיים-לחזה חזק ותנוחת הילד",
     description: "רוטינה רגועה שמשחררת את היום ומכינה את הגוף לשינה.",
     youtubeQuery: "bedtime stretch routine gentle no twisting",
     backFocused: true,
@@ -374,14 +422,16 @@ export const WORKOUT_POOL = [
     youtubeQuery: "guided walking meditation",
   },
   {
-    id: "legs-up-wall",
+    id: "supported-90-90",
     type: "recovery",
-    title: "רגליים על הקיר והרפיית גב 🛋️",
+    title: "שכיבת 90/90: שוקיים על כיסא + נשימה 🛋️",
     durationMinutes: 10,
     impact: "מנוחה מלאה",
-    spineSafety: "שכיבה על הגב עם תמיכה מלאה, ללא עומס על החוליות",
-    description: "מנח מרגיע שמקל על רגליים עייפות ומרפה את הגב התחתון.",
-    youtubeQuery: "legs up the wall relaxation",
+    spineSafety:
+      "שכיבה על הגב, שוקיים על כיסא או ספה בזווית 90° — התנוחה שמורידה הכי הרבה לחץ מהדיסק",
+    description:
+      "מנח פריקה קלאסי לגב התחתון יחד עם נשימה סרעפתית איטית — מרגיע את הגב ומוריד קורטיזול.",
+    youtubeQuery: "90 90 position lower back relief breathing",
     backFocused: true,
   },
   {

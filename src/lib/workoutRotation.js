@@ -2,12 +2,14 @@ import { SOS_WORKOUT, WORKOUT_POOL } from "../data/workoutPool";
 
 // Weekly rhythm (Sunday..Saturday) keeps the week balanced; the workout inside
 // each type rotates every time that type comes around, so days rarely repeat.
+// Strength twice a week with rest between (insulin sensitivity in PCOS),
+// moderate cardio three times, and a recovery day to keep cortisol down.
 export const WEEK_RHYTHM = [
   "cardio", // ראשון
   "strength", // שני
   "cardio", // שלישי
-  "strength", // רביעי
-  "mobility", // חמישי
+  "mobility", // רביעי
+  "strength", // חמישי
   "cardio", // שישי
   "recovery", // שבת
 ];

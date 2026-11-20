@@ -16,7 +16,11 @@ import { updateToday, useToday, useCabin, setCabin } from "../store";
 import CastToTvButton from "../components/CastToTvButton";
 import JourneyToEastMap from "../components/JourneyToEastMap";
 import CollapsibleCard from "../components/CollapsibleCard";
-import { WORKOUT_TYPES } from "../data/workoutPool";
+import {
+  POST_MEAL_TIP,
+  SAFETY_RULES,
+  WORKOUT_TYPES,
+} from "../data/workoutPool";
 import {
   getDailyExtras,
   getDailyWorkout,
@@ -247,6 +251,23 @@ export default function Movement() {
             </div>
           </div>
 
+          {/* Why this helps: back + PCOS + weight + cortisol/insulin */}
+          <p className="rounded-2xl border border-lilac/30 bg-lilac/10 p-3 text-xs leading-relaxed text-purple-100">
+            <strong className="text-lilac">למה זה טוב לך: </strong>
+            {typeInfo.benefit}
+          </p>
+
+          <details className="group rounded-2xl bg-white/5 px-3 py-2 text-xs">
+            <summary className="cursor-pointer select-none font-bold text-mint">
+              🛡️ כללי בטיחות לגב ולקורטיזול
+            </summary>
+            <ul className="mt-2 list-disc space-y-1 pr-4 text-purple-200">
+              {SAFETY_RULES.map((rule) => (
+                <li key={rule}>{rule}</li>
+              ))}
+            </ul>
+          </details>
+
           {/* Smart TV Cast Integration */}
           <CastToTvButton
             workoutTitle={workout.title}
@@ -291,6 +312,10 @@ export default function Movement() {
               {dailyDone ? "✅ בוצע" : `סיימתי +${REWARD} 🪙`}
             </button>
           </div>
+
+          <p className="text-[11px] leading-relaxed text-mint">
+            🍽️ {POST_MEAL_TIP}
+          </p>
 
           {!sosMode && (
             <p className="flex items-center gap-1.5 text-[11px] text-purple-300">
