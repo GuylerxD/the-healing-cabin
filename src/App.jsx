@@ -12,6 +12,8 @@ import {
   Settings,
 } from "lucide-react";
 import SettingsModal from "./components/SettingsModal";
+import { BACKUP_CHANGED_EVENT } from "./components/BackupSection";
+import { isBackupDue } from "./lib/backup";
 import {
   useCabin,
   setAllSectionsCollapsed,
@@ -49,11 +51,17 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("quests");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [storageFull, setStorageFull] = useState(false);
+  const [backupDue, setBackupDue] = useState(() => isBackupDue());
 
   useEffect(() => {
     const onError = () => setStorageFull(true);
+    const onBackup = () => setBackupDue(isBackupDue());
     window.addEventListener(STORAGE_ERROR_EVENT, onError);
-    return () => window.removeEventListener(STORAGE_ERROR_EVENT, onError);
+    window.addEventListener(BACKUP_CHANGED_EVENT, onBackup);
+    return () => {
+      window.removeEventListener(STORAGE_ERROR_EVENT, onError);
+      window.removeEventListener(BACKUP_CHANGED_EVENT, onBackup);
+    };
   }, []);
   const { coins, longGoal, collapsedSections, pets } = useCabin();
   const { Screen } = TABS.find((t) => t.id === activeTab);
@@ -112,11 +120,17 @@ export default function App() {
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
-              aria-label="הגדרות"
-              title="הגדרות"
-              className="flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 p-2 text-moon transition hover:bg-white/15 active:scale-95"
+              aria-label={backupDue ? "הגדרות — מומלץ לגבות את הנתונים" : "הגדרות"}
+              title={backupDue ? "הגדרות — מומלץ לגבות" : "הגדרות"}
+              className="relative flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 p-2 text-moon transition hover:bg-white/15 active:scale-95"
             >
               <Settings className="h-4 w-4 text-lilac" />
+              {backupDue && (
+                <span
+                  className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-400 ring-2 ring-space"
+                  aria-hidden
+                />
+              )}
             </button>
             {/* כפתור כווץ הכל / פתח הכל למעלה */}
             <button

@@ -63,6 +63,13 @@ function load() {
 let state = load();
 const listeners = new Set();
 
+// After a backup restore rewrites localStorage: adopt it in memory, so a write that
+// happens before the page reloads saves the restored data instead of the old state.
+export function reloadCabinFromStorage() {
+  state = load();
+  listeners.forEach((l) => l());
+}
+
 // localStorage (~5MB) is shared with My Recipes on the same origin, so a write can fail
 // when it is full. Keep working from memory and let the UI warn instead of crashing.
 export const STORAGE_ERROR_EVENT = "cabin-storage-error";

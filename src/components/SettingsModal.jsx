@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { X, Settings, Pill, Star, Check } from "lucide-react";
+import { X, Settings, Pill, Star, Check, ShieldCheck } from "lucide-react";
 import { setCabin, useCabin } from "../store";
 import PillReminderToggle from "./PillReminderToggle";
+import BackupSection from "./BackupSection";
 
 function Section({ icon: Icon, title, hint, children }) {
   return (
@@ -75,6 +76,14 @@ export default function SettingsModal({ isOpen, onClose }) {
         </header>
 
         <div className="space-y-6 overflow-y-auto px-5 py-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]">
+          <Section
+            icon={ShieldCheck}
+            title="גיבוי ושחזור"
+            hint="כל הנתונים שמורים רק בדפדפן — גיבוי שומר עליהם אם מחליפים טלפון או מנקים נתונים"
+          >
+            <BackupSection />
+          </Section>
+
           <Section
             icon={Pill}
             title="התראות לגלולת זואלי"
