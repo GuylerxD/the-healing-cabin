@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Beef,
   Flame,
@@ -8,15 +7,13 @@ import {
   CheckCircle2,
   Utensils,
   Sparkles,
-  Plus,
-  Edit3,
-  Trash2,
+  ExternalLink,
   Undo2,
 } from "lucide-react";
 import { updateToday, useCabin, useToday } from "../store";
 import CollapsibleCard from "../components/CollapsibleCard";
-import CustomFoodLoggerModal from "../components/CustomFoodLoggerModal";
 import SweetBank from "../components/SweetBank";
+import { MY_RECIPES_URL, RECIPE_MEAL_REWARD } from "../lib/recipesSync";
 
 const PROTEIN_ADDS = [
   { label: "🐟 דג", grams: 25 },
@@ -27,76 +24,31 @@ const PROTEIN_ADDS = [
 
 const WATER_GOAL_CUPS = 8;
 
-const MEAL_SLOTS = [
-  { key: "breakfast", label: "בוקר", color: "text-blush" },
-  { key: "morningSnack", label: "ביניים בוקר", color: "text-mint" },
-  { key: "lunch", label: "צהריים", color: "text-lilac" },
-  { key: "afternoonSnack", label: "ביניים אחה״צ", color: "text-sky-300" },
-  { key: "dinner", label: "ערב", color: "text-moon" },
-];
+// Order meals the way My Recipes plans them
+const MEAL_ORDER = ["בוקר", "ביניים בוקר", "צהריים", 'ביניים אחה"צ', "ארוחת ערב"];
 
 export default function Nutrition() {
   const { proteinGoal = 110, calorieGoal = 1650 } = useCabin();
   const today = useToday();
 
-  const [customLoggerSlot, setCustomLoggerSlot] = useState(null);
-
   const protein = today.protein ?? 0;
   const calories = today.calories ?? 0;
   const waterCups = today.water ?? 0;
-  const customMeals = today.customMeals ?? {}; // { [slotKey]: { customName, calories, proteinGrams, breakdown, source } }
 
   const proteinPct = Math.min(100, Math.round((protein / proteinGoal) * 100));
   const caloriePct = Math.min(100, Math.round((calories / calorieGoal) * 100));
 
-  // Save AI / DB logged meal for a slot
-  const handleSaveCustomMeal = (slotKey, customData) => {
-    const existingCustom = customMeals[slotKey];
-    let currentCal = calories;
-    let currentProt = protein;
-
-    if (existingCustom) {
-      currentCal -= existingCustom.calories ?? 0;
-      currentProt -= existingCustom.proteinGrams ?? 0;
-    }
-
-    const nextCalories = Math.max(0, currentCal + customData.calories);
-    const nextProtein = Math.max(0, currentProt + customData.proteinGrams);
-    const nextCustomMeals = {
-      ...customMeals,
-      [slotKey]: customData,
-    };
-
-    updateToday(
-      {
-        calories: nextCalories,
-        protein: nextProtein,
-        meals: Object.keys(nextCustomMeals).length,
-        customMeals: nextCustomMeals,
-      },
-      existingCustom ? 0 : 2,
-    );
-  };
-
-  const handleRemoveCustomMeal = (slotKey) => {
-    const existing = customMeals[slotKey];
-    if (!existing) return;
-
-    const nextCalories = Math.max(0, calories - (existing.calories ?? 0));
-    const nextProtein = Math.max(0, protein - (existing.proteinGrams ?? 0));
-    const nextCustom = { ...customMeals };
-    delete nextCustom[slotKey];
-
-    updateToday(
-      {
-        calories: nextCalories,
-        protein: nextProtein,
-        meals: Object.keys(nextCustom).length,
-        customMeals: nextCustom,
-      },
-      -2,
-    );
-  };
+  // Meals marked "אכלתי" in My Recipes, synced by lib/recipesSync.js
+  const recipeMeals = Object.entries(today.recipeMeals ?? {})
+    .map(([key, m]) => ({ key, ...m }))
+    .sort((a, b) => {
+      const ia = MEAL_ORDER.indexOf(a.meal);
+      const ib = MEAL_ORDER.indexOf(b.meal);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.at - b.at;
+    });
+  const recipeCal = recipeMeals.reduce((s, m) => s + m.calories, 0);
+  const recipeProt =
+    Math.round(recipeMeals.reduce((s, m) => s + m.protein, 0) * 10) / 10;
 
   // Quick protein adds are logged per day so the last one can be undone.
   const quickProtein = today.quickProtein ?? [];
@@ -284,94 +236,63 @@ export default function Nutrition() {
         </div>
       </CollapsibleCard>
 
-      {/* 3. ארוחות היום — דיווח חופשי וחישוב AI / מאגר */}
+      {/* 4. ארוחות שסומנו "אכלתי" ב-My Recipes */}
       <CollapsibleCard
-        id="nutrition-daily-meals"
-        title="ארוחות היום (5 ארוחות)"
-        badge={`${Object.keys(customMeals).length} / 5 ארוחות דווחו`}
+        id="nutrition-recipes-meals"
+        title="ארוחות מ-My Recipes 🍽️"
+        badge={
+          recipeMeals.length
+            ? `${recipeMeals.length} מנות • ${recipeCal} קק״ל • ${recipeProt}ג׳ חלבון`
+            : "מסונכרן אוטומטית מהמתכונים"
+        }
         icon={Utensils}
         defaultOpen={true}
       >
-        <div className="space-y-3 text-xs">
-          {MEAL_SLOTS.map(({ key: slotKey, label: slotLabel, color }) => {
-            const customMeal = customMeals[slotKey];
-
-            return (
+        <div className="space-y-2.5 text-xs">
+          {recipeMeals.length === 0 ? (
+            <p className="rounded-2xl bg-white/5 p-3 text-purple-300 leading-relaxed">
+              סמני ״אכלתי ✓״ על מנה מהתפריט של היום ב-My Recipes, והקלוריות
+              והחלבון שלה יופיעו כאן ויתווספו למדדים (+{RECIPE_MEAL_REWARD} 🪙
+              לכל מנה).
+            </p>
+          ) : (
+            recipeMeals.map((m) => (
               <div
-                key={slotKey}
-                className={`rounded-2xl border p-3.5 space-y-2.5 transition ${
-                  customMeal
-                    ? "border-lilac/50 bg-lilac/10"
-                    : "border-white/10 bg-white/5"
-                }`}
+                key={m.key}
+                className="flex items-center justify-between gap-2 rounded-2xl border border-lilac/40 bg-lilac/10 px-3.5 py-2.5"
               >
-                <div className="flex items-center justify-between gap-2">
-                  <span className={`font-bold text-sm ${color}`}>
-                    {customMeal
-                      ? `${slotLabel}: ${customMeal.customName}`
-                      : slotLabel}
+                <div className="min-w-0">
+                  <span className="block text-[11px] font-bold text-lilac">
+                    {m.meal}
                   </span>
-                  {customMeal && (
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-moon">
-                        {customMeal.calories} קק״ל
-                      </span>
-                      <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[11px] font-bold text-mint">
-                        +{customMeal.proteinGrams}ג׳ חלבון
-                      </span>
-                    </div>
-                  )}
+                  <span className="block truncate text-sm font-semibold text-moon">
+                    {m.title}
+                  </span>
                 </div>
-
-                {customMeal ? (
-                  <>
-                    {customMeal.breakdown && (
-                      <p className="text-[11px] text-purple-200/80">
-                        {customMeal.breakdown}
-                      </p>
-                    )}
-                    <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setCustomLoggerSlot({
-                            key: slotKey,
-                            label: slotLabel,
-                          })
-                        }
-                        className="flex items-center gap-1.5 rounded-xl border border-lilac/40 bg-lilac/20 px-2.5 py-1.5 text-xs font-bold text-moon transition hover:bg-lilac/30 active:scale-95"
-                      >
-                        <Edit3 className="h-3.5 w-3.5" />
-                        <span>ערוך</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveCustomMeal(slotKey)}
-                        className="flex items-center gap-1 rounded-xl border border-blush/30 bg-blush/10 px-2.5 py-1.5 text-xs font-semibold text-blush transition hover:bg-blush/20 active:scale-95"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        <span>הסר</span>
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCustomLoggerSlot({
-                        key: slotKey,
-                        label: slotLabel,
-                      })
-                    }
-                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-moon transition hover:bg-white/10 active:scale-95"
-                  >
-                    <Plus className="h-3.5 w-3.5 text-lilac" />
-                    <span>מה אכלתי ב{slotLabel}? (+2 🪙)</span>
-                  </button>
-                )}
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-moon">
+                    {m.calories} קק״ל
+                  </span>
+                  <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[11px] font-bold text-mint">
+                    {m.protein}ג׳ חלבון
+                  </span>
+                </div>
               </div>
-            );
-          })}
+            ))
+          )}
+
+          <a
+            href={MY_RECIPES_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 font-semibold text-moon transition hover:bg-white/10 active:scale-95"
+          >
+            <ExternalLink className="h-3.5 w-3.5 text-lilac" />
+            <span>פתיחת My Recipes</span>
+          </a>
+          <p className="text-[11px] text-purple-300">
+            ביטול ״אכלתי״ במתכונים מוריד את המנה גם מכאן.
+          </p>
         </div>
       </CollapsibleCard>
 
@@ -406,18 +327,6 @@ export default function Nutrition() {
           <span className="text-lg">{today.earlyDinner ? "✅" : "⬜"}</span>
         </button>
       </CollapsibleCard>
-
-      {/* Custom Food Logger Modal */}
-      <CustomFoodLoggerModal
-        isOpen={!!customLoggerSlot}
-        mealSlotTitle={customLoggerSlot ? customLoggerSlot.label : ""}
-        onClose={() => setCustomLoggerSlot(null)}
-        onSaveCustomMeal={(data) => {
-          if (customLoggerSlot) {
-            handleSaveCustomMeal(customLoggerSlot.key, data);
-          }
-        }}
-      />
     </div>
   );
 }

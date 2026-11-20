@@ -20,6 +20,7 @@ import {
   tickPets,
 } from "./store";
 import { PET_IDS, needsAttention } from "./lib/pets";
+import { EATEN_LOG_KEY, syncEatenMeals } from "./lib/recipesSync";
 import Quests from "./screens/Quests";
 import Nutrition from "./screens/Nutrition";
 import Movement from "./screens/Movement";
@@ -51,19 +52,26 @@ export default function App() {
 
   const isAllCollapsed = areAllSectionsCollapsed(collapsedSections);
 
-  // Time-based updates: weekly sweet-bank reset and pet meters decay.
+  // Time-based updates: weekly sweet-bank reset, pet meters decay and meals eaten in My Recipes.
   // Run on load, every minute while open, and whenever the app returns to the foreground.
   useEffect(() => {
     const tick = () => {
       rolloverSweetBank();
       tickPets();
+      syncEatenMeals();
+    };
+    // Live update when My Recipes is open in another tab of the same origin
+    const onStorage = (e) => {
+      if (e.key === EATEN_LOG_KEY || e.key === null) syncEatenMeals();
     };
     tick();
     const interval = setInterval(tick, 60_000);
     document.addEventListener("visibilitychange", tick);
+    window.addEventListener("storage", onStorage);
     return () => {
       clearInterval(interval);
       document.removeEventListener("visibilitychange", tick);
+      window.removeEventListener("storage", onStorage);
     };
   }, []);
 

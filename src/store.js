@@ -23,7 +23,6 @@ const DEFAULTS = {
   prepPlan: [], // recipe ids planned for weekend prep
   recoveryStart: null, // ms timestamp while Active Recovery runs (survives closing the app)
   longGoal: "", // optional free-text long-term goal shown in the header
-  geminiApiKey: "", // optional user-supplied Gemini API key (stored locally in browser only)
   collapsedSections: {}, // { [sectionId]: boolean } - persisted collapse state
   customMealPlanDay: null, // optional overridden dayIndex (0..6) for today's nutrition tab
   currentWeight: 99, // Current weight in kg (starting baseline: 99kg)
@@ -46,7 +45,9 @@ const DEFAULTS = {
 
 function load() {
   try {
-    return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(KEY)) };
+    // eslint-disable-next-line no-unused-vars -- geminiApiKey: dropped with the AI meal logger
+    const { geminiApiKey, ...saved } = JSON.parse(localStorage.getItem(KEY)) ?? {};
+    return { ...DEFAULTS, ...saved };
   } catch {
     return DEFAULTS;
   }
@@ -225,7 +226,7 @@ export const SECTION_IDS = [
   "nutrition-protein-bar",
   "nutrition-sweet-bank",
   "nutrition-water",
-  "nutrition-daily-meals",
+  "nutrition-recipes-meals",
   "nutrition-reflux",
   "lifestyle-mochi-walks",
   "lifestyle-selfcare",

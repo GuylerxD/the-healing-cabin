@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X, Settings, Pill, Star, KeyRound, Check } from "lucide-react";
+import { X, Settings, Pill, Star, Check } from "lucide-react";
 import { setCabin, useCabin } from "../store";
 import PillReminderToggle from "./PillReminderToggle";
 
@@ -21,7 +21,7 @@ function Section({ icon: Icon, title, hint, children }) {
 }
 
 export default function SettingsModal({ isOpen, onClose }) {
-  const { longGoal = "", geminiApiKey = "" } = useCabin();
+  const { longGoal = "" } = useCabin();
   const [goalDraft, setGoalDraft] = useState(longGoal);
   const [goalSaved, setGoalSaved] = useState(false);
 
@@ -114,22 +114,6 @@ export default function SettingsModal({ isOpen, onClose }) {
                 {goalSaved ? "נשמר" : "שמירה"}
               </button>
             </form>
-          </Section>
-
-          <Section
-            icon={KeyRound}
-            title="מפתח Gemini AI"
-            hint="אופציונלי — לחישוב קלוריות וחלבון מדויק יותר. נשמר בדפדפן שלך בלבד"
-          >
-            <input
-              type="password"
-              value={geminiApiKey}
-              onChange={(e) =>
-                setCabin((s) => ({ ...s, geminiApiKey: e.target.value }))
-              }
-              placeholder="הדביקי מפתח Gemini API"
-              className="w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-xs text-moon placeholder:text-purple-400 focus:border-lilac focus:outline-none"
-            />
           </Section>
         </div>
       </div>
