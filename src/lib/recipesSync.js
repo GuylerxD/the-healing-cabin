@@ -5,7 +5,6 @@ import { setCabin, todayKey } from "../store";
 // Shape: { 'YYYY-MM-DD': { [slotKey]: { title, calories, protein, meal, at } } }
 export const EATEN_LOG_KEY = "healing_cabin_eaten_meals";
 export const RECIPE_MEAL_REWARD = 2;
-export const MY_RECIPES_URL = "https://guylerxd.github.io/my-recipes/";
 
 function readTodayEaten() {
   try {

@@ -5,15 +5,12 @@ import {
   Droplets,
   GlassWater,
   CheckCircle2,
-  Utensils,
   Sparkles,
-  ExternalLink,
   Undo2,
 } from "lucide-react";
 import { updateToday, useCabin, useToday } from "../store";
 import CollapsibleCard from "../components/CollapsibleCard";
 import SweetBank from "../components/SweetBank";
-import { MY_RECIPES_URL, RECIPE_MEAL_REWARD } from "../lib/recipesSync";
 
 const PROTEIN_ADDS = [
   { label: "🐟 דג", grams: 25 },
@@ -23,9 +20,6 @@ const PROTEIN_ADDS = [
 ];
 
 const WATER_GOAL_CUPS = 8;
-
-// Order meals the way My Recipes plans them
-const MEAL_ORDER = ["בוקר", "ביניים בוקר", "צהריים", 'ביניים אחה"צ', "ארוחת ערב"];
 
 export default function Nutrition() {
   const { proteinGoal = 110, calorieGoal = 1650 } = useCabin();
@@ -38,17 +32,6 @@ export default function Nutrition() {
   const proteinPct = Math.min(100, Math.round((protein / proteinGoal) * 100));
   const caloriePct = Math.min(100, Math.round((calories / calorieGoal) * 100));
 
-  // Meals marked "אכלתי" in My Recipes, synced by lib/recipesSync.js
-  const recipeMeals = Object.entries(today.recipeMeals ?? {})
-    .map(([key, m]) => ({ key, ...m }))
-    .sort((a, b) => {
-      const ia = MEAL_ORDER.indexOf(a.meal);
-      const ib = MEAL_ORDER.indexOf(b.meal);
-      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.at - b.at;
-    });
-  const recipeCal = recipeMeals.reduce((s, m) => s + m.calories, 0);
-  const recipeProt =
-    Math.round(recipeMeals.reduce((s, m) => s + m.protein, 0) * 10) / 10;
 
   // Quick protein adds are logged per day so the last one can be undone.
   const quickProtein = today.quickProtein ?? [];
@@ -233,66 +216,6 @@ export default function Nutrition() {
               <span>הגעת ליעד השתייה היומי! שתית 2 ליטר מלאים 🎉 (+2 🪙)</span>
             </div>
           )}
-        </div>
-      </CollapsibleCard>
-
-      {/* 4. ארוחות שסומנו "אכלתי" ב-My Recipes */}
-      <CollapsibleCard
-        id="nutrition-recipes-meals"
-        title="ארוחות מ-My Recipes 🍽️"
-        badge={
-          recipeMeals.length
-            ? `${recipeMeals.length} מנות • ${recipeCal} קק״ל • ${recipeProt}ג׳ חלבון`
-            : "מסונכרן אוטומטית מהמתכונים"
-        }
-        icon={Utensils}
-        defaultOpen={true}
-      >
-        <div className="space-y-2.5 text-xs">
-          {recipeMeals.length === 0 ? (
-            <p className="rounded-2xl bg-white/5 p-3 text-purple-300 leading-relaxed">
-              סמני ״אכלתי ✓״ על מנה מהתפריט של היום ב-My Recipes, והקלוריות
-              והחלבון שלה יופיעו כאן ויתווספו למדדים (+{RECIPE_MEAL_REWARD} 🪙
-              לכל מנה).
-            </p>
-          ) : (
-            recipeMeals.map((m) => (
-              <div
-                key={m.key}
-                className="flex items-center justify-between gap-2 rounded-2xl border border-lilac/40 bg-lilac/10 px-3.5 py-2.5"
-              >
-                <div className="min-w-0">
-                  <span className="block text-[11px] font-bold text-lilac">
-                    {m.meal}
-                  </span>
-                  <span className="block truncate text-sm font-semibold text-moon">
-                    {m.title}
-                  </span>
-                </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-moon">
-                    {m.calories} קק״ל
-                  </span>
-                  <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[11px] font-bold text-mint">
-                    {m.protein}ג׳ חלבון
-                  </span>
-                </div>
-              </div>
-            ))
-          )}
-
-          <a
-            href={MY_RECIPES_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 font-semibold text-moon transition hover:bg-white/10 active:scale-95"
-          >
-            <ExternalLink className="h-3.5 w-3.5 text-lilac" />
-            <span>פתיחת My Recipes</span>
-          </a>
-          <p className="text-[11px] text-purple-300">
-            ביטול ״אכלתי״ במתכונים מוריד את המנה גם מכאן.
-          </p>
         </div>
       </CollapsibleCard>
 

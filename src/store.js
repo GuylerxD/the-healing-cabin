@@ -226,7 +226,6 @@ export const SECTION_IDS = [
   "nutrition-protein-bar",
   "nutrition-sweet-bank",
   "nutrition-water",
-  "nutrition-recipes-meals",
   "nutrition-reflux",
   "lifestyle-mochi-walks",
   "lifestyle-selfcare",
