@@ -9,6 +9,7 @@ import {
   minutesOfDay,
   showPillNotification,
 } from "../lib/pillReminder";
+import CoinAmount from "./CoinAmount";
 
 const SNOOZE_MS = 10 * 60 * 1000;
 
@@ -115,7 +116,7 @@ export default function InAppPillReminder() {
         {/* Dismiss Button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 left-4 p-1.5 rounded-full bg-white/10 text-purple-300 hover:text-moon transition"
+          className="absolute top-4 left-4 p-1.5 rounded-full bg-white/10 text-muted hover:text-moon transition"
           aria-label="סגור תזכורת"
         >
           <X className="h-4 w-4" />
@@ -123,11 +124,11 @@ export default function InAppPillReminder() {
 
         {/* Icon & Title */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blush to-lilac text-space shadow-lg shadow-blush/30">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-lilac text-space shadow-lg shadow-lilac/30">
             <Pill className="h-6 w-6" />
           </div>
           <div>
-            <span className="text-[11px] font-bold text-blush tracking-wider uppercase">
+            <span className="text-2xs font-bold text-blush tracking-wider uppercase">
               תזכורת פנימית מהאפליקציה
             </span>
             <h3 className="text-base font-bold text-moon">
@@ -137,7 +138,7 @@ export default function InAppPillReminder() {
         </div>
 
         {/* Content */}
-        <p className="text-xs text-purple-200 leading-relaxed">
+        <p className="text-xs text-soft leading-relaxed">
           זהו הזמן הקבוע שלך לנטילת הגלולה היומית לשמירה על רצף מדויק ואיזון
           הורמונלי מיטבי.
         </p>
@@ -148,20 +149,20 @@ export default function InAppPillReminder() {
             <span>נפלא! נטילת זואלי נרשמה (+{PILL_REWARD} מטבעות ריפוי ✨)</span>
           </div>
         ) : (
-          <div className="space-y-2.5 pt-2">
+          <div className="space-y-3 pt-2">
             <button
               type="button"
               onClick={handleMarkAsTaken}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-l from-mint to-teal-400 p-3.5 text-sm font-bold text-space shadow-lg shadow-mint/25 transition active:scale-95"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-lilac p-4 text-sm font-bold text-space shadow-lg shadow-lilac/25 transition active:scale-95"
             >
               <CheckCircle2 className="h-5 w-5" />
-              <span>לקחתי עכשיו! (+{PILL_REWARD} 🪙)</span>
+              <span>לקחתי עכשיו · <CoinAmount amount={`+${PILL_REWARD}`} /></span>
             </button>
 
             <button
               type="button"
               onClick={handleSnooze}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 p-2.5 text-xs font-semibold text-purple-200 hover:bg-white/15 transition"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 p-3 text-xs font-semibold text-soft hover:bg-white/15 transition"
             >
               <Clock className="h-4 w-4 text-lilac" />
               <span>הזכר לי בעוד 10 דקות</span>

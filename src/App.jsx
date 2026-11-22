@@ -9,6 +9,8 @@ import {
   ChevronsDown,
   Compass,
   Settings,
+  TriangleAlert,
+  X,
 } from "lucide-react";
 import SettingsModal from "./components/SettingsModal";
 import { BACKUP_CHANGED_EVENT } from "./components/BackupSection";
@@ -36,7 +38,7 @@ const TABS = [
   { id: "nutrition", label: "תזונה", icon: Utensils, Screen: Nutrition },
   {
     id: "lifestyle",
-    label: "Lifestyle",
+    label: "אורח חיים",
     icon: HeartHandshake,
     Screen: Lifestyle,
   },
@@ -106,15 +108,15 @@ export default function App() {
       />
       <header className="sticky top-0 z-20 border-b border-white/10 bg-space/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-md items-center justify-between px-5 py-4">
-          <div>
-            <h1 className="text-lg font-bold text-blush tracking-wide">
-              The Healing Cabin ✨
+          <div className="min-w-0">
+            <h1 className="whitespace-nowrap text-xl font-extrabold leading-tight text-moon">
+              The Healing Cabin
             </h1>
-            <p className="text-xs text-purple-300">
-              {longGoal ? `🌟 ${longGoal}` : "צעד קטן כל יום 🌱"}
+            <p className="truncate text-xs text-muted">
+              {longGoal || "צעד קטן כל יום"}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
@@ -134,25 +136,22 @@ export default function App() {
             <button
               type="button"
               onClick={handleToggleCollapseAll}
-              className="flex items-center gap-1 rounded-2xl border border-white/15 bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-moon hover:bg-white/15 transition active:scale-95"
+              className="flex items-center justify-center rounded-2xl border border-white/15 bg-white/10 p-2 text-lilac transition hover:bg-white/15 active:scale-95"
               title={
+                isAllCollapsed ? "פתח את כל התפריטים" : "כווץ את כל התפריטים"
+              }
+              aria-label={
                 isAllCollapsed ? "פתח את כל התפריטים" : "כווץ את כל התפריטים"
               }
             >
               {isAllCollapsed ? (
-                <>
-                  <ChevronsDown className="h-3.5 w-3.5 text-mint" />
-                  <span>פתח הכל</span>
-                </>
+                <ChevronsDown className="h-4 w-4" aria-hidden />
               ) : (
-                <>
-                  <ChevronsUp className="h-3.5 w-3.5 text-lilac" />
-                  <span>כווץ הכל</span>
-                </>
+                <ChevronsUp className="h-4 w-4" aria-hidden />
               )}
             </button>
 
-            <div className="flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-3.5 py-1.5">
+            <div className="flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-1.5">
               <Coins className="h-4 w-4 text-mint" aria-hidden />
               <span className="text-sm font-bold text-mint" aria-label="מטבעות">
                 {coins}
@@ -162,24 +161,25 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-md space-y-4 px-4 pt-4">
+      <main className="mx-auto max-w-md space-y-5 px-4 pt-5">
         {storageFull && (
           <div
             role="alert"
-            className="flex items-start justify-between gap-2 rounded-2xl border border-blush/50 bg-blush/15 p-3 text-right text-xs text-blush"
+            className="flex items-start gap-2 rounded-2xl border border-blush/50 bg-blush/15 p-4 text-right text-xs text-blush"
             dir="rtl"
           >
-            <span>
-              ⚠️ האחסון בדפדפן מלא — השינויים האחרונים לא נשמרו. כדאי לפנות
+            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <span className="flex-1">
+              האחסון בדפדפן מלא — השינויים האחרונים לא נשמרו. כדאי לפנות
               מקום (למשל מתכונים ישנים ב-My Recipes) ולרענן.
             </span>
             <button
               type="button"
               onClick={() => setStorageFull(false)}
               aria-label="סגירת ההתראה"
-              className="shrink-0 font-bold"
+              className="shrink-0"
             >
-              ✕
+              <X className="h-4 w-4" aria-hidden />
             </button>
           </div>
         )}
@@ -205,7 +205,7 @@ export default function App() {
                   : undefined
               }
               className={`relative flex flex-col items-center gap-1 rounded-2xl px-1.5 py-1.5 transition ${
-                isActive ? "bg-lilac/20 text-mint" : "text-purple-300/70"
+                isActive ? "bg-lilac/20 text-lilac" : "text-muted/70"
               }`}
             >
               {id === "cabin" && petsNeedCare && (
@@ -215,7 +215,7 @@ export default function App() {
                 />
               )}
               <Icon className="h-4 w-4" aria-hidden />
-              <span className="text-[9.5px] font-medium leading-none">
+              <span className="text-2xs font-medium leading-none">
                 {label}
               </span>
             </button>

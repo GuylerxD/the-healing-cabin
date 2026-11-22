@@ -8,8 +8,17 @@
   --color-blush: #ffb7df;
   --color-lilac: #c792ea;
   --color-moon: #f5f0ff;
+  /* Text tones: moon = primary, soft = secondary, muted = captions / hints */
+  --color-soft: #d6cdee;
+  --color-muted: #a497c4;
+
+  /* Type scale — the smallest step; everything else uses Tailwind's xs → 2xl.
+     h1 xl/extrabold · screen h2 lg · card h3 base · sub h4 sm · body xs-sm · caption 2xs */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
 }
 
+/* Spacing scale: 1 · 1.5 · 2 · 3 · 4 · 5 · 6 (Tailwind units). Cards pad 5, gaps between cards 5. */
 @utility glass {
   @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur-lg;
 }

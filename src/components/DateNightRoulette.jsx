@@ -92,18 +92,18 @@ export default function DateNightRoulette() {
             <Heart className="h-5 w-5 fill-blush" />
           </div>
           <div>
-            <h4 className="font-bold text-xs text-moon flex items-center gap-1.5">
+            <h4 className="font-bold text-sm text-moon flex items-center gap-1.5">
               <span>רולטת דייטים בחיפה 🎡</span>
               <Sparkles className="h-3.5 w-3.5 text-blush" />
             </h4>
-            <p className="text-[11px] text-purple-300">
+            <p className="text-2xs text-muted">
               מוגן גב 100% • מותאם לאכלנים בררנים (שניצל, פיצה, בורגר בלי
               ירקות/רטבים)
             </p>
           </div>
         </div>
 
-        <span className="rounded-full bg-blush/15 border border-blush/30 px-2.5 py-0.5 text-[11px] font-bold text-blush">
+        <span className="rounded-full bg-blush/15 border border-blush/30 px-2.5 py-0.5 text-2xs font-bold text-blush">
           5 רעיונות מושלמים
         </span>
       </div>
@@ -117,17 +117,17 @@ export default function DateNightRoulette() {
         }`}
       >
         <div className="flex items-start justify-between">
-          <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-bold text-mint">
+          <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-2xs font-bold text-mint">
             {selectedDate.category}
           </span>
           <span className="text-xl">✨</span>
         </div>
 
         <div className="space-y-1">
-          <h3 className="font-extrabold text-moon text-sm">
+          <h3 className="font-extrabold text-moon text-base">
             {selectedDate.title}
           </h3>
-          <p className="text-xs text-purple-200 leading-relaxed">
+          <p className="text-xs text-soft leading-relaxed">
             {selectedDate.desc}
           </p>
         </div>
@@ -136,14 +136,14 @@ export default function DateNightRoulette() {
         <div className="space-y-1.5 pt-1 border-t border-white/10 text-xs">
           <div className="flex items-center gap-1.5 text-amber-300">
             <UtensilsCrossed className="h-3.5 w-3.5 shrink-0" />
-            <span className="text-[11px]">
+            <span className="text-2xs">
               <strong>אוכל מותאם:</strong> {selectedDate.foodMatch}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5 text-mint">
             <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-            <span className="text-[11px]">
+            <span className="text-2xs">
               <strong>בטיחות גב:</strong> {selectedDate.spineSafeNote}
             </span>
           </div>
@@ -158,7 +158,7 @@ export default function DateNightRoulette() {
         className={`w-full flex items-center justify-center gap-2 rounded-2xl py-3 text-xs font-bold transition-all active:scale-95 shadow-lg ${
           isSpinning
             ? "bg-blush text-space shadow-blush/30 animate-pulse"
-            : "bg-gradient-to-r from-blush via-lilac to-mint text-space shadow-lilac/30 hover:opacity-95"
+            : "bg-lilac text-space shadow-lilac/30 hover:opacity-95"
         }`}
       >
         <Dices className={`h-4 w-4 ${isSpinning ? "animate-spin" : ""}`} />

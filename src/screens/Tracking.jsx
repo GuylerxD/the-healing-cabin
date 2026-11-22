@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Scale, Shirt, Zap, Sparkles } from "lucide-react";
+import { Scale, Shirt, Zap, Sparkles, TrendingDown, Lightbulb } from "lucide-react";
 import { todayKey, updateToday, useCabin, useToday } from "../store";
 import { compareBy, daysUntilNextWeighIn, smooth } from "../lib/tracking";
 import {
@@ -10,6 +10,7 @@ import {
 import CollapsibleCard from "../components/CollapsibleCard";
 import JourneyToEastWeightTracker from "../components/JourneyToEastWeightTracker";
 import MorningCheckIn from "../components/MorningCheckIn";
+import CoinAmount from "../components/CoinAmount";
 
 const FIT = [
   ["tight", "צמוד"],
@@ -20,10 +21,38 @@ const PAIN = ["אין", "קל", "בינוני", "חזק"]; // index = 0..3
 const MOOD = ["שפוף 🌧️", "רגוע ⛅", "טוב ☀️", "קורן ✨"];
 
 function TrendChart({ weighIns }) {
-  if (weighIns.length < 2)
+  if (weighIns.length < 2) {
+    const first = weighIns.length === 0;
     return (
-      <p className="text-xs text-purple-300">המגמה תופיע אחרי שתי שקילות 🌱</p>
+      <div className="relative flex h-32 flex-col items-start justify-end gap-1 overflow-hidden rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-4">
+        <svg
+          viewBox="0 0 300 100"
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full opacity-25"
+          dir="ltr"
+          aria-hidden
+        >
+          <polyline
+            points="10,12 80,20 150,18 220,30 290,36"
+            fill="none"
+            stroke="var(--color-muted)"
+            strokeWidth="3"
+            strokeDasharray="6 8"
+            strokeLinecap="round"
+          />
+        </svg>
+        <TrendingDown className="relative h-5 w-5 text-lilac" aria-hidden />
+        <p className="relative text-sm font-semibold text-moon">
+          {first ? "עוד אין שקילות" : "עוד שקילה אחת והגרף יופיע"}
+        </p>
+        <p className="relative text-xs text-muted">
+          {first
+            ? "אחרי שתי שקילות שבועיות יופיע כאן קו המגמה החודשי."
+            : "הקו מחליק תנודות של יום־יומיים ומראה רק את הכיוון הכללי."}
+        </p>
+      </div>
     );
+  }
   const pts = smooth(weighIns.slice(-16).map((w) => w.kg));
   const min = Math.min(...pts) - 1;
   const max = Math.max(...pts) + 1;
@@ -77,6 +106,18 @@ export default function Tracking() {
   const [kg, setKg] = useState("");
   const wait = daysUntilNextWeighIn(weighIns, todayKey());
   const kgNum = Number(kg);
+  const hasInsights = [
+    (d) => d.workouts?.length > 0,
+    (d) => !!d.earlyDinner,
+  ].some((pred) =>
+    ["backPain", "energy"].some((f) => {
+      const c = compareBy(days, f, pred);
+      return c.yes != null || c.no != null;
+    }),
+  );
+  const trackedDays = Object.values(days).filter(
+    (d) => d.energy != null || d.backPain != null,
+  ).length;
   const validKg = isValidWeight(kgNum);
 
   const saveWeight = () => {
@@ -104,7 +145,7 @@ export default function Tracking() {
       >
         <div className="space-y-4">
           <div className="space-y-2">
-            <p className="text-xs text-purple-200">
+            <p className="text-xs text-soft">
               רמת אנרגיה (1 = מרוקנת • 5 = מלאת כוח)
             </p>
             <div className="flex gap-2">
@@ -116,7 +157,7 @@ export default function Tracking() {
                   className={`flex-1 rounded-2xl py-2.5 font-bold transition ${
                     today.energy === n
                       ? "bg-lilac text-space"
-                      : "bg-white/5 text-purple-200"
+                      : "bg-white/5 text-soft"
                   }`}
                 >
                   {n}
@@ -125,7 +166,7 @@ export default function Tracking() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-xs text-purple-200">מצב נפשי ורגשי היום 🧘‍♀️</p>
+            <p className="text-xs text-soft">מצב נפשי ורגשי היום 🧘‍♀️</p>
             <div className="grid grid-cols-4 gap-2">
               {MOOD.map((label, n) => (
                 <button
@@ -134,8 +175,8 @@ export default function Tracking() {
                   onClick={() => updateToday({ mood: n })}
                   className={`rounded-2xl py-2.5 text-xs font-bold transition ${
                     today.mood === n
-                      ? "bg-blush text-space"
-                      : "bg-white/5 text-purple-200"
+                      ? "bg-lilac text-space"
+                      : "bg-white/5 text-soft"
                   }`}
                 >
                   {label}
@@ -144,7 +185,7 @@ export default function Tracking() {
             </div>
           </div>
           <div className="space-y-2">
-            <p className="text-xs text-purple-200">כאבי גב היום 🦴</p>
+            <p className="text-xs text-soft">כאבי גב היום 🦴</p>
             <div className="grid grid-cols-4 gap-2">
               {PAIN.map((label, n) => (
                 <button
@@ -153,8 +194,8 @@ export default function Tracking() {
                   onClick={() => updateToday({ backPain: n })}
                   className={`rounded-2xl py-2.5 text-sm font-bold transition ${
                     today.backPain === n
-                      ? "bg-mint text-space"
-                      : "bg-white/5 text-purple-200"
+                      ? "bg-lilac text-space"
+                      : "bg-white/5 text-soft"
                   }`}
                 >
                   {label}
@@ -186,7 +227,7 @@ export default function Tracking() {
               className={`rounded-2xl py-3 transition ${
                 today.fit === id
                   ? "bg-mint/20 text-mint ring-1 ring-mint"
-                  : "bg-white/5 text-purple-200"
+                  : "bg-white/5 text-soft"
               }`}
             >
               {label}
@@ -221,7 +262,7 @@ export default function Tracking() {
         <div className="space-y-3">
           <TrendChart weighIns={weighIns} />
           {wait > 0 ? (
-            <p className="rounded-2xl bg-white/5 p-3 text-xs text-purple-200">
+            <p className="rounded-2xl bg-white/5 p-3 text-xs text-soft">
               השקילה הבאה בעוד {wait} ימים 🌙 הגוף משתנה לאט — וזה בסדר גמור.
             </p>
           ) : (
@@ -233,14 +274,14 @@ export default function Tracking() {
                 placeholder="משקל בק״ג"
                 value={kg}
                 onChange={(e) => setKg(e.target.value)}
-                className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-moon placeholder:text-purple-300"
+                className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-moon placeholder:text-muted"
               />
               <button
                 disabled={!validKg}
                 onClick={saveWeight}
-                className="rounded-2xl bg-mint px-4 py-2 text-sm font-bold text-space disabled:opacity-40"
+                className="flex items-center gap-1 rounded-2xl bg-lilac px-4 py-2 text-sm font-bold text-space disabled:opacity-40"
               >
-                שמירה +{WEIGH_REWARD}
+                שמירה · <CoinAmount amount={`+${WEIGH_REWARD}`} />
               </button>
             </div>
           )}
@@ -255,12 +296,31 @@ export default function Tracking() {
         icon={Sparkles}
         defaultOpen={false}
       >
+        {!hasInsights ? (
+          <div className="flex items-start gap-3 rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-4">
+            <Lightbulb className="mt-0.5 h-5 w-5 shrink-0 text-lilac" aria-hidden />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-moon">
+                התובנות נבנות מהמעקב היומי
+              </p>
+              <p className="text-xs text-muted">
+                אחרי 3 ימים עם אימון ו־3 ימים בלי, תראי כאן אם אימון וארוחת ערב
+                מוקדמת משנים את כאבי הגב והאנרגיה שלך.
+              </p>
+              <p className="text-xs text-soft">
+                {trackedDays === 0
+                  ? "התחילי בסימון אנרגיה וכאבי גב למעלה."
+                  : `עד עכשיו: ${trackedDays} ימי מעקב.`}
+              </p>
+            </div>
+          </div>
+        ) : (
         <div className="space-y-2">
-          <p className="text-xs text-purple-300">
+          <p className="text-xs text-muted">
             ממוצע בימים עם / בלי (מופיע אחרי 3 ימים בכל קבוצה)
           </p>
-          <table className="w-full text-xs text-purple-100">
-            <thead className="text-purple-300">
+          <table className="w-full text-xs text-moon">
+            <thead className="text-muted">
               <tr>
                 <th className="py-1 text-right font-medium"></th>
                 <th className="py-1 font-medium">כאב (0-3)</th>
@@ -281,6 +341,7 @@ export default function Tracking() {
             </tbody>
           </table>
         </div>
+        )}
       </CollapsibleCard>
     </div>
   );

@@ -7,10 +7,12 @@ import {
   CheckCircle2,
   Sparkles,
   Undo2,
+  Check,
 } from "lucide-react";
 import { updateToday, useCabin, useToday } from "../store";
 import CollapsibleCard from "../components/CollapsibleCard";
 import SweetBank from "../components/SweetBank";
+import CoinAmount from "../components/CoinAmount";
 
 const PROTEIN_ADDS = [
   { label: "🐟 דג", grams: 25 },
@@ -67,7 +69,7 @@ export default function Nutrition() {
         icon={Flame}
         defaultOpen={true}
       >
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           {/* Calories Progress Bar (Goal: 1600 - 1700 kcal) */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
@@ -75,7 +77,7 @@ export default function Nutrition() {
                 <Flame className="h-4 w-4" />
                 <span>מד קלוריות יומי</span>
               </span>
-              <span className="text-purple-200">
+              <span className="text-soft">
                 <strong>{calories}</strong> / {calorieGoal} קק״ל (יעד 1600-1700)
               </span>
             </div>
@@ -89,8 +91,8 @@ export default function Nutrition() {
               <div
                 className={`h-full rounded-full transition-all duration-300 ${
                   caloriePct >= 100
-                    ? "bg-gradient-to-l from-blush to-lilac"
-                    : "bg-gradient-to-l from-orange-400 to-blush"
+                    ? "bg-blush"
+                    : "bg-lilac"
                 }`}
                 style={{ width: `${caloriePct}%` }}
               />
@@ -104,7 +106,7 @@ export default function Nutrition() {
                 <Beef className="h-4 w-4" />
                 <span>מד חלבון יומי</span>
               </span>
-              <span className="text-purple-200">
+              <span className="text-soft">
                 <strong>{protein}</strong> / {proteinGoal} גרם (יעד 100-120ג׳)
               </span>
             </div>
@@ -116,11 +118,11 @@ export default function Nutrition() {
               aria-valuemax={100}
             >
               <div
-                className="h-full rounded-full bg-gradient-to-l from-mint to-lilac transition-all duration-300"
+                className="h-full rounded-full bg-mint transition-all duration-300"
                 style={{ width: `${proteinPct}%` }}
               />
             </div>
-            <p className="text-[11px] text-purple-300 pt-0.5">
+            <p className="text-2xs text-muted pt-0.5">
               {proteinPct >= 100
                 ? "הגעת ליעד החלבון הגבוה! 🎉 שומר על מסת שריר וממתן אינסולין ב-PCOS"
                 : "חלבון ושומן בריא בכל ארוחה מאטים ספיגת סוכר ומאזנים את התיאבון"}
@@ -130,14 +132,14 @@ export default function Nutrition() {
           {/* Quick protein buttons */}
           <div className="border-t border-white/10 pt-2.5">
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] text-purple-300">
+              <span className="text-2xs text-muted">
                 הוספה מהירה של חלבון:
               </span>
               {quickProtein.length > 0 && (
                 <button
                   type="button"
                   onClick={handleUndoQuickProtein}
-                  className="flex items-center gap-1 text-[11px] text-purple-300 hover:text-moon"
+                  className="flex items-center gap-1 text-2xs text-muted hover:text-moon"
                 >
                   <Undo2 className="h-3 w-3" />
                   <span>
@@ -155,7 +157,7 @@ export default function Nutrition() {
                   className="flex-1 rounded-2xl bg-white/5 py-2 text-xs text-moon transition active:scale-95 hover:bg-white/10"
                 >
                   {label}
-                  <span className="block text-[10px] text-purple-300">
+                  <span className="block text-2xs text-muted">
                     +{grams}ג׳
                   </span>
                 </button>
@@ -168,7 +170,7 @@ export default function Nutrition() {
       {/* 2. קופת המתוקים ואתגר התזמון (Sugar Reduction & Sweet Bank) */}
       <CollapsibleCard
         id="nutrition-sweet-bank"
-        title="קופת המתוקים ואתגר התזמון 🍪"
+        title="קופת המתוקים ואתגר התזמון"
         badge="תקציב 4 אסימונים שבועי • מגן הגלוקוז"
         icon={Sparkles}
         defaultOpen={true}
@@ -179,7 +181,7 @@ export default function Nutrition() {
       {/* 3. מעקב שתיית מים וחליטות (Hydration Tracker) */}
       <CollapsibleCard
         id="nutrition-water"
-        title="שתיית מים וחליטות מאזנות סוכר 💧"
+        title="שתיית מים וחליטות מאזנות סוכר"
         badge={`${waterCups} / ${WATER_GOAL_CUPS} כוסות (2 ליטר)`}
         icon={Droplets}
         defaultOpen={true}
@@ -198,13 +200,13 @@ export default function Nutrition() {
                   className={`flex flex-col items-center justify-center rounded-2xl py-2.5 transition active:scale-90 ${
                     isFilled
                       ? "bg-sky-400/25 border border-sky-400 text-sky-300 shadow-md shadow-sky-400/20"
-                      : "bg-white/5 border border-white/10 text-purple-400 hover:bg-white/10"
+                      : "bg-white/5 border border-white/10 text-muted/70 hover:bg-white/10"
                   }`}
                 >
                   <GlassWater
                     className={`h-4 w-4 ${isFilled ? "animate-bounce" : ""}`}
                   />
-                  <span className="text-[10px] mt-1 font-mono">{i + 1}</span>
+                  <span className="text-2xs mt-1 font-mono">{i + 1}</span>
                 </button>
               );
             })}
@@ -213,7 +215,7 @@ export default function Nutrition() {
           {waterCups >= WATER_GOAL_CUPS && (
             <div className="flex items-center gap-1.5 text-xs text-mint font-semibold">
               <CheckCircle2 className="h-4 w-4" />
-              <span>הגעת ליעד השתייה היומי! שתית 2 ליטר מלאים 🎉 (+2 🪙)</span>
+              <span>הגעת ליעד השתייה היומי! שתית 2 ליטר מלאים 🎉 <CoinAmount amount="+2" /></span>
             </div>
           )}
         </div>
@@ -223,7 +225,7 @@ export default function Nutrition() {
       <CollapsibleCard
         id="nutrition-reflux"
         title="שגרת ערב בריאה (הגנה מצרבות)"
-        badge={today.earlyDinner ? "הושלם בהצלחה ✨" : "3 שעות לפני שינה"}
+        badge={today.earlyDinner ? "הושלם" : "3 שעות לפני שינה"}
         icon={Trophy}
         defaultOpen={true}
       >
@@ -238,16 +240,23 @@ export default function Nutrition() {
           className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-right text-xs transition ${
             today.earlyDinner
               ? "bg-mint/15 text-mint border border-mint/40"
-              : "bg-white/5 text-purple-200"
+              : "bg-white/5 text-soft"
           }`}
         >
           <span>
             סיימתי ארוחת ערב 3 שעות לפני השינה
-            <span className="block text-[11px] opacity-70">
+            <span className="block text-2xs opacity-70">
               שומר מצרבת וריפלוקס • +4 מטבעות
             </span>
           </span>
-          <span className="text-lg">{today.earlyDinner ? "✅" : "⬜"}</span>
+          <span
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border ${
+              today.earlyDinner ? "border-mint bg-mint text-space" : "border-white/20 bg-white/5"
+            }`}
+            aria-hidden
+          >
+            {today.earlyDinner && <Check className="h-4 w-4" />}
+          </span>
         </button>
       </CollapsibleCard>
     </div>

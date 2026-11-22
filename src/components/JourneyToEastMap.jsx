@@ -38,15 +38,15 @@ export default function JourneyToEastMap() {
   return (
     <section className="glass space-y-4 p-5 text-right" dir="rtl">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-mint/20 text-mint">
             <Compass className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-bold text-moon text-sm">
+            <h3 className="font-bold text-moon text-base">
               המסע למזרח: בדרך לקוריאה ויפן
             </h3>
-            <p className="text-xs text-purple-300">
+            <p className="text-xs text-muted">
               המרת דקות הליכה ביתית לקילומטרים וירטואליים
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function JourneyToEastMap() {
       </div>
 
       {/* Progress & Current Position Info */}
-      <div className="rounded-2xl bg-white/5 p-3.5 space-y-2 border border-white/10 text-xs">
+      <div className="rounded-2xl bg-white/5 p-4 space-y-2 border border-white/10 text-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-moon font-semibold">
             <MapPin className="h-4 w-4 text-blush" />
@@ -67,7 +67,7 @@ export default function JourneyToEastMap() {
             </span>
           </div>
           {next ? (
-            <span className="text-purple-300">
+            <span className="text-muted">
               עוד {(next.km - totalKm).toFixed(1)} ק״מ ל-{next.name}
             </span>
           ) : (
@@ -86,11 +86,11 @@ export default function JourneyToEastMap() {
           aria-valuemax={100}
         >
           <div
-            className="h-full rounded-full bg-gradient-to-l from-mint via-lilac to-blush transition-all duration-500"
+            className="h-full rounded-full bg-lilac transition-all duration-500"
             style={{ width: `${progressPct}%` }}
           />
         </div>
-        <div className="flex justify-between text-[11px] text-purple-300">
+        <div className="flex justify-between text-2xs text-muted">
           <span>{walkingMinutes} דקות הליכה מצטברות</span>
           <span>{progressPct}% מהמסע הושלם</span>
         </div>
@@ -106,17 +106,17 @@ export default function JourneyToEastMap() {
               <div key={wp.id} className="flex flex-col items-center">
                 <span className="text-base">{wp.emoji}</span>
                 <span
-                  className={`mt-1 text-[10px] truncate max-w-full font-medium ${
+                  className={`mt-1 text-2xs truncate max-w-full font-medium ${
                     isCurrent
                       ? "text-blush font-bold"
                       : isVisited
                         ? "text-mint"
-                        : "text-purple-300/60"
+                        : "text-muted/60"
                   }`}
                 >
                   {wp.name.split(" ")[0]}
                 </span>
-                <span className="text-[9px] text-purple-400">{wp.km} ק״מ</span>
+                <span className="text-2xs text-muted/70">{wp.km} ק״מ</span>
               </div>
             );
           })}
@@ -125,7 +125,7 @@ export default function JourneyToEastMap() {
 
       {/* Quick Walk Log action */}
       <div className="flex items-center justify-between border-t border-white/10 pt-3 text-xs">
-        <span className="text-purple-200">השלמת אימון הליכה עכשיו?</span>
+        <span className="text-soft">השלמת אימון הליכה עכשיו?</span>
         <div className="flex gap-2">
           <button
             type="button"
@@ -138,7 +138,7 @@ export default function JourneyToEastMap() {
           <button
             type="button"
             onClick={() => addWalkMinutes(25)}
-            className="flex items-center gap-1 rounded-xl bg-mint px-2.5 py-1.5 text-space text-xs font-bold transition active:scale-95"
+            className="flex items-center gap-1 rounded-xl bg-lilac px-2.5 py-1.5 text-space text-xs font-bold transition active:scale-95"
           >
             <Navigation className="h-3 w-3" />
             <span>+25 דק' קיי-פופ (+2 ק״מ)</span>

@@ -81,17 +81,17 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
     <div className="space-y-3">
       {/* Haven Bubble: Low Mood Support (שפוף 🌧️) */}
       {showMoodHaven && (
-        <section className="space-y-3 rounded-3xl border border-[#c792ea]/50 bg-gradient-to-br from-[#1e1538] via-[#2d1b4e] to-[#130d26] p-5 shadow-2xl backdrop-blur-xl">
+        <section className="space-y-3 rounded-3xl border border-lilac/50 bg-space-light p-5 shadow-2xl backdrop-blur-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-blush animate-pulse" />
-              <h3 className="text-sm font-bold text-blush">
+              <h3 className="text-base font-bold text-blush">
                 בקתת הרוגע והנפש שלך 💜
               </h3>
             </div>
-            <span className="text-[11px] text-purple-200">חיבוק עצמי חם</span>
+            <span className="text-2xs text-soft">חיבוק עצמי חם</span>
           </div>
-          <p className="text-xs leading-relaxed text-purple-100">
+          <p className="text-xs leading-relaxed text-moon">
             זה בסדר גמור להרגיש שפוף היום. קחי לעצמך מרחב מוגן, הרפי ציפיות
             והתפנקי באחד מהדברים המרגיעים הבאים:
           </p>
@@ -109,7 +109,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
                 className={`flex-1 rounded-xl py-1.5 text-xs font-bold transition ${
                   moodTab === tab.id
                     ? "bg-lilac text-space shadow-md"
-                    : "text-purple-300 hover:text-moon"
+                    : "text-muted hover:text-moon"
                 }`}
               >
                 {tab.label}
@@ -119,12 +119,12 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
 
           {/* View 1: Diffuser & Essential Oils */}
           {moodTab === "diffuser" && (
-            <div className="space-y-2 rounded-2xl bg-white/5 p-3.5 border border-white/10">
+            <div className="space-y-2 rounded-2xl bg-white/5 p-4 border border-white/10">
               <div className="flex items-center gap-2 font-bold text-xs text-mint">
                 <Flame className="h-4 w-4" />
                 <span>הדלקת מכשיר אדים ושמנים אתריים מומלצים:</span>
               </div>
-              <ul className="space-y-1.5 text-xs text-purple-100 pr-1">
+              <ul className="space-y-1.5 text-xs text-moon pr-1">
                 <li className="flex items-start gap-1.5">
                   <span>🌸</span>
                   <span>
@@ -151,12 +151,12 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
                 <button
                   disabled={today.diffuserOn}
                   onClick={() => updateToday({ diffuserOn: true }, 2)}
-                  className="flex items-center gap-1.5 rounded-xl bg-mint px-3 py-1.5 text-xs font-bold text-space disabled:opacity-50 transition active:scale-95"
+                  className="flex items-center gap-1.5 rounded-xl bg-lilac px-3 py-1.5 text-xs font-bold text-space disabled:opacity-50 transition active:scale-95"
                 >
                   <Check className="h-3.5 w-3.5" />
                   {today.diffuserOn
-                    ? "הדלקתי אדים (+2 🪙)"
-                    : "הדלקתי את המכשיר (+2 🪙)"}
+                    ? "הדלקתי אדים (+2 מטבעות)"
+                    : "הדלקתי את המכשיר (+2 מטבעות)"}
                 </button>
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
 
           {/* View 2: Audio & Calming Sounds */}
           {moodTab === "audio" && (
-            <div className="space-y-2 rounded-2xl bg-white/5 p-3.5 border border-white/10">
+            <div className="space-y-2 rounded-2xl bg-white/5 p-4 border border-white/10">
               <div className="flex items-center gap-2 font-bold text-xs text-blush">
                 <Headphones className="h-4 w-4" />
                 <span>מוזיקה וצלילים להורדת עומס רגשי:</span>
@@ -194,7 +194,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
 
           {/* View 3: Mindfulness & Guided Imagery */}
           {moodTab === "mindfulness" && (
-            <div className="space-y-2 rounded-2xl bg-white/5 p-3.5 border border-white/10">
+            <div className="space-y-2 rounded-2xl bg-white/5 p-4 border border-white/10">
               <div className="flex items-center gap-2 font-bold text-xs text-lilac">
                 <Volume2 className="h-4 w-4" />
                 <span>דמיון מודרך וקרקוע מהיר:</span>
@@ -226,11 +226,11 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
 
       {/* Bubble 1: PCOS Bloating & Insulin Sensitivity (Only on tracking tab) */}
       {showBloat && (
-        <section className="space-y-2 rounded-3xl border border-[#ffb7df]/40 bg-gradient-to-l from-[#ffb7df]/20 to-[#c792ea]/15 p-4 backdrop-blur-md">
+        <section className="space-y-2 rounded-3xl border border-blush/40 bg-blush/10 p-4 backdrop-blur-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Coffee className="h-5 w-5 text-blush" />
-              <h3 className="text-sm font-bold text-blush">
+              <h3 className="text-base font-bold text-blush">
                 הקלה על נפיחות ועומס ל-PCOS 🍵
               </h3>
             </div>
@@ -240,7 +240,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
               </span>
             )}
           </div>
-          <p className="text-xs leading-relaxed text-purple-100">
+          <p className="text-xs leading-relaxed text-moon">
             נפיחות היא תגובה נפוצה לרגישות להורמונים ואינסולין ב-PCOS — זה לא
             שומן ולא כישלון. עברי לבגדים משוחררים, שתי מים מרווים או חליטת
             קינמון/בבונג שעוזרת לאיזון.
@@ -251,11 +251,11 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
               onClick={() => {
                 updateToday({ teaLogged: true }, 2);
               }}
-              className="flex items-center gap-1.5 rounded-xl bg-blush px-3 py-1.5 text-xs font-bold text-space disabled:opacity-50 transition active:scale-95"
+              className="flex items-center gap-1.5 rounded-xl bg-lilac px-3 py-1.5 text-xs font-bold text-space disabled:opacity-50 transition active:scale-95"
             >
               {today.teaLogged
-                ? "נשתתה חליטה (+2 🪙)"
-                : "שתיתי חליטה מרגיעה (+2 🪙)"}
+                ? "נשתתה חליטה (+2 מטבעות)"
+                : "שתיתי חליטה מרגיעה (+2 מטבעות)"}
             </button>
           </div>
         </section>
@@ -263,14 +263,14 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
 
       {/* Bubble 2: Low Energy Permission to Rest (Only on tracking tab) */}
       {showLowEnergy && (
-        <section className="space-y-2 rounded-3xl border border-[#c792ea]/50 bg-gradient-to-l from-[#c792ea]/25 to-white/5 p-4 backdrop-blur-md">
+        <section className="space-y-2 rounded-3xl border border-lilac/50 bg-lilac/15 p-4 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <BatteryCharging className="h-5 w-5 text-lilac animate-pulse" />
-            <h3 className="text-sm font-bold text-lilac">
+            <h3 className="text-base font-bold text-lilac">
               היתר רשמי להוריד הילוך 🛋️
             </h3>
           </div>
-          <p className="text-xs leading-relaxed text-purple-100">
+          <p className="text-xs leading-relaxed text-moon">
             רמת האנרגיה שלך נמוכה כרגע — הגוף משקיע משאבים בריפוי פנימי. אין
             צורך לעשות היום וי על כל המשימות.
           </p>
@@ -287,17 +287,17 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
 
       {/* Bubble 3: Asthma & 4-7-8 Breathing Circle */}
       {showAsthma && (
-        <section className="space-y-3 rounded-3xl border border-[#80ffdb]/40 bg-gradient-to-l from-[#80ffdb]/20 to-white/5 p-4 backdrop-blur-md">
+        <section className="space-y-3 rounded-3xl border border-mint/40 bg-mint/10 p-4 backdrop-blur-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Wind className="h-5 w-5 text-mint" />
-              <h3 className="text-sm font-bold text-mint">
+              <h3 className="text-base font-bold text-mint">
                 פריקת סטרס נשימתי ואסתמה 🫁
               </h3>
             </div>
             <button
               onClick={() => setBreathingActive(!breathingActive)}
-              className="flex items-center gap-1 rounded-xl bg-mint px-2.5 py-1 text-xs font-bold text-space"
+              className="flex items-center gap-1 rounded-xl bg-lilac px-2.5 py-1 text-xs font-bold text-space"
             >
               {breathingActive ? (
                 <Square className="h-3 w-3" />
@@ -307,7 +307,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
               {breathingActive ? "סיום" : "נשימת 4-7-8"}
             </button>
           </div>
-          <p className="text-xs leading-relaxed text-purple-100">
+          <p className="text-xs leading-relaxed text-moon">
             נשימה כבדה מעידה על סטרס בריאות. שתי שלוק מים פושרים ותרגלי פריקת
             עומס בנשיפת שפתיים צרות.
           </p>
@@ -328,7 +328,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Footprints className="h-5 w-5 text-mint" />
-              <h3 className="text-sm font-bold text-mint">
+              <h3 className="text-base font-bold text-mint">
                 איזון סוכר ל-PCOS אחרי ארוחה 🥗
               </h3>
             </div>
@@ -336,7 +336,7 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
               <span className="text-xs font-bold text-mint">הושלם ✔</span>
             )}
           </div>
-          <p className="text-xs leading-relaxed text-purple-100">
+          <p className="text-xs leading-relaxed text-moon">
             סימנת ארוחה! הליכה נינוחה של 5-10 דקות (או מתיחות קלות) מונעת נפילות
             סוכר וחשקים למתוק.
           </p>
@@ -346,12 +346,12 @@ export default function SmartBubbles({ onNavigateTab, activeTab }) {
               onClick={() => {
                 updateToday({ pcosWalk: true }, 2);
               }}
-              className="flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-bold text-purple-100 hover:bg-white/20 disabled:opacity-50 transition"
+              className="flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-bold text-moon hover:bg-white/20 disabled:opacity-50 transition"
             >
               <Check className="h-3.5 w-3.5 text-mint" />
               {today.pcosWalk
-                ? "הליכה קלה סומנה (+2 🪙)"
-                : "עשיתי סיבוב קל (+2 🪙)"}
+                ? "הליכה קלה סומנה (+2 מטבעות)"
+                : "עשיתי סיבוב קל (+2 מטבעות)"}
             </button>
           </div>
         </section>

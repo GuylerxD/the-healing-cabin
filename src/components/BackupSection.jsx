@@ -71,8 +71,8 @@ export default function BackupSection() {
   };
 
   return (
-    <div className="space-y-2.5 text-xs">
-      <p className={due ? "text-blush" : "text-purple-300"}>
+    <div className="space-y-3 text-xs">
+      <p className={due ? "text-blush" : "text-muted"}>
         {lastAt
           ? `גיבוי אחרון: ${formatDate(lastAt)}`
           : "עוד לא נשמר גיבוי."}
@@ -83,7 +83,7 @@ export default function BackupSection() {
         <button
           type="button"
           onClick={handleDownload}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-mint px-3 py-2 font-bold text-space transition active:scale-95"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-2xl bg-lilac px-3 py-2 font-bold text-space transition active:scale-95"
         >
           <Download className="h-4 w-4" />
           <span>הורדת גיבוי</span>
@@ -119,7 +119,7 @@ export default function BackupSection() {
               {formatDate(new Date(pending.file.createdAt))}.
             </span>
           </p>
-          <p className="text-purple-200">
+          <p className="text-soft">
             בקתת הריפוי: {pending.summary.cabinKeys} פריטים • My Recipes:{" "}
             {pending.summary.recipesKeys} פריטים • {pending.summary.kb}KB
           </p>
@@ -155,7 +155,7 @@ export default function BackupSection() {
         </p>
       )}
 
-      <p className="text-[11px] text-purple-300">
+      <p className="text-2xs text-muted">
         קובץ אחד שומר את בקתת הריפוי ואת My Recipes יחד (מטבעות, חיות, משקל,
         מתכונים ותפריט). מפתח ה-Gemini לא נכלל בקובץ.
       </p>

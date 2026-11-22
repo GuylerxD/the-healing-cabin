@@ -114,7 +114,7 @@ export default function Cabin() {
       {/* 1. החדר האינטראקטיבי של מוצ׳י וצ׳ארלי (Cozy Virtual Room Canvas) */}
       <CollapsibleCard
         id="cabin-pet-room"
-        title="הבקתה האינטראקטיבית של מוצ׳י וצ׳ארלי 🐾"
+        title="הבקתה האינטראקטיבית של מוצ׳י וצ׳ארלי"
         badge={resting ? "שנ״צ משותף בעיצומו 💤" : "מגע, משחק ותאורת אווירה"}
         icon={PawPrint}
         defaultOpen={true}
@@ -158,16 +158,16 @@ export default function Cabin() {
                 className={`flex flex-col items-center gap-1 rounded-2xl p-3 text-xs transition active:scale-95 ${
                   has
                     ? "bg-mint/15 text-mint"
-                    : "bg-white/5 text-purple-100 disabled:opacity-40"
+                    : "bg-white/5 text-moon disabled:opacity-40"
                 }`}
               >
                 <span className="text-2xl" aria-hidden>
                   {item.emoji}
                 </span>
                 <span className="font-bold">{item.name}</span>
-                <span className="text-purple-300">
+                <span className="text-muted">
                   {item.pet === "mochi" ? "למוצ׳י" : "לצ׳ארלי"} •{" "}
-                  {has ? "✨ שלך" : `${item.price} 🪙`}
+                  {has ? "שלך" : `${item.price} מטבעות`}
                 </span>
               </button>
             );

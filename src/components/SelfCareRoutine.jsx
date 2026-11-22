@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Pencil, Plus, Trash2, Sparkles } from "lucide-react";
 import { setCabin, sweetWeekKey, todayKey, useCabin } from "../store";
+import CoinAmount from "./CoinAmount";
 
 // Each period resets by its key: an old key simply counts as "nothing done yet".
 const PERIODS = [
@@ -118,7 +119,7 @@ export default function SelfCareRoutine() {
       };
     });
     if (paidBonus) {
-      setBonusMsg(`השלמת את כל הטיפוח ה${period.label}! +${period.bonus} 🪙 בונוס`);
+      setBonusMsg(`השלמת את כל הטיפוח ה${period.label}! +${period.bonus} מטבעות בונוס`);
       setTimeout(() => setBonusMsg(null), 4000);
     }
   };
@@ -162,7 +163,7 @@ export default function SelfCareRoutine() {
             className={`flex-1 rounded-xl py-1.5 font-bold transition ${
               p.id === periodId
                 ? "bg-pink-400 text-space shadow-md"
-                : "text-purple-300 hover:bg-white/5"
+                : "text-muted hover:bg-white/5"
             }`}
           >
             {p.label}
@@ -173,7 +174,7 @@ export default function SelfCareRoutine() {
       {/* Progress */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-purple-200">
+          <span className="text-soft">
             <strong className="text-moon">
               {doneCount} / {list.length}
             </strong>{" "}
@@ -183,7 +184,7 @@ export default function SelfCareRoutine() {
             type="button"
             onClick={() => (editing ? finishEditing() : setEditing(true))}
             className={`flex items-center gap-1 rounded-xl px-2.5 py-1 font-bold transition active:scale-95 ${
-              editing ? "bg-mint text-space" : "bg-white/10 text-purple-200 hover:bg-white/15"
+              editing ? "bg-lilac text-space" : "bg-white/10 text-soft hover:bg-white/15"
             }`}
           >
             {editing ? <Check className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
@@ -198,7 +199,7 @@ export default function SelfCareRoutine() {
           aria-valuemax={100}
         >
           <div
-            className="h-full rounded-full bg-gradient-to-l from-pink-400 to-lilac transition-all duration-300"
+            className="h-full rounded-full bg-lilac transition-all duration-300"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -207,9 +208,16 @@ export default function SelfCareRoutine() {
       {/* Tasks */}
       <div className="space-y-1.5">
         {list.length === 0 && (
-          <p className="rounded-2xl bg-white/5 p-3 text-purple-300">
-            אין משימות ברשימה — לחצי על ״עריכה״ כדי להוסיף 🌸
-          </p>
+          <div className="flex items-start gap-3 rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-4">
+            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-lilac" aria-hidden />
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-moon">הרשימה ריקה</p>
+              <p className="text-xs text-muted">
+                לחצי על ״עריכה״ למעלה והוסיפי את הצעדים שלך — למשל קרם לחות או
+                ניקוי פנים.
+              </p>
+            </div>
+          </div>
         )}
         {list.map((task) => {
           const isDone = doneIds.includes(task.id);
@@ -237,7 +245,7 @@ export default function SelfCareRoutine() {
               type="button"
               onClick={() => toggleTask(task.id)}
               aria-pressed={isDone}
-              className={`flex w-full items-center justify-between gap-2 rounded-2xl border px-3.5 py-2.5 text-right transition active:scale-[0.99] ${
+              className={`flex w-full items-center justify-between gap-2 rounded-2xl border px-4 py-2.5 text-right transition active:scale-[0.99] ${
                 isDone
                   ? "border-mint/50 bg-mint/15 text-mint"
                   : "border-white/10 bg-white/5 text-moon hover:bg-white/[0.08]"
@@ -247,7 +255,7 @@ export default function SelfCareRoutine() {
                 {task.title}
               </span>
               <span className="flex shrink-0 items-center gap-2">
-                <span className="text-[10px] text-purple-300">+{period.reward} 🪙</span>
+                <span className="text-2xs text-muted"><CoinAmount amount={`+${period.reward}`} /></span>
                 <span
                   className={`flex h-5 w-5 items-center justify-center rounded-lg border ${
                     isDone ? "border-mint bg-mint text-space" : "border-white/20 bg-white/5"
@@ -268,7 +276,7 @@ export default function SelfCareRoutine() {
             maxLength={60}
             onChange={(e) => setDraft(e.target.value)}
             placeholder={`משימה ${period.label}ת חדשה...`}
-            className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-moon placeholder:text-purple-400 focus:border-lilac focus:outline-none"
+            className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-moon placeholder:text-muted/70 focus:border-lilac focus:outline-none"
           />
           <button
             type="submit"
@@ -288,8 +296,8 @@ export default function SelfCareRoutine() {
         </div>
       ) : (
         !editing && (
-          <p className="text-[11px] text-purple-300">
-            השלמת כל הרשימה ה{period.label}ת = בונוס +{period.bonus} 🪙
+          <p className="text-2xs text-muted">
+            השלמת כל הרשימה ה{period.label}ת = בונוס <CoinAmount amount={`+${period.bonus}`} />
           </p>
         )
       )}

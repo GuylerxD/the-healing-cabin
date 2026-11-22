@@ -11,11 +11,15 @@ import {
   Dumbbell,
   Shuffle,
   CalendarClock,
+  Zap,
+  Check,
+  UtensilsCrossed,
 } from "lucide-react";
 import { updateToday, useToday, useCabin, setCabin } from "../store";
 import CastToTvButton from "../components/CastToTvButton";
 import JourneyToEastMap from "../components/JourneyToEastMap";
 import CollapsibleCard from "../components/CollapsibleCard";
+import CoinAmount from "../components/CoinAmount";
 import {
   POST_MEAL_TIP,
   SAFETY_RULES,
@@ -99,14 +103,14 @@ export default function Movement() {
     <div className="space-y-4">
       {/* Back Relief Advice Bubble when back pain is high */}
       {isBackPainHigh && (
-        <section className="p-5 rounded-3xl bg-gradient-to-br from-[#c792ea]/20 via-[#ffb7df]/20 to-[#80ffdb]/10 border border-[#ffb7df]/50 backdrop-blur-lg space-y-3">
+        <section className="p-5 rounded-3xl bg-blush/10 border border-blush/50 backdrop-blur-lg space-y-3">
           <div className="flex items-center gap-2">
             <Flame className="h-5 w-5 text-blush animate-pulse" />
-            <h2 className="font-bold text-blush text-sm">
+            <h2 className="font-bold text-blush text-base">
               המלצת חימום והקלה לגב להיום 🛋️
             </h2>
           </div>
-          <p className="text-xs text-purple-100 leading-relaxed">
+          <p className="text-xs text-moon leading-relaxed">
             מזוהה כאב גב מוגבר היום. מומלץ להניח **כרית חמה או בקבוק חם** על הגב
             התחתון או הבטן התחתונה כדי להרפות את השרירים ולהקל על הלחץ.
           </p>
@@ -117,7 +121,7 @@ export default function Movement() {
               <span className="font-mono text-base font-bold text-mint">
                 {formatTimer(timerSeconds)}
               </span>
-              <span className="text-xs text-purple-200">
+              <span className="text-xs text-soft">
                 טיימר כרית חמה (10 דק׳)
               </span>
             </div>
@@ -125,7 +129,7 @@ export default function Movement() {
               <button
                 onClick={() => setTimerRunning(!timerRunning)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
-                  timerRunning ? "bg-blush text-space" : "bg-mint text-space"
+                  timerRunning ? "bg-blush text-space" : "bg-lilac text-space"
                 }`}
               >
                 {timerRunning
@@ -140,7 +144,7 @@ export default function Movement() {
                     setTimerRunning(false);
                     setTimerSeconds(600);
                   }}
-                  className="px-2 py-1.5 rounded-xl text-xs text-purple-300 bg-white/5"
+                  className="px-2 py-1.5 rounded-xl text-xs text-muted bg-white/5"
                 >
                   איפוס
                 </button>
@@ -160,7 +164,7 @@ export default function Movement() {
       >
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs text-purple-200">איך הנשימה במנוחה עכשיו?</p>
+            <p className="text-xs text-soft">איך הנשימה במנוחה עכשיו?</p>
             <button
               aria-pressed={heavy}
               onClick={() => updateToday({ heavyBreathing: !heavy })}
@@ -192,7 +196,7 @@ export default function Movement() {
         }
       >
         <div className="flex items-center justify-between p-1 text-right">
-          <div className="text-xs text-purple-200">
+          <div className="text-xs text-soft">
             החלפה אוטומטית לרוטינת מתיחות עמידה עדינה של 8 דק׳ (100% מוגן גב
             ואסתמה)
           </div>
@@ -228,15 +232,15 @@ export default function Movement() {
         defaultOpen={true}
         headerClassName={sosMode ? "!border-blush/50" : "!border-mint/40"}
       >
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           {ADAPTED_NOTE[adaptedReason] && (
-            <p className="rounded-xl border border-mint/30 bg-mint/10 px-3 py-2 text-[11px] font-semibold text-mint">
+            <p className="rounded-xl border border-mint/30 bg-mint/10 px-3 py-2 text-2xs font-semibold text-mint">
               {ADAPTED_NOTE[adaptedReason]}
             </p>
           )}
           <div>
-            <h3 className="font-bold text-moon text-sm">{workout.title}</h3>
-            <p className="text-xs text-purple-200 mt-1">{workout.description}</p>
+            <h3 className="font-bold text-moon text-base">{workout.title}</h3>
+            <p className="text-xs text-soft mt-1">{workout.description}</p>
           </div>
 
           <div className="rounded-2xl bg-white/5 p-3 space-y-1.5 text-xs">
@@ -246,22 +250,24 @@ export default function Movement() {
               <Sparkles className="h-3.5 w-3.5 shrink-0" />
               <span>{workout.spineSafety}</span>
             </div>
-            <div className="text-purple-300">
-              ⚡ {workout.impact} • ⏱️ {workout.durationMinutes} דקות
+            <div className="flex items-center gap-3 text-muted">
+              <span className="flex items-center gap-1"><Zap className="h-3.5 w-3.5" aria-hidden />{workout.impact}</span>
+              <span className="flex items-center gap-1"><Timer className="h-3.5 w-3.5" aria-hidden />{workout.durationMinutes} דקות</span>
             </div>
           </div>
 
           {/* Why this helps: back + PCOS + weight + cortisol/insulin */}
-          <p className="rounded-2xl border border-lilac/30 bg-lilac/10 p-3 text-xs leading-relaxed text-purple-100">
+          <p className="rounded-2xl border border-lilac/30 bg-lilac/10 p-3 text-xs leading-relaxed text-moon">
             <strong className="text-lilac">למה זה טוב לך: </strong>
             {typeInfo.benefit}
           </p>
 
           <details className="group rounded-2xl bg-white/5 px-3 py-2 text-xs">
-            <summary className="cursor-pointer select-none font-bold text-mint">
-              🛡️ כללי בטיחות לגב ולקורטיזול
+            <summary className="flex cursor-pointer select-none items-center gap-1.5 font-bold text-mint">
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+              כללי בטיחות לגב ולקורטיזול
             </summary>
-            <ul className="mt-2 list-disc space-y-1 pr-4 text-purple-200">
+            <ul className="mt-2 list-disc space-y-1 pr-4 text-soft">
               {SAFETY_RULES.map((rule) => (
                 <li key={rule}>{rule}</li>
               ))}
@@ -279,7 +285,7 @@ export default function Movement() {
             target="_blank"
             rel="noopener noreferrer"
             className={`flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-bold text-space shadow-lg transition active:scale-95 ${
-              sosMode ? "bg-blush shadow-blush/20" : "bg-mint shadow-mint/20"
+              sosMode ? "bg-blush shadow-blush/20" : "bg-lilac shadow-lilac/20"
             }`}
           >
             <PlayCircle className="h-4 w-4" />
@@ -305,20 +311,21 @@ export default function Movement() {
               type="button"
               aria-pressed={dailyDone}
               onClick={() => toggleDone(dailyDoneId)}
-              className={`flex-1 rounded-2xl py-2 text-xs font-bold transition active:scale-95 ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-2xl py-2 text-xs font-bold transition active:scale-95 ${
                 dailyDone ? "bg-mint/20 text-mint" : "bg-lilac text-space"
               }`}
             >
-              {dailyDone ? "✅ בוצע" : `סיימתי +${REWARD} 🪙`}
+              {dailyDone ? (<><Check className="h-4 w-4" aria-hidden />בוצע</>) : (<>סיימתי · <CoinAmount amount={`+${REWARD}`} /></>)}
             </button>
           </div>
 
-          <p className="text-[11px] leading-relaxed text-mint">
-            🍽️ {POST_MEAL_TIP}
+          <p className="flex items-start gap-1.5 text-2xs leading-relaxed text-mint">
+            <UtensilsCrossed className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+            {POST_MEAL_TIP}
           </p>
 
           {!sosMode && (
-            <p className="flex items-center gap-1.5 text-[11px] text-purple-300">
+            <p className="flex items-center gap-1.5 text-2xs text-muted">
               <CalendarClock className="h-3.5 w-3.5 shrink-0" />
               <span>מחר: {tomorrow.title}</span>
             </p>
@@ -368,12 +375,12 @@ export default function Movement() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <span className="block text-[11px] font-semibold text-lilac">
+                    <span className="block text-2xs font-semibold text-lilac">
                       {t.emoji} {t.label}
                     </span>
                     <h3 className="font-bold">{w.title}</h3>
                   </div>
-                  <span className="shrink-0 text-xs text-purple-300">
+                  <span className="shrink-0 text-xs text-muted">
                     {w.durationMinutes} דק׳
                   </span>
                 </div>
@@ -385,7 +392,7 @@ export default function Movement() {
                   </p>
                 )}
                 {locked ? (
-                  <p className="text-xs text-purple-200">
+                  <p className="text-xs text-soft">
                     נשמור לאחרי שהנשימה תירגע 🌙
                   </p>
                 ) : (
@@ -401,11 +408,11 @@ export default function Movement() {
                     <button
                       aria-pressed={isDone}
                       onClick={() => toggleDone(w.id)}
-                      className={`flex-1 rounded-2xl py-2 text-sm font-bold transition ${
+                      className={`flex flex-1 items-center justify-center gap-1.5 rounded-2xl py-2 text-sm font-bold transition ${
                         isDone ? "bg-mint/20 text-mint" : "bg-lilac text-space"
                       }`}
                     >
-                      {isDone ? "✅ בוצע" : `סיימתי +${REWARD}`}
+                      {isDone ? (<><Check className="h-4 w-4" aria-hidden />בוצע</>) : (<>סיימתי · <CoinAmount amount={`+${REWARD}`} /></>)}
                     </button>
                   </div>
                 )}

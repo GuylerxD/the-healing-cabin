@@ -78,7 +78,7 @@ export default function MochiWalkTracker() {
       boostPet("mochi", { happiness: 20, energy: 15 }, { bringHome: true });
 
       setWalkSuccessMessage(
-        `טיול נהדר של ${minutesWalked} דק׳! הרווחת +${treatsEarned} חטיפי כלבים ו-+${coinsEarned} 🪙`,
+        `טיול נהדר של ${minutesWalked} דק׳! הרווחת +${treatsEarned} חטיפי כלבים ו-+${coinsEarned} מטבעות`,
       );
       setProbioticChecked(false);
     }
@@ -97,10 +97,10 @@ export default function MochiWalkTracker() {
         <div className="flex items-center gap-2">
           <span className="text-3xl animate-bounce">🐶</span>
           <div>
-            <h4 className="font-bold text-xs text-moon">
+            <h4 className="font-bold text-sm text-moon">
               טיולי שטח עם מוצ׳י בחיפה
             </h4>
-            <p className="text-[11px] text-purple-300">
+            <p className="text-2xs text-muted">
               הליכה בחוץ טובה לגב, לנפש ולמוצ׳י הקטנה
             </p>
           </div>
@@ -114,7 +114,7 @@ export default function MochiWalkTracker() {
 
       {/* Location Selector */}
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-purple-200 block">
+        <label className="text-xs font-semibold text-soft block">
           יעד הטיול בחיפה (מישורי ומוגן גב):
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -124,17 +124,17 @@ export default function MochiWalkTracker() {
               type="button"
               disabled={isWalking}
               onClick={() => setSelectedLocation(loc.id)}
-              className={`rounded-2xl p-2.5 text-right border transition active:scale-95 text-xs ${
+              className={`rounded-2xl p-3 text-right border transition active:scale-95 text-xs ${
                 selectedLocation === loc.id
                   ? "bg-mint/20 border-mint text-mint font-bold shadow-md shadow-mint/20"
-                  : "bg-white/5 border-white/10 text-purple-200 hover:bg-white/10"
+                  : "bg-white/5 border-white/10 text-soft hover:bg-white/10"
               }`}
             >
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-blush shrink-0" />
                 <span className="font-bold truncate">{loc.name}</span>
               </div>
-              <span className="text-[10px] text-purple-300 block mt-1 opacity-80 leading-tight">
+              <span className="text-2xs text-muted block mt-1 opacity-80 leading-tight">
                 {loc.desc}
               </span>
             </button>
@@ -146,18 +146,18 @@ export default function MochiWalkTracker() {
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center space-y-3">
         {isWalking ? (
           <div className="space-y-1">
-            <span className="text-[11px] text-mint font-semibold animate-pulse block">
+            <span className="text-2xs text-mint font-semibold animate-pulse block">
               🐾 מוצ׳י ואת בטיול כעת...
             </span>
             <div className="text-3xl font-mono font-extrabold text-moon tracking-wider">
               {formatTimer(walkSeconds)}
             </div>
-            <span className="text-[11px] text-purple-300">
+            <span className="text-2xs text-muted">
               {HAIFA_LOCATIONS.find((l) => l.id === selectedLocation)?.name}
             </span>
           </div>
         ) : (
-          <div className="text-xs text-purple-200">
+          <div className="text-xs text-soft">
             {lastMochiWalk ? (
               <span>
                 טיול אחרון: יום {lastMochiWalk.date} • {lastMochiWalk.minutes}{" "}
@@ -175,7 +175,7 @@ export default function MochiWalkTracker() {
           className={`w-full flex items-center justify-center gap-2 rounded-2xl py-3 text-xs font-bold transition active:scale-95 shadow-lg ${
             isWalking
               ? "bg-blush text-space shadow-blush/25 hover:bg-blush/90"
-              : "bg-mint text-space shadow-mint/25 hover:bg-mint/90"
+              : "bg-lilac text-space shadow-lilac/25 hover:bg-lilac/90"
           }`}
         >
           {isWalking ? (
@@ -193,17 +193,17 @@ export default function MochiWalkTracker() {
       </div>
 
       {/* Post-walk Health Checklist for Mochi */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 space-y-2">
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 space-y-2">
         <span className="text-xs font-bold text-moon block">
           שגרת בריאות לאחר הטיול:
         </span>
         <button
           type="button"
           onClick={() => setProbioticChecked(!probioticChecked)}
-          className={`w-full flex items-center justify-between rounded-xl p-2.5 text-xs transition border ${
+          className={`w-full flex items-center justify-between rounded-xl p-3 text-xs transition border ${
             probioticChecked
               ? "bg-mint/15 border-mint text-mint"
-              : "bg-white/5 border-white/10 text-purple-200 hover:bg-white/10"
+              : "bg-white/5 border-white/10 text-soft hover:bg-white/10"
           }`}
         >
           <div className="flex items-center gap-2">

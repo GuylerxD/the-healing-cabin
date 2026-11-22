@@ -6,6 +6,9 @@ import {
   ChevronRight,
   ChevronLeft,
   Calendar,
+  CalendarDays,
+  Lightbulb,
+  Check,
 } from "lucide-react";
 import { updateDay, useCabin, dateKeyWithOffset } from "../store";
 import { triggerInAppPillReminder } from "../lib/pillReminder";
@@ -46,12 +49,12 @@ export default function MorningCheckIn() {
   return (
     <div className="space-y-4">
       {/* Date switcher — applies only to the acid check and the pill */}
-      <div className="space-y-1.5 rounded-2xl border border-white/10 bg-white/5 p-2.5 text-xs text-moon">
+      <div className="space-y-1.5 rounded-2xl border border-white/10 bg-white/5 p-3 text-xs text-moon">
         <div className="flex items-center justify-between">
           <button
             type="button"
             onClick={() => setDayOffset((prev) => prev - 1)}
-            className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 transition hover:bg-white/15 active:scale-95"
+            className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-soft transition hover:bg-white/15 active:scale-95"
             title="יום קודם"
           >
             <ChevronRight className="h-4 w-4" />
@@ -70,7 +73,7 @@ export default function MorningCheckIn() {
               <button
                 type="button"
                 onClick={() => setDayOffset((prev) => Math.min(0, prev + 1))}
-                className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-purple-200 transition hover:bg-white/15 active:scale-95"
+                className="flex items-center gap-1 rounded-xl bg-white/10 px-2.5 py-1.5 text-soft transition hover:bg-white/15 active:scale-95"
                 title="יום הבא"
               >
                 <span>יום הבא</span>
@@ -81,14 +84,16 @@ export default function MorningCheckIn() {
             )}
           </div>
         </div>
-        <p className="text-center text-[11px] text-purple-300">
-          📅 צ׳ק-אין בוקר — אפשר לחזור לימים קודמים כדי לסמן חומציות וגלולה
+        <p className="flex items-center gap-1.5 text-2xs text-muted">
+          <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          צ׳ק-אין בוקר — אפשר לחזור לימים קודמים כדי לסמן חומציות וגלולה
         </p>
       </div>
 
       {!isToday && (
-        <div className="rounded-xl border border-blush/40 bg-blush/10 p-2.5 text-center text-xs font-semibold text-blush">
-          💡 את נמצאת בעריכת נתוני עבר ({displayDateTitle}). הסימון של חומציות
+        <div className="flex items-start gap-2 rounded-xl border border-blush/40 bg-blush/10 p-3 text-xs font-semibold text-blush">
+          <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+          את נמצאת בעריכת נתוני עבר ({displayDateTitle}). הסימון של חומציות
           וגלולה יעודכן רטרואקטיבית לתאריך זה.
         </div>
       )}
@@ -100,13 +105,13 @@ export default function MorningCheckIn() {
         badge={
           activeDayData.acid
             ? `רמת חומציות: ${activeDayData.acid}`
-            : "1 = רגוע • 5 = צורב (+2 🪙)"
+            : "1 = רגוע • 5 = צורב · +2 מטבעות"
         }
         icon={Flame}
         defaultOpen={true}
       >
         <div className="space-y-3">
-          <p className="text-xs text-purple-200">
+          <p className="text-xs text-soft">
             1 = רגוע לגמרי • 5 = צורב מאוד (+2 מטבעות על הבדיקה)
           </p>
           <div className="flex gap-2">
@@ -124,7 +129,7 @@ export default function MorningCheckIn() {
                 className={`flex-1 rounded-2xl py-2.5 font-bold transition ${
                   activeDayData.acid === lvl
                     ? "bg-lilac text-space shadow-lg shadow-lilac/30"
-                    : "bg-white/5 text-purple-200"
+                    : "bg-white/5 text-soft"
                 }`}
               >
                 {lvl}
@@ -132,8 +137,9 @@ export default function MorningCheckIn() {
             ))}
           </div>
           {activeDayData.acid >= 4 && (
-            <p className="rounded-2xl border border-blush/40 bg-blush/15 p-3 text-xs text-blush">
-              💡 החומציות גבוהה — מומלץ להתחיל עם מאפין פולנטה רך להרגעת הקיבה.
+            <p className="flex items-start gap-2 rounded-2xl border border-blush/40 bg-blush/15 p-3 text-xs text-blush">
+              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+              החומציות גבוהה — מומלץ להתחיל עם מאפין פולנטה רך להרגעת הקיבה.
             </p>
           )}
         </div>
@@ -145,8 +151,8 @@ export default function MorningCheckIn() {
         title={`נטילת זואלי (Zoely) ${!isToday ? `(${dayNameHe})` : ""}`}
         badge={
           activeDayData.qlaira
-            ? `נלקחה (${displayDateTitle}) ✨`
-            : "גלולה יומית (+4 🪙)"
+            ? `נלקחה (${displayDateTitle})`
+            : "גלולה יומית · +4 מטבעות"
         }
         icon={Pill}
         defaultOpen={true}
@@ -155,9 +161,9 @@ export default function MorningCheckIn() {
         }
       >
         <div className="flex items-center justify-between gap-3 text-right">
-          <div className="text-xs text-purple-200">
+          <div className="text-xs text-soft">
             {activeDayData.qlaira
-              ? `הגלולה עבור ${displayDateTitle} סומנה בהצלחה ✨`
+              ? `הגלולה עבור ${displayDateTitle} סומנה`
               : `סמני אם נטלת את הגלולה ב-${displayDateTitle}`}
           </div>
 
@@ -181,13 +187,23 @@ export default function MorningCheckIn() {
                   activeDayData.qlaira ? -4 : 4,
                 )
               }
-              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition ${
                 activeDayData.qlaira
                   ? "bg-mint text-space"
                   : "bg-white/10 text-moon"
               }`}
             >
-              {activeDayData.qlaira ? "✅ נלקחה (+4)" : "סמן שלקחתי 💊"}
+              {activeDayData.qlaira ? (
+                <>
+                  <Check className="h-4 w-4" aria-hidden />
+                  נלקחה
+                </>
+              ) : (
+                <>
+                  <Pill className="h-4 w-4" aria-hidden />
+                  סמני שלקחתי
+                </>
+              )}
             </button>
           </div>
         </div>

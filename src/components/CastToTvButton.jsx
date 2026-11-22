@@ -77,7 +77,7 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
         <button
           type="button"
           onClick={handleCastToggle}
-          className={`flex items-center gap-2 rounded-2xl px-3.5 py-2 text-xs font-bold transition active:scale-95 ${
+          className={`flex items-center gap-2 rounded-2xl px-4 py-2 text-xs font-bold transition active:scale-95 ${
             castState === "connected"
               ? "bg-mint text-space shadow-lg shadow-mint/20"
               : castState === "connecting"
@@ -99,7 +99,7 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
           ) : (
             <>
               <Tv className="h-4 w-4 text-mint" />
-              <span>שדר לטלוויזיה בסלון 📺</span>
+              <span>שדרי לטלוויזיה בסלון</span>
             </>
           )}
         </button>
@@ -108,7 +108,7 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
           <button
             type="button"
             onClick={openOnSmartTv}
-            className="text-[11px] text-purple-300 underline hover:text-moon"
+            className="text-2xs text-muted underline hover:text-moon"
           >
             פתח בממשק YouTube TV
           </button>
@@ -117,7 +117,7 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
 
       {/* Active TV Broadcast Control Overlay */}
       {castState === "connected" && (
-        <div className="rounded-2xl border border-mint/40 bg-space/80 p-3.5 space-y-2.5 backdrop-blur-md">
+        <div className="rounded-2xl border border-mint/40 bg-space/80 p-4 space-y-3 backdrop-blur-md">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 text-mint font-semibold">
               <Cast className="h-4 w-4 animate-pulse" />
@@ -125,14 +125,14 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
             </div>
             <button
               onClick={() => setCastState("disconnected")}
-              className="flex items-center gap-1 text-[11px] text-purple-300 hover:text-blush transition"
+              className="flex items-center gap-1 text-2xs text-muted hover:text-blush transition"
             >
               <XCircle className="h-3.5 w-3.5" />
               <span>נתק שידור</span>
             </button>
           </div>
 
-          <p className="text-[11px] text-purple-200">
+          <p className="text-2xs text-soft">
             מתנגן כעת: <strong className="text-moon">{workoutTitle}</strong>
           </p>
 
@@ -149,7 +149,7 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
               <span>{isPlaying ? "השהה בטלוויזיה" : "המשך ניגון"}</span>
             </button>
 
-            <div className="flex items-center gap-2 text-purple-300">
+            <div className="flex items-center gap-2 text-muted">
               <Volume2 className="h-3.5 w-3.5" />
               <input
                 type="range"
@@ -160,7 +160,7 @@ export default function CastToTvButton({ workoutTitle, youtubeQuery }) {
                 className="h-1.5 w-20 accent-mint cursor-pointer"
                 aria-label="עוצמת שמע בטלוויזיה"
               />
-              <span className="text-[10px] font-mono">{volume}%</span>
+              <span className="text-2xs font-mono">{volume}%</span>
             </div>
           </div>
         </div>

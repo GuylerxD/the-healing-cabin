@@ -6,14 +6,14 @@ import BackupSection from "./BackupSection";
 
 function Section({ icon: Icon, title, hint, children }) {
   return (
-    <section className="space-y-2.5">
+    <section className="space-y-3">
       <div className="flex items-center gap-2">
         <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-white/10 text-mint">
           <Icon className="h-4 w-4" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-moon">{title}</h3>
-          {hint && <p className="text-[11px] text-purple-300">{hint}</p>}
+          <h3 className="text-base font-bold text-moon">{title}</h3>
+          {hint && <p className="text-2xs text-muted">{hint}</p>}
         </div>
       </div>
       {children}
@@ -60,7 +60,7 @@ export default function SettingsModal({ isOpen, onClose }) {
         <header className="flex items-center justify-between border-b border-white/10 px-5 py-4">
           <h2
             id="settings-title"
-            className="flex items-center gap-2 text-base font-bold text-moon"
+            className="flex items-center gap-2 text-lg font-bold text-moon"
           >
             <Settings className="h-5 w-5 text-lilac" />
             <span>הגדרות</span>
@@ -69,7 +69,7 @@ export default function SettingsModal({ isOpen, onClose }) {
             type="button"
             onClick={onClose}
             aria-label="סגירת ההגדרות"
-            className="rounded-full bg-white/10 p-1.5 text-purple-300 transition hover:bg-white/20"
+            className="rounded-full bg-white/10 p-1.5 text-muted transition hover:bg-white/20"
           >
             <X className="h-4 w-4" />
           </button>
@@ -116,9 +116,9 @@ export default function SettingsModal({ isOpen, onClose }) {
                   setGoalSaved(false);
                 }}
                 placeholder="למשל: טיול חלומות 🌸"
-                className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-sm text-moon placeholder:text-purple-300"
+                className="min-w-0 flex-1 rounded-2xl bg-white/10 px-4 py-2 text-sm text-moon placeholder:text-muted"
               />
-              <button className="flex items-center gap-1 rounded-2xl bg-blush px-4 py-2 text-sm font-bold text-space">
+              <button className="flex items-center gap-1 rounded-2xl bg-lilac px-4 py-2 text-sm font-bold text-space">
                 {goalSaved && <Check className="h-4 w-4" />}
                 {goalSaved ? "נשמר" : "שמירה"}
               </button>

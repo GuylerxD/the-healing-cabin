@@ -115,19 +115,19 @@ export default function PillReminderToggle({ onNotificationSent }) {
 
   if (!supported) {
     return (
-      <div className="glass p-4 text-xs text-purple-300">
+      <div className="glass p-4 text-xs text-muted">
         התראות Web Push אינן נתמכות במכשיר זה או בדפדפן הנוכחי.
       </div>
     );
   }
 
   return (
-    <section className="glass space-y-3.5 p-5 text-right" dir="rtl">
+    <section className="glass space-y-4 p-5 text-right" dir="rtl">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <div
             className={`flex h-9 w-9 items-center justify-center rounded-2xl transition ${
-              enabled ? "bg-mint/20 text-mint" : "bg-white/10 text-purple-300"
+              enabled ? "bg-mint/20 text-mint" : "bg-white/10 text-muted"
             }`}
           >
             {enabled ? (
@@ -137,10 +137,10 @@ export default function PillReminderToggle({ onNotificationSent }) {
             )}
           </div>
           <div>
-            <h3 className="font-bold text-moon text-sm">
+            <h3 className="font-bold text-moon text-base">
               תזכורת יומית לגלולת זואלי
             </h3>
-            <p className="text-xs text-purple-300">
+            <p className="text-xs text-muted">
               התראת Push מקומית מדויקת (Zoely Reminder)
             </p>
           </div>
@@ -166,14 +166,14 @@ export default function PillReminderToggle({ onNotificationSent }) {
 
       {/* Time Picker & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3 text-xs">
-        <label className="flex items-center gap-2 text-purple-200">
+        <label className="flex items-center gap-2 text-soft">
           <Clock className="h-4 w-4 text-mint" />
           <span>שעת תזכורת קבועה:</span>
           <input
             type="time"
             value={reminderTime}
             onChange={handleTimeChange}
-            className="rounded-xl border border-white/15 bg-white/10 px-2.5 py-1 text-moon text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-mint"
+            className="rounded-xl border border-white/15 bg-white/10 px-2.5 py-1 text-moon text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-lilac"
           />
         </label>
 
@@ -206,7 +206,7 @@ export default function PillReminderToggle({ onNotificationSent }) {
       )}
 
       {permission === "denied" && (
-        <div className="flex items-center gap-2 rounded-xl bg-blush/15 p-2.5 text-xs text-blush border border-blush/30">
+        <div className="flex items-center gap-2 rounded-xl bg-blush/15 p-3 text-xs text-blush border border-blush/30">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>
             ההתראות חסומות בדפדפן. יש לפתוח את הגדרות האתר ולאשר קבלת התראות.

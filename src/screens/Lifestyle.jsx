@@ -11,16 +11,16 @@ export default function Lifestyle() {
       {/* Title Banner */}
       <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-base font-bold text-mint flex items-center gap-2">
+          <h2 className="text-lg font-bold text-mint flex items-center gap-2">
             <Compass className="h-5 w-5" />
             <span>אורח חיים, בית ודייטים (Lifestyle)</span>
           </h2>
-          <p className="text-xs text-purple-300">
+          <p className="text-xs text-muted">
             הרגלי שטח עם מוצ׳י, שגרת סדר בבית ורולטת בילויים זוגית בחיפה
           </p>
         </div>
         <span className="rounded-full bg-lilac/20 border border-lilac/30 px-3 py-1 text-xs font-bold text-lilac">
-          חיים בריאים ✨
+          חיים בריאים
         </span>
       </div>
 
@@ -38,7 +38,7 @@ export default function Lifestyle() {
       {/* 2. Personal care routine: daily / weekly / monthly */}
       <CollapsibleCard
         id="lifestyle-selfcare"
-        title="שגרת טיפוח אישית 🧴"
+        title="שגרת טיפוח אישית"
         badge="יומי • שבועי • חודשי — רשימות שאפשר לערוך"
         icon={Sparkles}
         defaultOpen={true}

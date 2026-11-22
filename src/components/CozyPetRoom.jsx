@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Sparkles, Moon, Sun } from "lucide-react";
+import { Sparkles, Moon, Sun, Lightbulb } from "lucide-react";
 import { useCabin, setCabin, petAction } from "../store";
 import { RECOVERY_DAILY_CAP } from "../lib/recovery";
 import {
@@ -12,6 +12,7 @@ import {
   initialPets,
   moodLabel,
 } from "../lib/pets";
+import CoinAmount from "./CoinAmount";
 
 const HEART_EMOJIS = ["❤️", "💖", "💕", "💗", "💓", "💞", "🩷", "🩵", "💜", "🫶"];
 
@@ -94,8 +95,8 @@ function StatBar({ stat, value }) {
   const v = Math.round(value);
   const low = v < LOW_THRESHOLD;
   return (
-    <div className="flex items-center gap-1.5 text-[10px]">
-      <span className="w-14 shrink-0 text-purple-200">
+    <div className="flex items-center gap-1.5 text-2xs">
+      <span className="w-14 shrink-0 text-soft">
         {STAT_LABELS[stat].emoji} {STAT_LABELS[stat].label}
       </span>
       <div
@@ -108,12 +109,12 @@ function StatBar({ stat, value }) {
       >
         <div
           className={`h-full rounded-full transition-all duration-500 ${
-            low ? "bg-red-400" : "bg-gradient-to-l from-mint to-lilac"
+            low ? "bg-red-400" : "bg-lilac"
           }`}
           style={{ width: `${v}%` }}
         />
       </div>
-      <span className={`w-7 text-left font-mono ${low ? "text-red-300 font-bold" : "text-purple-300"}`}>
+      <span className={`w-7 text-left font-mono ${low ? "text-red-300 font-bold" : "text-muted"}`}>
         {v}
       </span>
     </div>
@@ -231,7 +232,7 @@ export default function CozyPetRoom({
             🏃
           </div>
           <span className="mt-1 block font-bold text-xs text-moon">{def.name}</span>
-          <span className="text-[10px] font-bold text-red-300">
+          <span className="text-2xs font-bold text-red-300">
             {moodLabel(petId, pet)}
           </span>
         </div>
@@ -285,7 +286,7 @@ export default function CozyPetRoom({
           )}
 
           {reaction[petId] ? (
-            <span className="absolute -top-7 whitespace-nowrap rounded-full bg-mint px-2 py-0.5 text-[10px] font-extrabold text-space shadow-md animate-fade-in">
+            <span className="absolute -top-7 whitespace-nowrap rounded-full bg-mint px-2 py-0.5 text-2xs font-extrabold text-space shadow-md animate-fade-in">
               {reaction[petId]}
             </span>
           ) : (
@@ -299,8 +300,8 @@ export default function CozyPetRoom({
 
         <span className="mt-1 block font-bold text-xs text-moon">{def.name}</span>
         <span
-          className={`text-[10px] ${
-            pet.status === "ok" ? "text-purple-300" : "font-bold text-red-300"
+          className={`text-2xs ${
+            pet.status === "ok" ? "text-muted" : "font-bold text-red-300"
           }`}
         >
           {moodLabel(petId, pet)}
@@ -313,7 +314,7 @@ export default function CozyPetRoom({
     const def = PETS[petId];
     const pet = pets[petId];
     const btn =
-      "flex-1 rounded-xl border border-white/10 bg-white/5 px-1.5 py-2 text-[11px] font-bold text-moon transition hover:bg-white/10 active:scale-95 disabled:opacity-40";
+      "flex-1 rounded-xl border border-white/10 bg-white/5 px-1.5 py-2 text-2xs font-bold text-moon transition hover:bg-white/10 active:scale-95 disabled:opacity-40";
 
     return (
       <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-3">
@@ -322,8 +323,8 @@ export default function CozyPetRoom({
             {def.emoji} {def.name}
           </span>
           <span
-            className={`text-[11px] ${
-              pet.status === "ok" ? "text-purple-300" : "font-bold text-red-300"
+            className={`text-2xs ${
+              pet.status === "ok" ? "text-muted" : "font-bold text-red-300"
             }`}
           >
             {moodLabel(petId, pet)}
@@ -344,13 +345,13 @@ export default function CozyPetRoom({
             onClick={() => doAction(petId, "vet")}
             className="w-full rounded-xl bg-blush px-3 py-2 text-xs font-bold text-space transition active:scale-95"
           >
-            💊 וטרינר ותרופה ({VET_COST} 🪙)
+            💊 וטרינר ותרופה (<CoinAmount amount={VET_COST} />)
           </button>
         )}
 
         {pet.status === "away" ? (
           <div className="space-y-1.5">
-            <p className="text-[11px] text-purple-200">
+            <p className="text-2xs text-soft">
               {def.name} {petId === "mochi" ? "ברחה" : "ברח"} מהבית כי לא טיפלו
               {petId === "mochi" ? " בה" : " בו"} זמן מה.
               {petId === "mochi" && " טיול אמיתי עם מוצ׳י יחזיר אותה בחינם 🐾"}
@@ -360,17 +361,17 @@ export default function CozyPetRoom({
               onClick={() => doAction(petId, "search")}
               className="w-full rounded-xl bg-lilac px-3 py-2 text-xs font-bold text-space transition active:scale-95"
             >
-              🔦 לחפש את {def.name} ({SEARCH_COST} 🪙)
+              🔦 לחפש את {def.name} (<CoinAmount amount={SEARCH_COST} />)
             </button>
           </div>
         ) : (
           <div className="flex gap-1.5">
             <button type="button" onClick={() => doAction(petId, "feed")} className={btn}>
               🍖 האכלה
-              <span className="block text-[9px] font-normal text-purple-300">
+              <span className="block text-2xs font-normal text-muted">
                 {petId === "mochi" && dogTreats > 0
                   ? `חטיף (${dogTreats})`
-                  : `${FOOD_COST} 🪙`}
+                  : `${FOOD_COST} מטבעות`}
               </span>
             </button>
             <button
@@ -380,19 +381,19 @@ export default function CozyPetRoom({
               className={btn}
             >
               🎾 משחק
-              <span className="block text-[9px] font-normal text-purple-300">
+              <span className="block text-2xs font-normal text-muted">
                 −אנרגיה
               </span>
             </button>
             <button type="button" onClick={() => doAction(petId, "bath")} className={btn}>
               {def.actions.bath}
-              <span className="block text-[9px] font-normal text-purple-300">
+              <span className="block text-2xs font-normal text-muted">
                 פעם בשעתיים
               </span>
             </button>
             <button type="button" onClick={() => doAction(petId, "pet")} className={btn}>
               🤲 ליטוף
-              <span className="block text-[9px] font-normal text-purple-300">
+              <span className="block text-2xs font-normal text-muted">
                 חינם
               </span>
             </button>
@@ -400,7 +401,7 @@ export default function CozyPetRoom({
         )}
 
         {notice?.petId === petId && (
-          <p className="rounded-xl bg-blush/15 px-2.5 py-1.5 text-[11px] text-blush animate-fade-in">
+          <p className="rounded-xl bg-blush/15 px-2.5 py-1.5 text-2xs text-blush animate-fade-in">
             {notice.text}
           </p>
         )}
@@ -429,7 +430,7 @@ export default function CozyPetRoom({
               <Sparkles className="h-3.5 w-3.5 text-lilac" />
             </span>
             {resting && (
-              <span className="rounded-full bg-mint/20 border border-mint/40 px-2.5 py-0.5 text-[10px] font-bold text-mint animate-pulse">
+              <span className="rounded-full bg-mint/20 border border-mint/40 px-2.5 py-0.5 text-2xs font-bold text-mint animate-pulse">
                 שנ״צ משותף פעיל 💤
               </span>
             )}
@@ -443,10 +444,10 @@ export default function CozyPetRoom({
                 type="button"
                 onClick={() => handleSetLighting(mode.id)}
                 title={mode.name}
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold transition ${
+                className={`rounded-full px-2 py-0.5 text-2xs font-semibold transition ${
                   roomLighting === mode.id
                     ? "bg-white/20 text-moon shadow-sm scale-105"
-                    : "text-purple-300 opacity-60 hover:opacity-100"
+                    : "text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 {mode.lampEmoji}
@@ -502,9 +503,9 @@ export default function CozyPetRoom({
         </div>
 
         {/* Room Floor Ground */}
-        <div className="relative z-10 border-t border-white/10 pt-2 text-[11px] text-purple-300">
+        <div className="relative z-10 border-t border-white/10 pt-2 text-2xs text-muted">
           {resting
-            ? `💤 שנ״צ משותף: נחתן יחד ${elapsedMin} דקות (+${pending} 🪙) • האנרגיה שלהם מתמלאת`
+            ? `💤 שנ״צ משותף: נחתן יחד ${elapsedMin} דקות (+${pending} מטבעות) • האנרגיה שלהם מתמלאת`
             : "🕯️ לחיצה על מוצ׳י או צ׳ארלי = ליטוף • הם צריכים אוכל, משחק, ניקיון ושינה"}
         </div>
       </div>
@@ -516,8 +517,8 @@ export default function CozyPetRoom({
           onClick={() => setActiveTab("interact")}
           className={`flex-1 rounded-xl py-2 font-bold transition ${
             activeTab === "interact"
-              ? "bg-mint text-space shadow-md"
-              : "text-purple-300 hover:bg-white/5"
+              ? "bg-lilac text-space shadow-md"
+              : "text-muted hover:bg-white/5"
           }`}
         >
           🐾 טיפול ומשחק
@@ -528,7 +529,7 @@ export default function CozyPetRoom({
           className={`flex-1 rounded-xl py-2 font-bold transition ${
             activeTab === "nap"
               ? "bg-lilac text-space shadow-md"
-              : "text-purple-300 hover:bg-white/5"
+              : "text-muted hover:bg-white/5"
           }`}
         >
           🛋️ זמן שנ״צ משותף (Lofi)
@@ -539,7 +540,7 @@ export default function CozyPetRoom({
           className={`flex-1 rounded-xl py-2 font-bold transition ${
             activeTab === "decor"
               ? "bg-pink-400 text-space shadow-md"
-              : "text-purple-300 hover:bg-white/5"
+              : "text-muted hover:bg-white/5"
           }`}
         >
           🎨 עיצוב ותאורה
@@ -548,11 +549,12 @@ export default function CozyPetRoom({
 
       {/* Tab 1: Tamagotchi care */}
       {activeTab === "interact" && (
-        <div className="space-y-2.5 text-xs">
+        <div className="space-y-3 text-xs">
           {renderCarePanel("mochi")}
           {renderCarePanel("charlie")}
-          <p className="px-1 text-[10px] text-purple-300">
-            💡 טיול אמיתי עם מוצ׳י ומשימות הסירוק ברולטת הבית מטפלים בהם גם כאן.
+          <p className="flex items-start gap-1.5 px-1 text-2xs text-muted">
+            <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+            טיול אמיתי עם מוצ׳י ומשימות הסירוק ברולטת הבית מטפלים בהם גם כאן.
             מטר שמתרוקן עלול לגרום לעצב, מחלה או בריחה מהבית!
           </p>
         </div>
@@ -566,12 +568,12 @@ export default function CozyPetRoom({
               <Moon className="h-4 w-4" />
               <span>מצב שנת צהריים משותפת (Lofi Cozy Mode)</span>
             </div>
-            <span className="text-purple-300">
+            <span className="text-muted">
               עד {RECOVERY_DAILY_CAP} מטבעות ביום
             </span>
           </div>
 
-          <p className="text-purple-200 leading-relaxed text-[11.5px]">
+          <p className="text-soft leading-relaxed text-xs">
             בהפעלת המנוחה, האורות בבקתה מתעמעמים, מוצ׳י וצ׳ארלי עוברים למצב שינה
             ומתכרבלים יחד איתך — והאנרגיה שלהם מתמלאת. כל 5 דקות מנוחה צוברות
             מטבע לחדר — גם כשהמסך כבוי!
@@ -589,7 +591,7 @@ export default function CozyPetRoom({
             {resting ? (
               <>
                 <Sun className="h-4 w-4" />
-                <span>התעוררנו מהשנ״צ — לאסוף {pending} 🪙</span>
+                <span>התעוררנו מהשנ״צ — לאסוף <CoinAmount amount={pending} /></span>
               </>
             ) : (
               <>
@@ -613,10 +615,10 @@ export default function CozyPetRoom({
                 key={mode.id}
                 type="button"
                 onClick={() => handleSetLighting(mode.id)}
-                className={`flex items-center gap-2 rounded-xl p-2.5 border transition ${
+                className={`flex items-center gap-2 rounded-xl p-3 border transition ${
                   roomLighting === mode.id
                     ? "bg-mint/15 border-mint text-mint font-bold"
-                    : "bg-white/5 border-white/10 text-purple-200 hover:bg-white/10"
+                    : "bg-white/5 border-white/10 text-soft hover:bg-white/10"
                 }`}
               >
                 <span className="text-lg">{mode.lampEmoji}</span>
@@ -633,10 +635,10 @@ export default function CozyPetRoom({
               <button
                 type="button"
                 onClick={() => handleToggleDecor("rug")}
-                className={`rounded-xl px-3 py-1.5 border text-[11px] font-semibold transition ${
+                className={`rounded-xl px-3 py-1.5 border text-2xs font-semibold transition ${
                   placedDecor.includes("rug")
                     ? "bg-pink-400/20 border-pink-400 text-pink-300"
-                    : "bg-white/5 border-white/10 text-purple-400"
+                    : "bg-white/5 border-white/10 text-muted/70"
                 }`}
               >
                 🧶 שטיח K-pop חמים {placedDecor.includes("rug") ? "✔" : ""}
@@ -645,10 +647,10 @@ export default function CozyPetRoom({
               <button
                 type="button"
                 onClick={() => handleToggleDecor("plant")}
-                className={`rounded-xl px-3 py-1.5 border text-[11px] font-semibold transition ${
+                className={`rounded-xl px-3 py-1.5 border text-2xs font-semibold transition ${
                   placedDecor.includes("plant")
                     ? "bg-emerald-400/20 border-emerald-400 text-emerald-300"
-                    : "bg-white/5 border-white/10 text-purple-400"
+                    : "bg-white/5 border-white/10 text-muted/70"
                 }`}
               >
                 🪴 עציץ שלווה ירוק {placedDecor.includes("plant") ? "✔" : ""}
@@ -658,10 +660,10 @@ export default function CozyPetRoom({
                 <button
                   type="button"
                   onClick={() => handleToggleDecor("salt-lamp")}
-                  className={`rounded-xl px-3 py-1.5 border text-[11px] font-semibold transition ${
+                  className={`rounded-xl px-3 py-1.5 border text-2xs font-semibold transition ${
                     placedDecor.includes("salt-lamp")
                       ? "bg-amber-400/20 border-amber-400 text-amber-300"
-                      : "bg-white/5 border-white/10 text-purple-400"
+                      : "bg-white/5 border-white/10 text-muted/70"
                   }`}
                 >
                   🪨 מנורת מלח {placedDecor.includes("salt-lamp") ? "✔" : ""}
@@ -672,10 +674,10 @@ export default function CozyPetRoom({
                 <button
                   type="button"
                   onClick={() => handleToggleDecor("tarnaby-lamp")}
-                  className={`rounded-xl px-3 py-1.5 border text-[11px] font-semibold transition ${
+                  className={`rounded-xl px-3 py-1.5 border text-2xs font-semibold transition ${
                     placedDecor.includes("tarnaby-lamp")
                       ? "bg-lilac/20 border-lilac text-lilac"
-                      : "bg-white/5 border-white/10 text-purple-400"
+                      : "bg-white/5 border-white/10 text-muted/70"
                   }`}
                 >
                   🕯️ מנורת TÄRNABY{" "}
